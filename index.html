@@ -2276,7 +2276,7 @@ function renderChallengeAdmin() {
           <label style="font-family:Orbitron,monospace;font-size:9px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:5px;">DESCRIÇÃO</label>
           <textarea id="ch-desc" rows="2" placeholder="Descreva o que o executivo precisa fazer..." style="width:100%;box-sizing:border-box;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:Rajdhani,sans-serif;font-size:14px;resize:vertical;">${c?.description||''}</textarea>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;">
           <div>
             <label style="font-family:Orbitron,monospace;font-size:9px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:5px;">INÍCIO</label>
             <input id="ch-start" type="date" value="${c?.startDate ? new Date(c.startDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]}" style="width:100%;box-sizing:border-box;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:Orbitron,monospace;font-size:11px;">
@@ -3411,6 +3411,57 @@ function renderRules() {
           ${tableHtml}
         </div>`;
     }).join('')}
+
+    <div style="margin-top:32px;margin-bottom:8px;">
+      <div style="font-family:'Orbitron',monospace;font-size:9px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;">Indicadores Visuais</div>
+
+      <!-- Semáforo -->
+      <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0;">
+            <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#00ff88;box-shadow:0 0 6px #00ff88;"></span>
+            <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#ffb828;box-shadow:0 0 6px #ffb828;"></span>
+            <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#ff3355;box-shadow:0 0 6px #ff3355;"></span>
+          </div>
+          <div style="flex:1;">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--text);">Semáforo de Ritmo</div>
+            <div style="font-family:'Orbitron',monospace;font-size:10px;color:var(--accent);letter-spacing:1px;margin-top:2px;">Indicador de atividade recente · visível no ranking</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:12px;display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;align-items:center;gap:10px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:500;">
+            <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#00ff88;box-shadow:0 0 5px #00ff88;flex-shrink:0;"></span>
+            <span style="color:rgba(240,232,255,0.7);">Pontuou nos <strong style="color:#00ff88;">últimos 7 dias</strong> — ritmo forte, em dia com o ranking.</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:500;">
+            <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#ffb828;box-shadow:0 0 5px #ffb828;flex-shrink:0;"></span>
+            <span style="color:rgba(240,232,255,0.7);">Entre <strong style="color:#ffb828;">7 e 14 dias</strong> sem pontuar — atenção, ritmo desacelerando.</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:500;">
+            <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#ff3355;box-shadow:0 0 5px #ff3355;flex-shrink:0;"></span>
+            <span style="color:rgba(240,232,255,0.7);">Mais de <strong style="color:#ff3355;">14 dias</strong> sem pontuar — inativo, risco de perder posições.</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:500;">
+            <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#3a3a5a;flex-shrink:0;"></span>
+            <span style="color:rgba(240,232,255,0.5);">Sem histórico registrado ainda.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desafios -->
+      <div style="background:rgba(255,184,40,0.05);border:1px solid rgba(255,184,40,0.25);border-radius:12px;padding:20px 24px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <span style="font-size:26px;line-height:1;flex-shrink:0;">🏆</span>
+          <div style="flex:1;">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--text);">Desafios</div>
+            <div style="font-family:'Orbitron',monospace;font-size:10px;color:#ffb828;letter-spacing:1px;margin-top:2px;">Bônus de pontos · período limitado · publicado pelo time</div>
+          </div>
+        </div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:500;color:rgba(240,232,255,0.7);line-height:1.6;border-top:1px solid rgba(255,184,40,0.2);padding-top:12px;">
+          O time de Desenvolvimento de Franquias pode publicar desafios extras com prazo e pontuação definidos. Quando um desafio está ativo, ele aparece como banner no topo do Ranking. Executivos que cumprirem o desafio dentro do período recebem os pontos automaticamente após validação do time. Os pontos de desafio são somados ao total do ranking.
+        </div>
+      </div>
+    </div>
   `;
 }
 
