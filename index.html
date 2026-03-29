@@ -1265,14 +1265,15 @@
     #loginScreen .ls-left { justify-content:flex-start; padding-top:16px; }
   }
   @media(max-width:768px) {
-    #loginScreen .ls-screen { grid-template-columns:1fr; }
+    #loginScreen { overflow-y:auto; -webkit-overflow-scrolling:touch; }
+    #loginScreen .ls-screen { grid-template-columns:1fr; min-height:auto; }
     #loginScreen .ls-left { padding:24px 24px 20px; min-height:auto; gap:16px; justify-content:flex-start; }
     #loginScreen .ls-brand-pill { margin-bottom:0; font-size:10px; }
     #loginScreen .ls-brand-logo { width:clamp(90px,28vw,120px); margin-bottom:0; margin-top:14px; }
     #loginScreen .ls-h1 { font-size:clamp(52px,15vw,72px); letter-spacing:-1px; margin-bottom:10px; margin-top:10px; }
     #loginScreen .ls-hl-tag { font-size:11px; }
     #loginScreen .ls-hl-desc { font-size:12px; line-height:1.45; }
-    #loginScreen .ls-right { padding:24px 20px 36px; }
+    #loginScreen .ls-right { padding:24px 20px 48px; }
     #loginScreen .ls-form-header { margin-bottom:20px; }
     #loginScreen .ls-field { margin-bottom:14px; }
     #loginScreen .ls-btn-main { padding:13px 20px; }
@@ -1778,7 +1779,7 @@
           <label>Senha</label>
           <div class="ls-input-wrap">
             <span class="ls-input-icon">🔑</span>
-            <input type="password" id="loginPassword" placeholder="Digite sua senha" onkeydown="if(event.key==='Enter')doLogin()">
+            <input type="password" id="loginPassword" placeholder="Digite sua senha" onkeydown="if(event.key==='Enter')doLogin()" onfocus="setTimeout(()=>{document.querySelector('.ls-btn-main')?.scrollIntoView({behavior:'smooth',block:'center'})},400)">
           </div>
         </div>
         <div class="login-error" id="loginError"></div>
