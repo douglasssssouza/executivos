@@ -211,7 +211,7 @@
   table { width:100%; border-collapse:collapse; }
   thead th {
     font-family:'Orbitron',monospace; font-size:10px; letter-spacing:2px;
-    text-transform:uppercase; color:var(--muted);
+    text-transform:uppercase; color:#b0c4d8;
     padding:14px 12px; text-align:center;
     background: rgba(0,212,255,0.05);
     border-bottom: 1px solid var(--border);
@@ -380,7 +380,7 @@
     font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
     padding:5px 14px; border-radius:100px; cursor:pointer;
     border:1px solid var(--border); background:transparent;
-    color:#7a90b0; transition:all 0.2s;
+    color:#b0c4d8; transition:all 0.2s;
   }
   .filter-btn.active { background:rgba(0,219,255,0.1); border-color:rgba(0,219,255,0.35); color:#00dbff; }
   .filter-btn:hover:not(.active) { border-color:rgba(0,219,255,0.25); color:var(--text); }
@@ -1986,7 +1986,7 @@
 // ===================== AUTH =====================
 const PASSWORDS = {
   admin: '8a314eaeea9fbc15ea28913d434feaec299fefe398b8e8b03d46e15ce84e489b',
-  lider: '2625f703cfa85af334ee299aea5371f5552f90666be3f90e7d0abcd41ad842b2'
+  lider: 'f711a4e5f5cdd0ddf628c847f029d775be586ef386e52509e53c36b3d358389b'
 };
 async function hashPwd(str) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
