@@ -1265,7 +1265,7 @@
     #loginScreen .ls-left { justify-content:flex-start; padding-top:16px; }
   }
   @media(max-width:768px) {
-    #loginScreen { overflow-y:auto; -webkit-overflow-scrolling:touch; }
+    #loginScreen { overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior-y:contain; }
     #loginScreen .ls-screen { grid-template-columns:1fr; }
     #loginScreen .ls-left { padding:24px 24px 20px; min-height:auto; gap:16px; justify-content:flex-start; }
     #loginScreen .ls-brand-pill { margin-bottom:0; font-size:10px; }
