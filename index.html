@@ -1223,7 +1223,7 @@
   #loginScreen .ls-field select, #loginScreen .ls-field input {
     width:100%; padding:13px 16px 13px 42px;
     background:#0c1424; border:1px solid rgba(0,219,255,0.12);
-    color:#f0f4ff; font-family:'Inter',sans-serif; font-size:14px; font-weight:500;
+    color:#f0f4ff; font-family:'Inter',sans-serif; font-size:16px; font-weight:500;
     border-radius:10px; transition:all .2s; appearance:none;
   }
   #loginScreen .ls-field select:focus, #loginScreen .ls-field input:focus {
@@ -1683,6 +1683,14 @@
       set(ref(db, 'executives'), executives);
     };
   </script>
+  <script>
+  // Block pinch-zoom on iOS while login screen is visible
+  (function(){
+    function blockZoom(e){ if(e.touches && e.touches.length > 1){ e.preventDefault(); } }
+    document.addEventListener('touchstart', blockZoom, {passive:false});
+    document.addEventListener('touchmove', blockZoom, {passive:false});
+  })();
+  </script>
 </head>
 <body>
 
@@ -1794,6 +1802,9 @@
     </div>
   </div>
 </div>
+<!-- APP WRAP (oculto até login) -->
+<div id="appWrap" style="display:none;">
+
 <!-- USER BADGE -->
 <div id="userBadge">
   <div class="top-bar-left">
@@ -3001,6 +3012,7 @@ async function doLogin() {
     currentExecId = execId;
     if (window._logAccess) window._logAccess(exec.name.split(' ')[0], 'exec', exec.id);
     document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appWrap').style.display = '';
     const badge = document.getElementById('userBadge');
     badge.style.display = 'flex';
     document.getElementById('userLabel').textContent = exec.name.split(' ')[0];
@@ -3016,6 +3028,7 @@ async function doLogin() {
       if (isLider) currentProfile = 'lider';
       if (window._logAccess) window._logAccess(isLider ? 'Líder' : 'Admin', isLider ? 'lider' : 'admin');
       document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('appWrap').style.display = '';
       const badge = document.getElementById('userBadge');
       badge.style.display = 'flex';
       document.getElementById('userLabel').textContent = isLider ? 'Líder' : 'Admin';
@@ -3497,5 +3510,7 @@ updateLastUpdateBadge();
   }
 })();
 </script>
+
+</div><!-- /appWrap -->
 </body>
 </html>
