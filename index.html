@@ -1621,10 +1621,11 @@
     onValue(accessRef, (snap) => {
       window._accessLogData = snap.val() || {};
       if (typeof renderAccessLog === 'function') renderAccessLog();
+      if (typeof renderEdit === 'function') renderEdit();
     });
 
     // Expor função de log de acesso
-    window._logAccess = function(name, profile) {
+    window._logAccess = function(name, profile, execId) {
       const key = 'acc_' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
       const ua = navigator.userAgent;
       const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
@@ -1634,12 +1635,14 @@
       else if (/Chrome/i.test(ua)) browser = 'Chrome';
       else if (/Firefox/i.test(ua)) browser = 'Firefox';
       else if (/Safari/i.test(ua)) browser = 'Safari';
-      set(ref(db, 'access_log/' + key), {
+      const entry = {
         name: name,
         profile: profile,
         timestamp: Date.now(),
         device: (isMobile ? 'Mobile' : 'Desktop') + ' · ' + browser
-      });
+      };
+      if (execId != null) entry.execId = execId;
+      set(ref(db, 'access_log/' + key), entry);
     };
 
     // Expor função de limpar log
@@ -2396,6 +2399,57 @@ function renderStats() {
 }
 
 // ===================== RENDER EDIT =====================
+// ===================== INATIVIDADE =====================
+function getLastAccessForExec(execId) {
+  const data = window._accessLogData || {};
+  const entries = Object.values(data).filter(e => e.profile === 'exec' && e.execId === execId);
+  if (!entries.length) return null;
+  return Math.max(...entries.map(e => e.timestamp));
+}
+
+function inactivityBadges(exec) {
+  const DAY = 86400000;
+  const now = Date.now();
+  let html = '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;">';
+
+  // — Acesso —
+  const lastAccess = getLastAccessForExec(exec.id);
+  if (lastAccess === null) {
+    html += `<span title="Nunca acessou o app" style="font-family:Orbitron,monospace;font-size:8px;letter-spacing:0.5px;padding:2px 7px;border-radius:4px;background:rgba(122,144,176,0.1);border:1px solid rgba(122,144,176,0.25);color:#7a90b0;white-space:nowrap;">
+      👤 Nunca acessou
+    </span>`;
+  } else {
+    const days = Math.floor((now - lastAccess) / DAY);
+    if (days >= 14) {
+      html += `<span title="Sem acesso há ${days} dias" style="font-family:Orbitron,monospace;font-size:8px;letter-spacing:0.5px;padding:2px 7px;border-radius:4px;background:rgba(255,50,80,0.12);border:1px solid rgba(255,50,80,0.35);color:#ff5060;white-space:nowrap;">
+        👤 ${days}d sem acesso
+      </span>`;
+    } else if (days >= 7) {
+      html += `<span title="Sem acesso há ${days} dias" style="font-family:Orbitron,monospace;font-size:8px;letter-spacing:0.5px;padding:2px 7px;border-radius:4px;background:rgba(255,180,40,0.12);border:1px solid rgba(255,180,40,0.35);color:#ffb828;white-space:nowrap;">
+        👤 ${days}d sem acesso
+      </span>`;
+    }
+  }
+
+  // — Pontuação —
+  if (exec.lastScoreUpdate) {
+    const days = Math.floor((now - exec.lastScoreUpdate) / DAY);
+    if (days >= 30) {
+      html += `<span title="Sem atualização de pontos há ${days} dias" style="font-family:Orbitron,monospace;font-size:8px;letter-spacing:0.5px;padding:2px 7px;border-radius:4px;background:rgba(255,50,80,0.12);border:1px solid rgba(255,50,80,0.35);color:#ff5060;white-space:nowrap;">
+        📊 ${days}d sem pontuar
+      </span>`;
+    } else if (days >= 15) {
+      html += `<span title="Sem atualização de pontos há ${days} dias" style="font-family:Orbitron,monospace;font-size:8px;letter-spacing:0.5px;padding:2px 7px;border-radius:4px;background:rgba(255,180,40,0.12);border:1px solid rgba(255,180,40,0.35);color:#ffb828;white-space:nowrap;">
+        📊 ${days}d sem pontuar
+      </span>`;
+    }
+  }
+
+  html += '</div>';
+  // Retorna vazio se nenhum badge foi adicionado
+  return html === '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;"></div>' ? '' : html;
+}
+
 function renderEdit() {
   const ranked = getRanked('Todos');
   const cards = document.getElementById('editCards');
@@ -2416,6 +2470,7 @@ function renderEdit() {
           <input class="edit-name-input" type="text" value="${e.name}"
             oninput="setName(${e.id}, this.value)" placeholder="Nome do executivo">
           <span class="vertical-tag ${vertClass(e.vertical)}">${e.vertical}</span>
+          ${inactivityBadges(e)}
         </div>
         <div style="flex:1"></div>
         <div class="edit-total-preview" id="preview-${e.id}">${t} pts</div>
@@ -2486,7 +2541,10 @@ function clearSearch() {
 function setFieldRaw(id, field, val) {
   const e = executives.find(x=>x.id===id);
   if(!e) return;
+  const scoreFields = ['train','action','alvo','dev','wow'];
+  const prev = e[field];
   e[field] = parseInt(val)||0;
+  if (scoreFields.includes(field) && e[field] !== prev) e.lastScoreUpdate = Date.now();
   updatePreview(id);
 }
 function updatePreview(id) {
@@ -2748,7 +2806,7 @@ async function doLogin() {
     }
     // Login executivo OK
     currentExecId = execId;
-    if (window._logAccess) window._logAccess(exec.name.split(' ')[0], 'exec');
+    if (window._logAccess) window._logAccess(exec.name.split(' ')[0], 'exec', exec.id);
     document.getElementById('loginScreen').style.display = 'none';
     const badge = document.getElementById('userBadge');
     badge.style.display = 'flex';
