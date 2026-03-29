@@ -38,13 +38,6 @@
 
   html { overflow-x: hidden; }
 
-  html.login-mode, html.login-mode body {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-
   body {
     background: var(--bg);
     color: var(--text);
@@ -1276,19 +1269,21 @@
   }
   @media(max-width:768px) {
     #loginScreen { overflow:hidden; }
-    #loginScreen .ls-screen { grid-template-columns:1fr; min-height:auto; }
-    #loginScreen .ls-left { padding:24px 24px 20px; min-height:auto; gap:16px; justify-content:flex-start; }
-    #loginScreen .ls-brand-pill { margin-bottom:0; font-size:10px; }
-    #loginScreen .ls-brand-logo { width:clamp(90px,28vw,120px); margin-bottom:0; margin-top:14px; }
-    #loginScreen .ls-h1 { font-size:clamp(52px,15vw,72px); letter-spacing:-1px; margin-bottom:10px; margin-top:10px; }
-    #loginScreen .ls-hl-tag { font-size:11px; }
-    #loginScreen .ls-hl-desc { font-size:12px; line-height:1.45; }
-    #loginScreen .ls-right { padding:24px 20px 48px; overflow:hidden; }
-    #loginScreen .ls-form-header { margin-bottom:20px; }
-    #loginScreen .ls-field { margin-bottom:14px; }
-    #loginScreen .ls-btn-main { padding:13px 20px; }
-    #loginScreen .ls-form-footer { margin-top:18px; font-size:8px; }
-    #loginScreen .ls-form-footer strong { font-size:8px; }
+    #loginScreen .ls-screen { grid-template-columns:1fr; min-height:100dvh; min-height:100vh; }
+    #loginScreen .ls-left { display:none; }
+    #loginScreen .ls-right {
+      min-height:100dvh; min-height:100vh;
+      padding:48px 28px 40px;
+      overflow:hidden;
+      align-items:center;
+    }
+    #loginScreen .ls-form-wrap { max-width:100%; }
+    #loginScreen .ls-form-header { margin-bottom:24px; }
+    #loginScreen .ls-form-title { font-size:28px; }
+    #loginScreen .ls-field { margin-bottom:16px; }
+    #loginScreen .ls-btn-main { padding:14px 20px; }
+    #loginScreen .ls-form-footer { margin-top:20px; font-size:10px; }
+    #loginScreen .ls-form-footer strong { font-size:10px; }
   }
   #userBadge {
     position:sticky; top:0; z-index:100; width:100%;
@@ -1695,7 +1690,7 @@
     };
   </script>
 </head>
-<body onload="document.documentElement.classList.add('login-mode')">
+<body>
 
 <!-- LOGIN SCREEN -->
 <div id="loginScreen">
@@ -3014,7 +3009,6 @@ async function doLogin() {
     // Login executivo OK
     currentExecId = execId;
     if (window._logAccess) window._logAccess(exec.name.split(' ')[0], 'exec', exec.id);
-    document.documentElement.classList.remove('login-mode');
     document.getElementById('loginScreen').style.display = 'none'; document.getElementById('appWrap').style.display = '';
     const badge = document.getElementById('userBadge');
     badge.style.display = 'flex';
