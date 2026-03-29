@@ -3,7 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⚡ Executivo de Alta Performance</title>
+<title>Executivo de Alta Performance</title>
+<script>
+(function(){
+  var allowed = ['localhost','127.0.0.1','douglasssssouza.github.io'];
+  var host = location.hostname;
+  if (allowed.indexOf(host) === -1) {
+    document.documentElement.innerHTML = '<body style="margin:0;background:#04080f;display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;"><div style="text-align:center;color:#7a90b0;"><div style="font-size:48px;margin-bottom:16px;">🔒</div><div style="font-size:20px;color:#fff;margin-bottom:8px;">Acesso não autorizado</div><div style="font-size:14px;">Este aplicativo só pode ser acessado pelo canal oficial.</div></div></body>';
+  }
+})();
+</script>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAzMiAzMic+PHJlY3Qgd2lkdGg9JzMyJyBoZWlnaHQ9JzMyJyByeD0nNCcgZmlsbD0nIzA0MDgwZicvPjxwYXRoIGQ9J000LDI0IEExMywxMyAwIDEsMSAyOCwyNCcgc3Ryb2tlPScjMWEyNTM1JyBzdHJva2Utd2lkdGg9JzMuNScgZmlsbD0nbm9uZScgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJy8+PHBhdGggZD0nTTQsMjQgQTEzLDEzIDAgMSwxIDI4LDI0JyBzdHJva2U9JyMwMGRiZmYnIHN0cm9rZS13aWR0aD0nMy41JyBmaWxsPSdub25lJyBzdHJva2UtbGluZWNhcD0ncm91bmQnLz48bGluZSB4MT0nMTYnIHkxPScyMicgeDI9JzIyJyB5Mj0nMTInIHN0cm9rZT0nd2hpdGUnIHN0cm9rZS13aWR0aD0nMicgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJy8+PGNpcmNsZSBjeD0nMTYnIGN5PScyMicgcj0nMi41JyBmaWxsPScjMDBkYmZmJy8+PC9zdmc+"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -1852,7 +1862,7 @@
   <!-- EDIT PANEL -->
   <div class="panel" id="panel-edit">
     <div class="edit-header">
-      <h2>⚙ Editar Pontos</h2>
+      <h2 style="color:#ffffff;">⚙ Editar Pontos</h2>
       <div style="display:flex;gap:8px;">
         <button class="btn btn-add" onclick="openAddModal()">+ Novo Executivo</button>
         <button class="btn btn-primary" onclick="saveAll()">💾 Salvar & Atualizar Ranking</button>
@@ -1922,7 +1932,14 @@
 
 <script>
 // ===================== AUTH =====================
-const PASSWORDS = { admin: 'admin5040!', exec: 'executivos2025', lider: 'lider2025' };
+const PASSWORDS = {
+  admin: '8a314eaeea9fbc15ea28913d434feaec299fefe398b8e8b03d46e15ce84e489b',
+  lider: '2625f703cfa85af334ee299aea5371f5552f90666be3f90e7d0abcd41ad842b2'
+};
+async function hashPwd(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
 let currentProfile = 'admin';
 let currentExecId = null;
 
@@ -2587,7 +2604,7 @@ function removeExecutive(id) {
 
 
 
-function doLogin() {
+async function doLogin() {
   const pwd = document.getElementById('loginPassword').value;
   const errEl = document.getElementById('loginError');
 
@@ -2624,9 +2641,10 @@ function doLogin() {
     applyRoleRestrictions();
     errEl.textContent = '';
   } else {
-    // Admin / Líder login
-    const isLider = pwd === PASSWORDS.lider;
-    const isAdmin = pwd === PASSWORDS[currentProfile];
+    // Admin / Líder login — compara hash SHA-256
+    const pwdHash = await hashPwd(pwd);
+    const isLider = pwdHash === PASSWORDS.lider;
+    const isAdmin = pwdHash === PASSWORDS.admin && currentProfile === 'admin';
     if (isAdmin || isLider) {
       if (isLider) currentProfile = 'lider';
       document.getElementById('loginScreen').style.display = 'none';
@@ -2981,10 +2999,22 @@ function renderRules() {
         </div>` : '';
 
       const isWow = c.key === 'wow';
+      const isDev = c.key === 'dev';
+
+      const lockBadge = `
+        <div title="Em breve — critério ainda não está sendo computado" style="position:absolute;top:10px;left:10px;display:flex;align-items:center;gap:5px;background:rgba(255,190,40,0.1);border:1px solid rgba(255,190,40,0.35);border-radius:6px;padding:3px 7px 3px 5px;cursor:default;">
+          <svg width="11" height="13" viewBox="0 0 11 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="0.75" y="5.5" width="9.5" height="7" rx="1.5" stroke="rgba(255,190,40,0.8)" stroke-width="1.2" fill="rgba(255,190,40,0.12)"/>
+            <path d="M3 5.5V3.5a2.5 2.5 0 0 1 5 0v2" stroke="rgba(255,190,40,0.8)" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+            <circle cx="5.5" cy="9" r="1.2" fill="rgba(255,190,40,0.8)"/>
+          </svg>
+          <span style="font-family:'Orbitron',monospace;font-size:8px;color:rgba(255,190,40,0.8);letter-spacing:0.5px;">EM BREVE</span>
+        </div>`;
 
       if (isWow) {
         return `
-        <div class="criteria-card wow-card" style="border-radius:12px;padding:20px 24px;margin-bottom:16px;">
+        <div class="criteria-card wow-card" style="position:relative;border-radius:12px;padding:20px 24px;padding-top:36px;margin-bottom:16px;">
+          ${lockBadge}
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
             <span class="wow-rocket" style="color:#00dbff;">${ruleIcons[c.key]||''}</span>
             <div style="flex:1;">
@@ -2999,7 +3029,8 @@ function renderRules() {
       }
 
       return `
-        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:16px;">
+        <div style="position:relative;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:20px 24px;${isDev?'padding-top:36px;':''}margin-bottom:16px;">
+          ${isDev ? lockBadge : ''}
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
             <span style="color:#00dbff;display:flex;align-items:center;">${ruleIcons[c.key]||''}</span>
             <div style="flex:1;">
