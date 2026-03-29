@@ -1029,6 +1029,8 @@
   #loginScreen {
     position:fixed; inset:0; z-index:999;
     font-family:'Inter',sans-serif;
+    background:#04080f;
+    overscroll-behavior:none;
   }
   #loginScreen .ls-screen {
     min-height:100vh; display:grid;
@@ -1273,7 +1275,7 @@
     #loginScreen .ls-h1 { font-size:clamp(52px,15vw,72px); letter-spacing:-1px; margin-bottom:10px; margin-top:10px; }
     #loginScreen .ls-hl-tag { font-size:11px; }
     #loginScreen .ls-hl-desc { font-size:12px; line-height:1.45; }
-    #loginScreen .ls-right { padding:24px 20px 48px; overflow-y:auto; -webkit-overflow-scrolling:touch; max-height:100vh; }
+    #loginScreen .ls-right { padding:24px 20px 48px; overflow-y:auto; -webkit-overflow-scrolling:touch; max-height:100vh; overscroll-behavior:contain; }
     #loginScreen .ls-form-header { margin-bottom:20px; }
     #loginScreen .ls-field { margin-bottom:14px; }
     #loginScreen .ls-btn-main { padding:13px 20px; }
