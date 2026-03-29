@@ -38,6 +38,9 @@
 
   html { overflow-x: hidden; }
 
+  /* Impede body de rolar enquanto login está visível */
+  body.login-open { overflow: hidden; height: 100%; }
+
   body {
     background: var(--bg);
     color: var(--text);
@@ -1027,8 +1030,9 @@
 
   /* ===== LOGIN SCREEN ===== */
   #loginScreen {
-    position:fixed; inset:0; z-index:999;
+    position:fixed; inset:0; z-index:9999;
     font-family:'Inter',sans-serif;
+    background:#04080f;
   }
   #loginScreen .ls-screen {
     min-height:100vh; display:grid;
@@ -1696,6 +1700,7 @@
 <body>
 
 <!-- LOGIN SCREEN -->
+<script>document.body.classList.add('login-open');</script>
 <div id="loginScreen">
   <div class="ls-screen">
     <div class="ls-left">
@@ -3012,6 +3017,7 @@ async function doLogin() {
     // Login executivo OK
     currentExecId = execId;
     if (window._logAccess) window._logAccess(exec.name.split(' ')[0], 'exec', exec.id);
+    document.body.classList.remove('login-open');
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('appWrap').style.display = '';
     const badge = document.getElementById('userBadge');
