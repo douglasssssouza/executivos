@@ -821,9 +821,9 @@
   /* ===== PTS DIFF ===== */
   .pts-diff {
     font-family:'Orbitron',monospace; font-size:10px;
-    color: var(--muted); margin-top:2px; letter-spacing:1px;
+    color: #b0c4d8; margin-top:2px; letter-spacing:1px;
   }
-  .pts-diff span { color: var(--red); font-weight:700; }
+  .pts-diff span { color: #b0c4d8; font-weight:700; }
 
   /* ===== LAST UPDATE ===== */
   .last-update-bar {
@@ -996,8 +996,9 @@
 
   .pts-diff {
     font-family:'Orbitron',monospace; font-size:10px;
-    color: var(--muted); margin-top:2px; letter-spacing:1px;
+    color: #b0c4d8; margin-top:2px; letter-spacing:1px;
   }
+  .pts-diff span { color: #b0c4d8; font-weight:700; }
   .pts-diff.closing { color: #ff9900; }
   .last-update span { color: var(--accent); }
 
@@ -1649,6 +1650,38 @@
     window._clearAccessLog = function() {
       set(ref(db, 'access_log'), null);
     };
+
+    // Listener de desafio ativo
+    const challengeRef = ref(db, 'challenge');
+    onValue(challengeRef, (snap) => {
+      window._challengeData = snap.val() || null;
+      if (typeof renderChallengeBanner === 'function') renderChallengeBanner();
+      if (typeof renderChallengeAdmin === 'function') renderChallengeAdmin();
+    });
+
+    // Salvar desafio
+    window._saveChallenge = function(data) { set(ref(db, 'challenge'), data); };
+    window._deleteChallenge = function() { set(ref(db, 'challenge'), null); };
+    window._markChallengeComplete = function(execId, pts) {
+      const e = executives.find(x => x.id === execId);
+      if (!e) return;
+      e.bonusPts = (e.bonusPts || 0) + pts;
+      // Marca no desafio
+      const completed = (window._challengeData && window._challengeData.completedBy) ? {...window._challengeData.completedBy} : {};
+      completed[execId] = true;
+      set(ref(db, 'challenge/completedBy'), completed);
+      // Salva executivos
+      set(ref(db, 'executives'), executives);
+    };
+    window._unmarkChallengeComplete = function(execId, pts) {
+      const e = executives.find(x => x.id === execId);
+      if (!e) return;
+      e.bonusPts = Math.max(0, (e.bonusPts || 0) - pts);
+      const completed = (window._challengeData && window._challengeData.completedBy) ? {...window._challengeData.completedBy} : {};
+      delete completed[execId];
+      set(ref(db, 'challenge/completedBy'), completed);
+      set(ref(db, 'executives'), executives);
+    };
   </script>
 </head>
 <body>
@@ -1823,6 +1856,10 @@
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="5" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M2 12c0-2.76 2.24-5 5-5s5 2.24 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="11" cy="4" r="1.5" fill="var(--accent)" stroke="none"/></svg>
       Acessos
     </button>
+    <button class="tab" id="tab-challenge" onclick="switchTab('challenge')" style="display:none;">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.8 3.6L13 5.3l-3 2.9.7 4.1L7 10.4l-3.7 1.9.7-4.1-3-2.9 4.2-.7z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+      Desafios
+    </button>
   </div>
 
   <!-- LAST UPDATE BAR (hidden — status shown in top bar) -->
@@ -1834,6 +1871,7 @@
 
   <!-- RANKING PANEL -->
   <div class="panel active" id="panel-ranking">
+    <div id="challengeBanner"></div>
     <div class="podium-section-wrap">
       <div class="holo-left"></div>
       <div class="holo-right"></div>
@@ -1896,6 +1934,17 @@
 
   <!-- RULES PANEL -->
   <div class="panel" id="panel-rules"></div>
+
+  <!-- CHALLENGE PANEL -->
+  <div class="panel" id="panel-challenge">
+    <div class="edit-header">
+      <h2 style="color:#ffffff;">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="vertical-align:-3px;margin-right:6px;"><path d="M9 1.5l2.3 4.6 5.1.7-3.7 3.6.9 5.1L9 13l-4.6 2.4.9-5.1L1.6 6.8l5.1-.7z" stroke="#ffb828" stroke-width="1.4" stroke-linejoin="round" fill="rgba(255,184,40,0.1)"/></svg>
+        Desafios
+      </h2>
+    </div>
+    <div id="challengeAdminWrap" style="margin-top:8px;"></div>
+  </div>
 
   <!-- ACCESS LOG PANEL -->
   <div class="panel" id="panel-access">
@@ -2133,7 +2182,7 @@ function snapshotRanks() {
 
 function getArrow(id, currentRank) {
   const prev = previousRanks[id];
-  if (prev === undefined || prev === currentRank) return '<span class="rank-arrow same">—</span>';
+  if (prev === undefined || prev === currentRank) return '';
   if (currentRank < prev) return `<span class="rank-arrow up">▲${prev - currentRank}</span>`;
   return `<span class="rank-arrow down">▼${currentRank - prev}</span>`;
 }
@@ -2149,7 +2198,15 @@ function updateLastUpdateBadge() {
 
 // ===================== HELPERS =====================
 function total(e) {
-  return (e.train||0)+(e.action||0)+(e.alvo||0)+(e.dev||0)+(e.wow||0);
+  return (e.train||0)+(e.action||0)+(e.alvo||0)+(e.dev||0)+(e.wow||0)+(e.bonusPts||0);
+}
+
+function semaforo(e) {
+  if (!e.lastScoreUpdate) return '<span title="Sem histórico de pontuação" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3a3a5a;margin-right:6px;flex-shrink:0;vertical-align:middle;"></span>';
+  const days = (Date.now() - e.lastScoreUpdate) / 86400000;
+  if (days <= 7)  return '<span title="Pontuou nos últimos 7 dias" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#00ff88;box-shadow:0 0 5px #00ff88;margin-right:6px;flex-shrink:0;vertical-align:middle;"></span>';
+  if (days <= 14) return '<span title="Entre 7 e 14 dias sem pontuar" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ffb828;box-shadow:0 0 5px #ffb828;margin-right:6px;flex-shrink:0;vertical-align:middle;"></span>';
+  return '<span title="Mais de 14 dias sem pontuar" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff3355;box-shadow:0 0 5px #ff3355;margin-right:6px;flex-shrink:0;vertical-align:middle;"></span>';
 }
 function maxPossible() {
   const all = executives;
@@ -2170,6 +2227,135 @@ function cell(v) {
 }
 
 // ===================== RENDER CRITERIA =====================
+// ===================== DESAFIOS =====================
+function renderChallengeBanner() {
+  const wrap = document.getElementById('challengeBanner');
+  if (!wrap) return;
+  const c = window._challengeData;
+  if (!c || !c.active) { wrap.innerHTML = ''; return; }
+  const now = Date.now();
+  const end = c.endDate || 0;
+  const daysLeft = Math.ceil((end - now) / 86400000);
+  const expired = daysLeft <= 0;
+  const completedCount = c.completedBy ? Object.keys(c.completedBy).length : 0;
+  if (expired) { wrap.innerHTML = ''; return; }
+  wrap.innerHTML = `
+    <div style="margin-bottom:20px;border-radius:14px;padding:18px 22px;background:linear-gradient(135deg,rgba(255,184,40,0.08),rgba(255,100,40,0.06));border:1px solid rgba(255,184,40,0.35);position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(45deg,rgba(255,184,40,0.02) 0,rgba(255,184,40,0.02) 1px,transparent 1px,transparent 12px);pointer-events:none;"></div>
+      <div style="display:flex;align-items:flex-start;gap:14px;position:relative;">
+        <div style="font-size:28px;line-height:1;flex-shrink:0;">🏆</div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
+            <span style="font-family:Orbitron,monospace;font-size:9px;letter-spacing:2px;color:#ffb828;font-weight:700;">DESAFIO ATIVO</span>
+            <span style="font-family:Orbitron,monospace;font-size:9px;background:rgba(255,184,40,0.15);border:1px solid rgba(255,184,40,0.4);color:#ffb828;padding:2px 8px;border-radius:20px;">${daysLeft} dia${daysLeft!==1?'s':''} restante${daysLeft!==1?'s':''}</span>
+            <span style="font-family:Orbitron,monospace;font-size:9px;background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);color:#00ff88;padding:2px 8px;border-radius:20px;">+${c.points} pts</span>
+          </div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#fff;margin-bottom:4px;">${c.title}</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:14px;color:rgba(240,232,255,0.7);line-height:1.5;">${c.description}</div>
+          ${completedCount > 0 ? `<div style="margin-top:8px;font-family:Orbitron,monospace;font-size:9px;color:#00ff88;">${completedCount} executivo${completedCount!==1?'s':''} já completou${completedCount!==1?'ram':''} ✓</div>` : ''}
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderChallengeAdmin() {
+  const wrap = document.getElementById('challengeAdminWrap');
+  if (!wrap) return;
+  const c = window._challengeData;
+  const now = Date.now();
+
+  const formSection = `
+    <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:20px;">
+      <div style="font-family:Orbitron,monospace;font-size:11px;color:#ffb828;letter-spacing:2px;margin-bottom:16px;">${c && c.active ? '✏️ EDITAR DESAFIO' : '➕ NOVO DESAFIO'}</div>
+      <div style="display:grid;gap:12px;">
+        <div>
+          <label style="font-family:Orbitron,monospace;font-size:9px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:5px;">TÍTULO</label>
+          <input id="ch-title" type="text" value="${c?.title||''}" placeholder="Ex: Foto com Manual do Franqueado" style="width:100%;box-sizing:border-box;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:Rajdhani,sans-serif;font-size:15px;">
+        </div>
+        <div>
+          <label style="font-family:Orbitron,monospace;font-size:9px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:5px;">DESCRIÇÃO</label>
+          <textarea id="ch-desc" rows="2" placeholder="Descreva o que o executivo precisa fazer..." style="width:100%;box-sizing:border-box;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:Rajdhani,sans-serif;font-size:14px;resize:vertical;">${c?.description||''}</textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+          <div>
+            <label style="font-family:Orbitron,monospace;font-size:9px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:5px;">INÍCIO</label>
+            <input id="ch-start" type="date" value="${c?.startDate ? new Date(c.startDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]}" style="width:100%;box-sizing:border-box;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:Orbitron,monospace;font-size:11px;">
+          </div>
+          <div>
+            <label style="font-family:Orbitron,monospace;font-size:9px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:5px;">FIM</label>
+            <input id="ch-end" type="date" value="${c?.endDate ? new Date(c.endDate).toISOString().split('T')[0] : ''}" style="width:100%;box-sizing:border-box;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:Orbitron,monospace;font-size:11px;">
+          </div>
+          <div>
+            <label style="font-family:Orbitron,monospace;font-size:9px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:5px;">PONTOS</label>
+            <input id="ch-pts" type="number" min="1" value="${c?.points||20}" style="width:100%;box-sizing:border-box;background:var(--panel);color:#ffb828;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:Orbitron,monospace;font-size:14px;font-weight:700;">
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:4px;">
+          <button onclick="saveChallenge()" style="flex:1;background:rgba(255,184,40,0.12);border:1px solid rgba(255,184,40,0.4);color:#ffb828;font-family:Orbitron,monospace;font-size:11px;letter-spacing:1px;padding:10px;border-radius:8px;cursor:pointer;">
+            ${c && c.active ? 'ATUALIZAR DESAFIO' : 'PUBLICAR DESAFIO'}
+          </button>
+          ${c && c.active ? `<button onclick="deleteChallenge()" style="background:rgba(255,50,80,0.1);border:1px solid rgba(255,50,80,0.3);color:#ff5060;font-family:Orbitron,monospace;font-size:11px;letter-spacing:1px;padding:10px 16px;border-radius:8px;cursor:pointer;">ENCERRAR</button>` : ''}
+        </div>
+      </div>
+    </div>`;
+
+  // Lista de executivos para marcar conclusão
+  let completionSection = '';
+  if (c && c.active) {
+    const ranked = getRanked('Todos');
+    const completed = c.completedBy || {};
+    const pts = c.points || 0;
+    const rows = ranked.map(e => {
+      const done = !!completed[e.id];
+      return `<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border);background:${done?'rgba(0,255,136,0.04)':'transparent'};">
+        <input type="checkbox" id="ch-exec-${e.id}" ${done?'checked':''} onchange="toggleChallengeComplete(${e.id},${pts},this.checked)"
+          style="width:16px;height:16px;cursor:pointer;accent-color:#00ff88;">
+        <span style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:${done?'#00ff88':'var(--text)'};flex:1;">${e.name}</span>
+        <span class="vertical-tag ${vertClass(e.vertical)}">${e.vertical}</span>
+        ${done ? '<span style="font-family:Orbitron,monospace;font-size:9px;color:#00ff88;">+'+pts+' pts ✓</span>' : ''}
+      </div>`;
+    }).join('');
+    completionSection = `
+      <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+        <div style="padding:14px 18px;border-bottom:1px solid var(--border);font-family:Orbitron,monospace;font-size:10px;color:#ffb828;letter-spacing:1.5px;">
+          MARCAR CONCLUSÃO — ${Object.keys(completed).length}/${ranked.length} executivos
+        </div>
+        ${rows}
+      </div>`;
+  }
+
+  wrap.innerHTML = formSection + completionSection;
+}
+
+function saveChallenge() {
+  const title = document.getElementById('ch-title')?.value.trim();
+  const desc = document.getElementById('ch-desc')?.value.trim();
+  const start = document.getElementById('ch-start')?.value;
+  const end = document.getElementById('ch-end')?.value;
+  const pts = parseInt(document.getElementById('ch-pts')?.value) || 0;
+  if (!title || !end || !pts) { alert('Preencha título, data de fim e pontos.'); return; }
+  const c = window._challengeData || {};
+  if (window._saveChallenge) window._saveChallenge({
+    title, description: desc, startDate: start ? new Date(start).getTime() : Date.now(),
+    endDate: new Date(end).getTime() + 86399999,
+    points: pts, active: true,
+    completedBy: c.completedBy || {}
+  });
+}
+
+function deleteChallenge() {
+  if (!confirm('Encerrar o desafio atual?')) return;
+  if (window._deleteChallenge) window._deleteChallenge();
+}
+
+function toggleChallengeComplete(execId, pts, checked) {
+  if (checked) {
+    if (window._markChallengeComplete) window._markChallengeComplete(execId, pts);
+  } else {
+    if (window._unmarkChallengeComplete) window._unmarkChallengeComplete(execId, pts);
+  }
+}
+
 // ===================== ACCESS LOG =====================
 function renderAccessLog() {
   const wrap = document.getElementById('accessLogWrap');
@@ -2257,7 +2443,7 @@ function renderRanking() {
       const prev = previousRanks[e.id];
       if (pos < prev)      moveHtml = `<span class="rank-up">▲${prev-pos}</span>`;
       else if (pos > prev) moveHtml = `<span class="rank-down">▼${pos-prev}</span>`;
-      else                 moveHtml = `<span class="rank-same">—</span>`;
+      else                 moveHtml = '';
     }
     // pts diff to next
     let diffHtml = '';
@@ -2271,7 +2457,7 @@ function renderRanking() {
         <div class="exec-avatar-wrap">
           ${avatarHtml(e, 38, pos<=3?`av-${pos}`:'')}
           <div>
-            <div class="exec-name" style="cursor:pointer" onclick="openMsgModal(${e.id})">${e.name}${moveHtml}<span class="msg-badge hidden" id="mbadge-${e.id}">0</span></div>
+            <div class="exec-name" style="cursor:pointer;display:flex;align-items:center;" onclick="openMsgModal(${e.id})">${semaforo(e)}${e.name}${moveHtml}<span class="msg-badge hidden" id="mbadge-${e.id}">0</span></div>
             <div><span class="vertical-tag ${vertClass(e.vertical)}">${e.vertical}</span></div>
             ${diffHtml}
           </div>
@@ -2296,12 +2482,12 @@ function renderRanking() {
     const cardCls = pos<=3?`rank-${pos}`:'';
     const arrow = getArrow(e.id, pos);
     const arrowMobile = arrow.replace('rank-arrow','mobile-arrow');
-    const diff = i < ranked.length-1 ? total(ranked[i+1]) < t ? `<span style="font-family:Orbitron,monospace;font-size:9px;color:var(--muted)">+${t-total(ranked[i+1])} pts</span>` : '' : '';
+    const diff = i < ranked.length-1 ? total(ranked[i+1]) < t ? `<span style="font-family:Orbitron,monospace;font-size:9px;color:#b0c4d8">+${t-total(ranked[i+1])} pts</span>` : '' : '';
     return `<div class="mobile-rank-card ${cardCls}">
       <div class="mobile-rank-num ${numCls}">${pos}</div>
       ${avatarHtml(e, 42, pos<=3?`av-${pos}`:'')}
       <div class="mobile-exec-info">
-        <div class="mobile-exec-name" style="cursor:pointer" onclick="openMsgModal(${e.id})">${e.name} ${arrowMobile}<span class="msg-badge hidden" id="mbadge-m-${e.id}">0</span></div>
+        <div class="mobile-exec-name" style="cursor:pointer;display:flex;align-items:center;gap:4px;" onclick="openMsgModal(${e.id})">${semaforo(e)}${e.name} ${arrowMobile}<span class="msg-badge hidden" id="mbadge-m-${e.id}">0</span></div>
         <div class="mobile-exec-meta">
           <span class="vertical-tag ${vertClass(e.vertical)}">${e.vertical}</span>
           ${diff}
@@ -2700,8 +2886,8 @@ function filterVertical(v, btn) {
 function switchTab(name) {
   // Block edit tab access for exec/lider profile
   if (name === 'edit' && (currentProfile === 'exec' || currentProfile === 'lider')) return;
-  // Block access log tab for non-admin
-  if (name === 'access' && currentProfile !== 'admin') return;
+  // Block access log and challenge tabs for non-admin
+  if ((name === 'access' || name === 'challenge') && currentProfile !== 'admin') return;
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   event.target.classList.add('active');
@@ -2851,6 +3037,9 @@ function applyRoleRestrictions() {
   // Show access tab only for admin
   const accessTab = document.getElementById('tab-access');
   if (accessTab) accessTab.style.display = isAdmin ? '' : 'none';
+  // Show challenge tab only for admin
+  const challengeTab = document.getElementById('tab-challenge');
+  if (challengeTab) challengeTab.style.display = isAdmin ? '' : 'none';
   // Destroy edit panel contents so it cannot be accessed via DOM tricks
   if (restricted) {
     const editCards = document.getElementById('editCards');
