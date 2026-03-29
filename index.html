@@ -1265,7 +1265,7 @@
     #loginScreen .ls-left { justify-content:flex-start; padding-top:16px; }
   }
   @media(max-width:768px) {
-    #loginScreen { overflow-y:auto; -webkit-overflow-scrolling:touch; }
+    #loginScreen { overflow:hidden; }
     #loginScreen .ls-screen { grid-template-columns:1fr; min-height:auto; }
     #loginScreen .ls-left { padding:24px 24px 20px; min-height:auto; gap:16px; justify-content:flex-start; }
     #loginScreen .ls-brand-pill { margin-bottom:0; font-size:10px; }
@@ -1273,7 +1273,7 @@
     #loginScreen .ls-h1 { font-size:clamp(52px,15vw,72px); letter-spacing:-1px; margin-bottom:10px; margin-top:10px; }
     #loginScreen .ls-hl-tag { font-size:11px; }
     #loginScreen .ls-hl-desc { font-size:12px; line-height:1.45; }
-    #loginScreen .ls-right { padding:24px 20px 48px; }
+    #loginScreen .ls-right { padding:24px 20px 48px; overflow-y:auto; -webkit-overflow-scrolling:touch; max-height:100vh; }
     #loginScreen .ls-form-header { margin-bottom:20px; }
     #loginScreen .ls-field { margin-bottom:14px; }
     #loginScreen .ls-btn-main { padding:13px 20px; }
@@ -1685,7 +1685,7 @@
     };
   </script>
 </head>
-<body>
+<body style="overflow:hidden;">
 
 <!-- LOGIN SCREEN -->
 <div id="loginScreen">
@@ -3001,7 +3001,7 @@ async function doLogin() {
     // Login executivo OK
     currentExecId = execId;
     if (window._logAccess) window._logAccess(exec.name.split(' ')[0], 'exec', exec.id);
-    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'none'; document.body.style.overflow = '';
     const badge = document.getElementById('userBadge');
     badge.style.display = 'flex';
     document.getElementById('userLabel').textContent = exec.name.split(' ')[0];
@@ -3016,7 +3016,7 @@ async function doLogin() {
     if (isAdmin || isLider) {
       if (isLider) currentProfile = 'lider';
       if (window._logAccess) window._logAccess(isLider ? 'Líder' : 'Admin', isLider ? 'lider' : 'admin');
-      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'none'; document.body.style.overflow = '';
       const badge = document.getElementById('userBadge');
       badge.style.display = 'flex';
       document.getElementById('userLabel').textContent = isLider ? 'Líder' : 'Admin';
