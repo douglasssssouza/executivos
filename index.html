@@ -2657,11 +2657,12 @@ function renderEdit() {
   const ranked = getRanked('Todos');
   const cards = document.getElementById('editCards');
   const FIELDS = [
-    { key:'train',  label:'Treinamentos',         hint:'10 pts por participação (mín. 50 min ao vivo)' },
-    { key:'action', label:'Plano de Ação',         hint:'5 pts por plano completo e aprovado' },
-    { key:'alvo',   label:'ALVO',                  hint:'15 pts por diagnóstico aplicado e anexado' },
-    { key:'dev',    label:'Índice de Desenvolvimento', hint:'até 10 pts/mês · lançar pontos acumulados do mês' },
-    { key:'wow',    label:'WOW — Evolução de Receita', hint:'até 35 pts/mês · (crescimento% ÷ 10%) × 35' },
+    { key:'train',     label:'Treinamentos',             hint:'10 pts por participação (mín. 50 min ao vivo)' },
+    { key:'action',    label:'Plano de Ação',             hint:'5 pts por plano completo e aprovado' },
+    { key:'alvo',      label:'ALVO',                      hint:'15 pts por diagnóstico aplicado e anexado' },
+    { key:'dev',       label:'Índice de Desenvolvimento', hint:'até 10 pts/mês · lançar pontos acumulados do mês' },
+    { key:'wow',       label:'WOW — Evolução de Receita', hint:'até 35 pts/mês · (crescimento% ÷ 10%) × 35' },
+    { key:'bonusPts',  label:'Bônus de Desafios',         hint:'pts acumulados de desafios concluídos · ajuste manual se necessário' },
   ];
   cards.innerHTML = ranked.map((e,i)=>{
     const t = total(e);
@@ -2785,9 +2786,27 @@ function saveOne(id) {
     setTimeout(()=>ind.classList.remove('show'), 2000);
   }
   snapshotRanks();
+  lastSaveTime = new Date();
   renderRanking();
   renderPodium();
   renderStats();
+  updateLastUpdateBadge();
+  // Save to Firebase
+  if (window._fbReady && window._fbDataLoaded) {
+    const fbInd = document.getElementById('fbIndicator');
+    if (fbInd) { fbInd.textContent = '🟡 Salvando…'; fbInd.style.color = '#ffb828'; }
+    const dbRef = window._fbRef(window._fbDb, 'executives');
+    window._fbSet(dbRef, executives)
+      .then(() => {
+        if (fbInd) { fbInd.textContent = '🟢 Salvo na nuvem'; fbInd.style.color = '#00ff88'; }
+      })
+      .catch(() => {
+        if (fbInd) { fbInd.textContent = '🔴 Erro ao salvar — dados NÃO foram salvos!'; fbInd.style.color = '#ff3355'; }
+        alert('⚠️ Falha ao salvar no Firebase. Verifique sua conexão e tente novamente.');
+      });
+  } else if (!window._fbDataLoaded) {
+    alert('⏳ Aguarde o Firebase carregar os dados antes de salvar.');
+  }
 }
 
 // ===================== PHOTO HELPERS =====================
