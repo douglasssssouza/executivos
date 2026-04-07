@@ -1031,283 +1031,258 @@
   /* ===== LOGIN SCREEN ===== */
   #loginScreen {
     position:fixed; inset:0; z-index:9999;
-    font-family:'Rajdhani',sans-serif;
-    background:#0C0800;
+    font-family:'Inter',sans-serif;
+    background:#04080f;
   }
   #loginScreen .ls-screen {
     min-height:100vh; display:grid;
     grid-template-columns:1fr 1fr;
   }
-
-  /* ── LEFT PANEL ─────────────────── */
   #loginScreen .ls-left {
     position:relative; overflow:hidden;
     display:flex; flex-direction:column;
-    justify-content:center; align-items:center;
-    padding:48px; gap:28px;
-    background:#120A00;
+    justify-content:center; gap:40px; padding:48px;
+    background:#080e1a;
   }
-  /* Diagonal linen texture */
   #loginScreen .ls-left::before {
     content:''; position:absolute; inset:0; pointer-events:none;
-    background-image:repeating-linear-gradient(
-      -45deg, transparent, transparent 38px,
-      rgba(201,162,39,0.025) 38px, rgba(201,162,39,0.025) 39px
-    );
+    background:
+      radial-gradient(ellipse 70% 50% at 0% 60%, rgba(0,219,255,0.12) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 60% at 100% 10%, rgba(164,77,255,0.14) 0%, transparent 60%);
   }
-  /* Warm radial glow */
-  #loginScreen .ls-left::after {
-    content:''; position:absolute; inset:0; pointer-events:none;
-    background:radial-gradient(ellipse 70% 60% at 50% 48%,
-      rgba(201,162,39,0.07) 0%, transparent 65%);
+  #loginScreen .ls-geo-lines {
+    position:absolute; inset:0; pointer-events:none; overflow:hidden;
   }
-  /* Crimson accent stripe on right edge */
-  #loginScreen .ls-deco-stripe {
-    position:absolute; top:0; right:0; bottom:0; width:3px;
-    background:linear-gradient(180deg,transparent 0%,#8B1A1A 20%,#8B1A1A 80%,transparent 100%);
-    opacity:.85;
+  #loginScreen .ls-geo-lines::before {
+    content:''; position:absolute;
+    top:-20%; right:-10%; width:55%; height:140%;
+    border-left:1px solid rgba(0,219,255,0.08);
+    border-right:1px solid rgba(0,219,255,0.04);
+    transform:rotate(15deg);
   }
-  #loginScreen .ls-deco-stripe::after {
-    content:''; position:absolute; top:0; left:-9px; bottom:0; width:1px;
-    background:linear-gradient(180deg,transparent 0%,rgba(201,162,39,0.35) 25%,rgba(201,162,39,0.35) 75%,transparent 100%);
+  #loginScreen .ls-geo-lines::after {
+    content:''; position:absolute;
+    bottom:-20%; left:20%; width:70%; height:120%;
+    border-top:1px solid rgba(164,77,255,0.07);
+    transform:rotate(-8deg);
   }
-  /* Org label */
-  #loginScreen .ls-org-label {
-    position:absolute; top:32px; left:48px;
-    font-family:'Inter',sans-serif; font-size:10px; font-weight:600;
-    letter-spacing:4px; text-transform:uppercase;
-    color:rgba(201,162,39,0.4); z-index:1;
+  #loginScreen .ls-brand { position:relative; z-index:1; }
+  #loginScreen .ls-brand-pill {
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(0,219,255,0.08); border:1px solid rgba(0,219,255,0.2);
+    border-radius:100px; padding:6px 16px 6px 10px;
+    font-size:12px; font-weight:600; color:#00dbff;
+    letter-spacing:.5px; text-transform:uppercase; margin-bottom:48px;
+  }
+  #loginScreen .ls-brand-dot {
+    width:8px; height:8px; border-radius:50%;
+    background:#00dbff; box-shadow:0 0 8px #00dbff;
+    animation:lsDotBlink 2s ease-in-out infinite;
+  }
+  @keyframes lsDotBlink { 0%,100%{opacity:1} 50%{opacity:.3} }
+  #loginScreen .ls-headline {
+    position:relative; z-index:1;
+    display:flex; flex-direction:column; flex:1;
+  }
+  #loginScreen .ls-headline-bottom { margin-top:auto; padding-top:24px; }
+  #loginScreen .ls-brand-logo { width:clamp(160px,16vw,220px); height:auto; margin-bottom:20px; display:block; }
+  #loginScreen .ls-gauge-arc { animation:lsGaugeFill 2.4s linear infinite; }
+  #loginScreen .ls-gauge-needle {
+    transform-box:view-box; transform-origin:70px 76px;
+    animation:lsNeedleSweep 2.4s linear infinite;
+  }
+  #loginScreen .ls-gauge-flash { animation:lsFlashRing 2.4s linear infinite; }
+  @keyframes lsGaugeFill {
+    0%    { stroke-dashoffset:193; }
+    38%   { stroke-dashoffset:24; }
+    41%   { stroke-dashoffset:34; }
+    44%   { stroke-dashoffset:21; }
+    47%   { stroke-dashoffset:32; }
+    50%   { stroke-dashoffset:22; }
+    54%   { stroke-dashoffset:48; }
+    72%   { stroke-dashoffset:12; }
+    75%   { stroke-dashoffset:24; }
+    78%   { stroke-dashoffset:10; }
+    81%   { stroke-dashoffset:22; }
+    84%   { stroke-dashoffset:8; }
+    87%   { stroke-dashoffset:20; }
+    90%   { stroke-dashoffset:8; }
+    95%   { stroke-dashoffset:193; }
+    100%  { stroke-dashoffset:193; }
+  }
+  @keyframes lsNeedleSweep {
+    0%    { transform:rotate(-120deg); }
+    38%   { transform:rotate(104deg); }
+    41%   { transform:rotate(95deg); }
+    44%   { transform:rotate(106deg); }
+    47%   { transform:rotate(97deg); }
+    50%   { transform:rotate(105deg); }
+    54%   { transform:rotate(82deg); }
+    72%   { transform:rotate(114deg); }
+    75%   { transform:rotate(103deg); }
+    78%   { transform:rotate(116deg); }
+    81%   { transform:rotate(105deg); }
+    84%   { transform:rotate(117deg); }
+    87%   { transform:rotate(106deg); }
+    90%   { transform:rotate(115deg); }
+    95%   { transform:rotate(-120deg); }
+    100%  { transform:rotate(-120deg); }
+  }
+  @keyframes lsFlashRing {
+    0%,35%  { stroke-opacity:0; }
+    40%     { stroke-opacity:.7; }
+    43%     { stroke-opacity:0; }
+    46%     { stroke-opacity:.5; }
+    50%,54% { stroke-opacity:0; }
+    73%     { stroke-opacity:.9; }
+    75%,80% { stroke-opacity:0; }
+    78%     { stroke-opacity:1; }
+    83%     { stroke-opacity:.9; }
+    85%,91% { stroke-opacity:0; }
+    88%     { stroke-opacity:.8; }
+    100%    { stroke-opacity:0; }
+  }
+  #loginScreen .ls-hl-tag {
+    font-size:13px; font-weight:600; letter-spacing:3px;
+    text-transform:uppercase; color:#7a90b0; margin-bottom:10px;
     display:flex; align-items:center; gap:10px;
   }
-  #loginScreen .ls-org-label::before {
-    content:''; display:block; width:14px; height:1px;
-    background:rgba(201,162,39,0.5); flex-shrink:0;
+  #loginScreen .ls-hl-tag::before {
+    content:''; display:block; width:24px; height:2px;
+    background:linear-gradient(90deg,#00dbff,#a44dff); border-radius:2px;
   }
-  /* Heraldic crest */
-  #loginScreen .ls-crest {
-    position:relative; z-index:1;
-    width:clamp(150px,18vw,210px); height:auto;
-    animation:lsCrestIn 1.3s cubic-bezier(.16,1,.3,1) both;
-  }
-  @keyframes lsCrestIn {
-    from { opacity:0; transform:translateY(-22px) scale(.94); }
-    to   { opacity:1; transform:translateY(0) scale(1); }
-  }
-  /* Headline */
-  #loginScreen .ls-headline {
-    position:relative; z-index:1; text-align:center;
-    animation:lsHeadIn 1.3s cubic-bezier(.16,1,.3,1) .18s both;
-  }
-  @keyframes lsHeadIn {
-    from { opacity:0; transform:translateY(18px); }
-    to   { opacity:1; transform:translateY(0); }
-  }
-  #loginScreen .ls-headline-eyebrow {
-    font-family:'Inter',sans-serif; font-size:9px; font-weight:700;
-    letter-spacing:5px; text-transform:uppercase;
-    color:rgba(201,162,39,0.5); margin-bottom:10px;
-  }
-  #loginScreen .ls-headline-title {
+  #loginScreen .ls-h1 {
     font-family:'Barlow Condensed',sans-serif;
-    font-size:clamp(44px,5.2vw,76px);
-    font-weight:900; line-height:.88; letter-spacing:-.5px;
-    text-transform:uppercase; color:#F5EDD6; margin:0;
+    font-size:clamp(68px,7.5vw,108px);
+    font-weight:900; line-height:.88; letter-spacing:-2px; margin-bottom:24px;
   }
-  #loginScreen .ls-headline-title span { display:block; }
-  #loginScreen .ls-headline-title .hl-gold { color:#C9A227; }
-  /* Diamond divider */
-  #loginScreen .ls-divider {
-    display:flex; align-items:center; gap:14px;
-    width:100%; max-width:260px; z-index:1;
-    animation:lsHeadIn 1.3s cubic-bezier(.16,1,.3,1) .32s both;
+  #loginScreen .ls-h1 .line1 {
+    display:block; color:#f0f4ff;
+    animation:lsGlowPulse 3s ease-in-out infinite;
   }
-  #loginScreen .ls-divider-line {
-    flex:1; height:1px;
-    background:linear-gradient(90deg,transparent,rgba(201,162,39,0.35));
+  #loginScreen .ls-h1 .line2 {
+    display:block;
+    background:linear-gradient(90deg,#00dbff 0%,#a44dff 60%,#00dbff 100%);
+    background-size:200% auto;
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    animation:lsShimmerSlide 3s linear infinite;
   }
-  #loginScreen .ls-divider-line:last-child {
-    background:linear-gradient(90deg,rgba(201,162,39,0.35),transparent);
+  #loginScreen .ls-h1 .line3 {
+    display:block; color:#f0f4ff;
+    animation:lsGlowPulse 3s ease-in-out infinite .4s;
   }
-  #loginScreen .ls-divider-diamond {
-    width:7px; height:7px; background:#C9A227;
-    transform:rotate(45deg); flex-shrink:0;
-    box-shadow:0 0 8px rgba(201,162,39,0.55);
+  @keyframes lsGlowPulse {
+    0%,100% { text-shadow:0 0 20px rgba(0,219,255,0),0 0 40px rgba(0,219,255,0); }
+    50%     { text-shadow:0 0 20px rgba(0,219,255,0.5),0 0 60px rgba(0,219,255,0.2); }
   }
-  /* Season label */
-  #loginScreen .ls-season {
-    position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
-    font-family:'Inter',sans-serif; font-size:9px; font-weight:600;
-    letter-spacing:4px; text-transform:uppercase;
-    color:rgba(201,162,39,0.28); white-space:nowrap; z-index:1;
+  @keyframes lsShimmerSlide {
+    0%   { background-position:200% center; }
+    100% { background-position:-200% center; }
   }
-
-  /* ── RIGHT PANEL ─────────────────── */
+  #loginScreen .ls-hl-desc {
+    font-size:16px; font-weight:400; color:#7a90b0; line-height:1.6; max-width:340px;
+  }
   #loginScreen .ls-right {
     display:flex; align-items:center; justify-content:center;
-    padding:48px 40px; background:#0C0800; position:relative;
-    border-left:1px solid rgba(201,162,39,0.08);
+    padding:48px 40px; background:#04080f; position:relative;
   }
   #loginScreen .ls-right::before {
     content:''; position:absolute; inset:0; pointer-events:none;
-    background:radial-gradient(ellipse 65% 55% at 50% 44%,
-      rgba(201,162,39,0.05) 0%, transparent 70%);
+    background:radial-gradient(ellipse 60% 50% at 50% 40%,rgba(164,77,255,0.06) 0%,transparent 70%);
   }
-  /* Form wrapper */
-  #loginScreen .ls-form-wrap {
-    position:relative; z-index:1; width:100%; max-width:380px;
-    animation:lsFormIn 1.3s cubic-bezier(.16,1,.3,1) .28s both;
-  }
-  @keyframes lsFormIn {
-    from { opacity:0; transform:translateY(22px); }
-    to   { opacity:1; transform:translateY(0); }
-  }
-  /* Form card with corner-bracket decoration */
-  #loginScreen .ls-form-box {
-    position:relative; padding:36px 32px;
-    background:rgba(20,11,1,0.65);
-    border:1px solid rgba(201,162,39,0.13);
-  }
-  #loginScreen .ls-form-box::before {
-    content:''; position:absolute; top:-1px; left:-1px;
-    width:20px; height:20px;
-    border-top:2px solid #C9A227; border-left:2px solid #C9A227;
-  }
-  #loginScreen .ls-form-box::after {
-    content:''; position:absolute; bottom:-1px; right:-1px;
-    width:20px; height:20px;
-    border-bottom:2px solid #C9A227; border-right:2px solid #C9A227;
-  }
-  #loginScreen .ls-form-box-inner {
-    position:absolute; inset:-1px; pointer-events:none;
-  }
-  #loginScreen .ls-form-box-inner::before {
-    content:''; position:absolute; top:0; right:0;
-    width:20px; height:20px;
-    border-top:2px solid #C9A227; border-right:2px solid #C9A227;
-  }
-  #loginScreen .ls-form-box-inner::after {
-    content:''; position:absolute; bottom:0; left:0;
-    width:20px; height:20px;
-    border-bottom:2px solid #C9A227; border-left:2px solid #C9A227;
-  }
-  /* Form header */
-  #loginScreen .ls-form-header { margin-bottom:28px; }
-  #loginScreen .ls-form-eyebrow {
-    font-family:'Inter',sans-serif; font-size:9px; font-weight:700;
-    letter-spacing:5px; text-transform:uppercase; color:#8B1A1A;
-    margin-bottom:8px; display:flex; align-items:center; gap:10px;
-  }
-  #loginScreen .ls-form-eyebrow::before {
-    content:''; display:block; width:18px; height:1px;
-    background:#8B1A1A; flex-shrink:0;
-  }
+  #loginScreen .ls-form-wrap { position:relative; z-index:1; width:100%; max-width:380px; }
+  #loginScreen .ls-form-header { margin-bottom:32px; }
   #loginScreen .ls-form-title {
-    font-family:'Barlow Condensed',sans-serif;
-    font-size:36px; font-weight:800; letter-spacing:1px;
-    text-transform:uppercase; color:#F5EDD6; line-height:1;
+    font-family:'Barlow Condensed',sans-serif; font-size:32px; font-weight:800;
+    letter-spacing:-.5px; color:#f0f4ff; margin-bottom:6px;
   }
-  /* Profile toggle */
+  #loginScreen .ls-form-sub { font-size:13px; color:#7a90b0; font-weight:400; }
   #loginScreen .ls-toggle-wrap {
-    display:grid; grid-template-columns:1fr 1fr; gap:4px;
-    background:#180D01; border:1px solid rgba(201,162,39,0.15);
-    padding:3px; margin-bottom:24px;
+    display:grid; grid-template-columns:1fr 1fr;
+    background:#0c1424; border:1px solid rgba(0,219,255,0.12);
+    border-radius:12px; padding:4px; gap:4px; margin-bottom:28px;
   }
   #loginScreen .toggle-btn {
-    display:flex; align-items:center; justify-content:center; gap:7px;
-    padding:10px 14px; border:none; background:transparent; cursor:pointer;
-    font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700;
-    letter-spacing:1px; text-transform:uppercase;
-    color:rgba(245,237,214,0.3); transition:all .2s;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    padding:11px 16px; border-radius:9px; cursor:pointer;
+    border:none; background:transparent; transition:all .2s;
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
+    color:#7a90b0;
+  }
+  #loginScreen .toggle-btn.active {
+    background:linear-gradient(135deg,rgba(0,219,255,0.15),rgba(164,77,255,0.15));
+    color:#f0f4ff; box-shadow:inset 0 0 0 1px rgba(0,219,255,0.25);
   }
   #loginScreen .toggle-btn .t-icon { display:flex; align-items:center; flex-shrink:0; }
-  #loginScreen .toggle-btn.active {
-    background:#C9A227; color:#0C0800;
-    box-shadow:0 2px 10px rgba(201,162,39,0.3);
-  }
-  #loginScreen .toggle-btn:not(.active):hover { color:rgba(245,237,214,0.65); }
-  /* Fields */
   #loginScreen .ls-field { margin-bottom:20px; }
   #loginScreen .ls-field label {
-    display:block; font-family:'Inter',sans-serif; font-size:9px; font-weight:700;
-    letter-spacing:3px; text-transform:uppercase;
-    color:rgba(201,162,39,0.55); margin-bottom:8px;
+    display:block; font-size:11px; font-weight:600; letter-spacing:1px;
+    text-transform:uppercase; color:#7a90b0; margin-bottom:8px; font-family:'Inter',sans-serif;
   }
   #loginScreen .ls-input-wrap { position:relative; }
   #loginScreen .ls-input-icon {
-    position:absolute; left:0; top:50%; transform:translateY(-50%);
-    font-size:14px; pointer-events:none; opacity:.38;
+    position:absolute; left:14px; top:50%; transform:translateY(-50%);
+    font-size:15px; pointer-events:none; opacity:.5;
   }
-  #loginScreen .ls-field select,
-  #loginScreen .ls-field input {
-    width:100%; padding:11px 14px 11px 26px;
-    background:transparent; border:none;
-    border-bottom:1px solid rgba(201,162,39,0.22);
-    color:#F5EDD6; font-family:'Rajdhani',sans-serif;
-    font-size:16px; font-weight:600; appearance:none;
-    transition:border-color .2s, background .2s;
+  #loginScreen .ls-field select, #loginScreen .ls-field input {
+    width:100%; padding:13px 16px 13px 42px;
+    background:#0c1424; border:1px solid rgba(0,219,255,0.12);
+    color:#f0f4ff; font-family:'Inter',sans-serif; font-size:16px; font-weight:500;
+    border-radius:10px; transition:all .2s; appearance:none;
   }
-  #loginScreen .ls-field input::placeholder { color:rgba(245,237,214,0.2); font-weight:400; }
-  #loginScreen .ls-field select:focus,
-  #loginScreen .ls-field input:focus {
-    outline:none; border-bottom-color:#C9A227;
-    background:rgba(201,162,39,0.04);
-    box-shadow:0 2px 0 rgba(201,162,39,0.18);
+  #loginScreen .ls-field select:focus, #loginScreen .ls-field input:focus {
+    outline:none; border-color:#00dbff;
+    background:rgba(0,219,255,0.04); box-shadow:0 0 0 3px rgba(0,219,255,0.08);
   }
-  #loginScreen .ls-field select option { background:#160B00; }
-  /* Error */
-  #loginScreen .login-error {
-    font-family:'Inter',sans-serif; font-size:11px; letter-spacing:.5px;
-    color:#CF5A5A; text-align:center; margin-bottom:12px; min-height:16px;
-  }
-  /* CTA — angular parallelogram */
+  #loginScreen .ls-field select option { background:#0c1424; }
   #loginScreen .ls-btn-main {
     width:100%; padding:15px 24px; margin-top:4px;
-    display:flex; align-items:center; justify-content:center; gap:12px;
-    font-family:'Barlow Condensed',sans-serif; font-size:16px;
-    font-weight:800; letter-spacing:3px; text-transform:uppercase;
-    border:none; cursor:pointer;
-    background:#C9A227; color:#0C0800;
-    position:relative; overflow:hidden; transition:all .25s;
-    clip-path:polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    font-family:'Inter',sans-serif; font-size:14px; font-weight:700;
+    letter-spacing:.5px; text-transform:uppercase;
+    border:none; border-radius:100px; cursor:pointer;
+    background:linear-gradient(90deg,#00a8c7 0%,#00dbff 40%,#a44dff 100%);
+    color:#04080f;
+    box-shadow:0 4px 24px rgba(0,219,255,0.25),0 2px 8px rgba(0,0,0,0.4);
+    transition:all .25s; position:relative; overflow:hidden;
   }
-  #loginScreen .ls-btn-main::before {
+  #loginScreen .ls-btn-main::after {
     content:''; position:absolute; inset:0;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);
-    transform:translateX(-150%); transition:transform .6s ease;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);
+    transform:translateX(-100%); animation:lsShine 3s ease-in-out infinite;
   }
-  #loginScreen .ls-btn-main:hover::before { transform:translateX(150%); }
+  @keyframes lsShine { 0%{transform:translateX(-100%)} 50%,100%{transform:translateX(100%)} }
   #loginScreen .ls-btn-main:hover {
-    background:#D4AE30; transform:translateY(-1px);
-    box-shadow:0 6px 24px rgba(201,162,39,0.4);
+    transform:translateY(-2px);
+    box-shadow:0 8px 36px rgba(0,219,255,0.35),0 4px 12px rgba(0,0,0,0.5);
   }
-  #loginScreen .ls-btn-main:active { transform:translateY(0); }
-  /* Form footer */
   #loginScreen .ls-form-footer {
-    margin-top:24px; text-align:center;
-    font-family:'Inter',sans-serif; font-size:9px; font-weight:500;
-    letter-spacing:2.5px; text-transform:uppercase;
-    color:rgba(201,162,39,0.22);
+    margin-top:28px; text-align:center; font-size:11px; color:#4a6080; font-weight:400;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  #loginScreen .ls-form-footer strong { color:#7a90b0; font-weight:600; }
+  #loginScreen .login-error {
+    font-size:12px; color:#ff3355; letter-spacing:1px; text-align:center;
+    margin-bottom:12px; min-height:16px; font-family:'Inter',sans-serif;
   }
   @media(max-width:1600px) {
-    #loginScreen .ls-left { justify-content:center; }
+    #loginScreen .ls-left { justify-content:flex-start; padding-top:16px; }
   }
   @media(max-width:768px) {
     #loginScreen { overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior-y:contain; }
     #loginScreen .ls-screen { grid-template-columns:1fr; }
-    #loginScreen .ls-left { padding:36px 24px 28px; min-height:auto; gap:18px; justify-content:flex-start; }
-    #loginScreen .ls-org-label { top:18px; left:24px; font-size:9px; letter-spacing:3px; }
-    #loginScreen .ls-crest { width:clamp(100px,28vw,140px); }
-    #loginScreen .ls-headline-title { font-size:clamp(40px,11vw,60px); }
-    #loginScreen .ls-headline-eyebrow { font-size:8px; letter-spacing:4px; }
-    #loginScreen .ls-right { padding:28px 20px 44px; border-left:none; border-top:1px solid rgba(201,162,39,0.08); }
-    #loginScreen .ls-form-box { padding:24px 18px; }
+    #loginScreen .ls-left { padding:24px 24px 20px; min-height:auto; gap:16px; justify-content:flex-start; }
+    #loginScreen .ls-brand-pill { margin-bottom:0; font-size:10px; }
+    #loginScreen .ls-brand-logo { width:clamp(90px,28vw,120px); margin-bottom:0; margin-top:14px; }
+    #loginScreen .ls-h1 { font-size:clamp(52px,15vw,72px); letter-spacing:-1px; margin-bottom:10px; margin-top:10px; }
+    #loginScreen .ls-hl-tag { font-size:11px; }
+    #loginScreen .ls-hl-desc { font-size:12px; line-height:1.45; }
+    #loginScreen .ls-right { padding:24px 20px 36px; }
     #loginScreen .ls-form-header { margin-bottom:20px; }
-    #loginScreen .ls-form-title { font-size:28px; }
-    #loginScreen .ls-field { margin-bottom:16px; }
-    #loginScreen .ls-btn-main { padding:13px 20px; font-size:14px; }
+    #loginScreen .ls-field { margin-bottom:14px; }
+    #loginScreen .ls-btn-main { padding:13px 20px; }
     #loginScreen .ls-form-footer { margin-top:18px; font-size:8px; }
-    #loginScreen .ls-season { display:none; }
-    #loginScreen .ls-divider { max-width:200px; }
+    #loginScreen .ls-form-footer strong { font-size:8px; }
   }
   #userBadge {
     position:sticky; top:0; z-index:100; width:100%;
@@ -1728,168 +1703,109 @@
 <script>document.body.classList.add('login-open');</script>
 <div id="loginScreen">
   <div class="ls-screen">
-
-    <!-- LEFT: Heraldic identity panel -->
     <div class="ls-left">
-      <div class="ls-deco-stripe"></div>
-      <div class="ls-org-label">Linx &middot; Desenvolvimento de Franquias</div>
-
-      <!-- Heraldic Crest — crown, heater shield, laurels, ribbon -->
-      <svg class="ls-crest" viewBox="0 0 200 222" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="lgV" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-            <stop offset="0%"   stop-color="#E8C84A"/>
-            <stop offset="45%"  stop-color="#C9A227"/>
-            <stop offset="100%" stop-color="#7A5A0A"/>
-          </linearGradient>
-          <linearGradient id="lgH" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox">
-            <stop offset="0%"   stop-color="#6A4A05"/>
-            <stop offset="50%"  stop-color="#C9A227"/>
-            <stop offset="100%" stop-color="#6A4A05"/>
-          </linearGradient>
-        </defs>
-        <!-- Crown (5 teeth) -->
-        <path d="M 68,44 L 76,22 L 84,36 L 92,18 L 100,10 L 108,18 L 116,36 L 124,22 L 132,44 Z"
-              stroke="#C9A227" stroke-width="1.3" fill="rgba(201,162,39,0.07)"/>
-        <circle cx="100" cy="12"  r="2.8" fill="#C9A227" opacity=".9"/>
-        <circle cx="92"  cy="19"  r="2"   fill="#C9A227" opacity=".7"/>
-        <circle cx="108" cy="19"  r="2"   fill="#C9A227" opacity=".7"/>
-        <circle cx="76"  cy="24"  r="1.5" fill="#C9A227" opacity=".55"/>
-        <circle cx="124" cy="24"  r="1.5" fill="#C9A227" opacity=".55"/>
-        <!-- Heater shield -->
-        <path d="M 58,44 L 142,44 L 142,126 Q 140,170 100,188 Q 60,170 58,126 Z"
-              stroke="#C9A227" stroke-width="1.4" fill="rgba(18,9,0,0.6)"/>
-        <!-- Shield inner border -->
-        <path d="M 65,51 L 135,51 L 135,125 Q 133,162 100,178 Q 67,162 65,125 Z"
-              stroke="rgba(201,162,39,0.22)" stroke-width="0.8" fill="none"/>
-        <!-- Chief division line -->
-        <line x1="58" y1="82" x2="142" y2="82" stroke="rgba(201,162,39,0.3)" stroke-width="0.8"/>
-        <!-- Vertical tick in chief -->
-        <line x1="100" y1="44" x2="100" y2="82" stroke="rgba(201,162,39,0.12)" stroke-width="0.6"/>
-        <!-- 5-pointed star — center (100,128), R=24, r=10 -->
-        <path d="M 100,104 L 105.9,119.9 L 122.8,120.6 L 109.5,131.1 L 114.1,147.4 L 100,138 L 85.9,147.4 L 90.5,131.1 L 77.2,120.6 L 94.1,119.9 Z"
-              fill="rgba(201,162,39,0.12)" stroke="#C9A227" stroke-width="1.2" stroke-linejoin="round"/>
-        <circle cx="100" cy="128" r="3.5" fill="#C9A227" opacity=".85"/>
-        <!-- Left laurel branch -->
-        <g stroke="#C9A227" stroke-width="1" fill="rgba(201,162,39,0.1)">
-          <line x1="52" y1="60" x2="50" y2="162" stroke-width=".7" opacity=".35"/>
-          <path d="M 52,67 Q 41,62 38,70 Q 42,78 52,67"/>
-          <path d="M 49,81 Q 37,78 35,87 Q 40,95 49,81"/>
-          <path d="M 46,96 Q 35,94 33,103 Q 38,111 46,96"/>
-          <path d="M 44,111 Q 33,110 32,119 Q 37,127 44,111"/>
-          <path d="M 45,126 Q 35,127 35,136 Q 41,142 45,126"/>
-          <path d="M 49,141 Q 40,144 41,153 Q 48,156 49,141"/>
-        </g>
-        <!-- Right laurel branch (mirror) -->
-        <g stroke="#C9A227" stroke-width="1" fill="rgba(201,162,39,0.1)">
-          <line x1="148" y1="60" x2="150" y2="162" stroke-width=".7" opacity=".35"/>
-          <path d="M 148,67 Q 159,62 162,70 Q 158,78 148,67"/>
-          <path d="M 151,81 Q 163,78 165,87 Q 160,95 151,81"/>
-          <path d="M 154,96 Q 165,94 167,103 Q 162,111 154,96"/>
-          <path d="M 156,111 Q 167,110 168,119 Q 163,127 156,111"/>
-          <path d="M 155,126 Q 165,127 165,136 Q 159,142 155,126"/>
-          <path d="M 151,141 Q 160,144 159,153 Q 152,156 151,141"/>
-        </g>
-        <!-- Ribbon / banner -->
-        <path d="M 38,202 L 52,195 L 148,195 L 162,202 L 148,209 L 52,209 Z"
-              stroke="#C9A227" stroke-width="1" opacity=".7" fill="rgba(201,162,39,0.06)"/>
-        <path d="M 38,202 L 52,195 L 52,209 Z"   fill="rgba(201,162,39,0.14)"/>
-        <path d="M 162,202 L 148,195 L 148,209 Z" fill="rgba(201,162,39,0.14)"/>
-        <text x="100" y="205.5" text-anchor="middle"
-              font-family="'Barlow Condensed', sans-serif"
-              font-size="8.5" font-weight="600" fill="#C9A227"
-              letter-spacing="4" opacity=".8">ALTA PERFORMANCE</text>
-      </svg>
-
-      <!-- Headline -->
+      <div class="ls-geo-lines"></div>
+      <div class="ls-brand">
+        <div class="ls-brand-pill">
+          <div class="ls-brand-dot"></div>
+          DESENVOLVIMENTO DE FRANQUIAS
+        </div>
+      </div>
       <div class="ls-headline">
-        <div class="ls-headline-eyebrow">Ranking Anual de</div>
-        <h1 class="ls-headline-title">
-          <span>Executivo</span>
-          <span class="hl-gold">de Alta</span>
-          <span>Performance</span>
-        </h1>
-      </div>
-
-      <!-- Diamond divider -->
-      <div class="ls-divider">
-        <div class="ls-divider-line"></div>
-        <div class="ls-divider-diamond"></div>
-        <div class="ls-divider-line"></div>
-      </div>
-
-      <div class="ls-season">Desenvolvimento de Franquias &middot; 2025</div>
-    </div>
-
-    <!-- RIGHT: Authentication form -->
-    <div class="ls-right">
-      <div class="ls-form-wrap">
-        <div class="ls-form-box">
-          <div class="ls-form-box-inner"></div>
-
-          <div class="ls-form-header">
-            <div class="ls-form-eyebrow">Acesso Restrito</div>
-            <div class="ls-form-title">Identifique-se</div>
-          </div>
-
-          <!-- Profile selector -->
-          <div class="ls-toggle-wrap">
-            <button class="toggle-btn active" id="profileAdmin" onclick="selectProfile('admin')">
-              <span class="t-icon">
-                <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M9 1.5L2.5 4.5V9c0 4 2.8 6.8 6.5 7.5C12.7 15.8 15.5 13 15.5 9V4.5L9 1.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-                  <path d="M6.5 9l1.8 1.8L11.5 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </span>
-              Admin
-            </button>
-            <button class="toggle-btn" id="profileExec" onclick="selectProfile('exec')">
-              <span class="t-icon">
-                <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5 2h8v6a4 4 0 0 1-8 0V2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-                  <path d="M5 3.5H3A1.5 1.5 0 0 0 3 6.5h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  <path d="M13 3.5h2a1.5 1.5 0 0 1 0 3h-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  <path d="M9 12v2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  <path d="M6 15.5h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                  <circle cx="9" cy="6" r="1.2" fill="currentColor" opacity=".5"/>
-                </svg>
-              </span>
-              Executivo
-            </button>
-          </div>
-
-          <!-- Executivo selector -->
-          <div class="ls-field" id="execSelectWrap" style="display:none">
-            <label>Executivo</label>
-            <div class="ls-input-wrap">
-              <span class="ls-input-icon">👤</span>
-              <select id="execSelect"><option value="">Selecione seu nome...</option></select>
-            </div>
-          </div>
-
-          <!-- Password -->
-          <div class="ls-field">
-            <label>Senha</label>
-            <div class="ls-input-wrap">
-              <span class="ls-input-icon">🔑</span>
-              <input type="password" id="loginPassword" placeholder="Digite sua senha" onkeydown="if(event.key==='Enter')doLogin()" onfocus="setTimeout(()=>{document.querySelector('.ls-btn-main')?.scrollIntoView({behavior:'smooth',block:'nearest'})},400)">
-            </div>
-          </div>
-
-          <div class="login-error" id="loginError"></div>
-
-          <button class="ls-btn-main" onclick="doLogin()">
-            Acessar o Ranking
-            <svg width="18" height="14" viewBox="0 0 18 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 7h16M10 1l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-
-          <div class="ls-form-footer">Powered by Desenvolvimento de Franquias</div>
+        <svg class="ls-brand-logo" viewBox="0 0 140 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="lsGaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"   stop-color="#00dbff"/>
+              <stop offset="60%"  stop-color="#a44dff"/>
+              <stop offset="100%" stop-color="#ff0066"/>
+            </linearGradient>
+            <filter id="lsGaugeGlow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <g stroke="rgba(255,255,255,0.12)" stroke-width="1.5" stroke-linecap="round">
+            <line x1="30" y1="97" x2="30" y2="91"/>
+            <line x1="46" y1="54" x2="43" y2="48" transform="rotate(-30 70 76)"/>
+            <line x1="70" y1="30" x2="70" y2="24"/>
+            <line x1="94" y1="54" x2="97" y2="48" transform="rotate(30 70 76)"/>
+            <line x1="110" y1="97" x2="110" y2="91"/>
+          </g>
+          <path d="M 30,99 A 46,46 0 1,0 110,99" stroke="rgba(255,0,80,0.18)" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="23 170"/>
+          <path d="M 30,99 A 46,46 0 1,0 110,99" stroke="rgba(255,255,255,0.08)" stroke-width="8" stroke-linecap="round" fill="none"/>
+          <path class="ls-gauge-arc" d="M 30,99 A 46,46 0 1,0 110,99" stroke="url(#lsGaugeGrad)" stroke-width="8" stroke-linecap="round" fill="none" filter="url(#lsGaugeGlow)" stroke-dasharray="193" stroke-dashoffset="193"/>
+          <line class="ls-gauge-needle" x1="70" y1="80" x2="70" y2="34" stroke="rgba(0,219,255,0.4)" stroke-width="6" stroke-linecap="round" filter="url(#lsGaugeGlow)"/>
+          <line class="ls-gauge-needle" x1="70" y1="83" x2="70" y2="34" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+          <circle class="ls-gauge-flash" cx="70" cy="76" r="46" fill="none" stroke="#ff2200" stroke-width="10" stroke-opacity="0"/>
+          <circle cx="70" cy="76" r="7" fill="rgba(0,219,255,0.12)" stroke="rgba(0,219,255,0.4)" stroke-width="1.5"/>
+          <circle cx="70" cy="76" r="3.5" fill="white"/>
+        </svg>
+        <div class="ls-h1">
+          <span class="line1">EXECUTIVO</span>
+          <span class="line2">DE ALTA</span>
+          <span class="line3">PERFORMANCE</span>
+        </div>
+        <div class="ls-headline-bottom">
+          <div class="ls-hl-tag">RANKING</div>
+          <p class="ls-hl-desc">Transformando método em resultado.</p>
         </div>
       </div>
     </div>
-
+    <div class="ls-right">
+      <div class="ls-form-wrap">
+        <div class="ls-form-header">
+          <div class="ls-form-title">Bem-vindo de volta</div>
+          <div class="ls-form-sub">Acesse o ranking e acompanhe sua posição</div>
+        </div>
+        <div class="ls-toggle-wrap">
+          <button class="toggle-btn active" id="profileAdmin" onclick="selectProfile('admin')">
+            <span class="t-icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 1.5L2.5 4.5V9c0 4 2.8 6.8 6.5 7.5C12.7 15.8 15.5 13 15.5 9V4.5L9 1.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M6.5 9l1.8 1.8L11.5 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            Admin
+          </button>
+          <button class="toggle-btn" id="profileExec" onclick="selectProfile('exec')">
+            <span class="t-icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 2h8v6a4 4 0 0 1-8 0V2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M5 3.5H3A1.5 1.5 0 0 0 3 6.5h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M13 3.5h2a1.5 1.5 0 0 1 0 3h-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M9 12v2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M6 15.5h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="9" cy="6" r="1.2" fill="currentColor" opacity=".5"/>
+              </svg>
+            </span>
+            Executivo
+          </button>
+        </div>
+        <div class="ls-field" id="execSelectWrap" style="display:none">
+          <label>Executivo</label>
+          <div class="ls-input-wrap">
+            <span class="ls-input-icon">👤</span>
+            <select id="execSelect"><option value="">Selecione seu nome...</option></select>
+          </div>
+        </div>
+        <div class="ls-field">
+          <label>Senha</label>
+          <div class="ls-input-wrap">
+            <span class="ls-input-icon">🔑</span>
+            <input type="password" id="loginPassword" placeholder="Digite sua senha" onkeydown="if(event.key==='Enter')doLogin()" onfocus="setTimeout(()=>{document.querySelector('.ls-btn-main')?.scrollIntoView({behavior:'smooth',block:'nearest'})},400)">
+          </div>
+        </div>
+        <div class="login-error" id="loginError"></div>
+        <button class="ls-btn-main" onclick="doLogin()">
+          Acessar o Ranking
+          <span style="font-size:18px">→</span>
+        </button>
+        <div class="ls-form-footer">
+          <span>Powered by</span>
+          <strong>Desenvolvimento de Franquias</strong>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <!-- APP WRAP (oculto até login) -->
