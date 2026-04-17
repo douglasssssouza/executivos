@@ -2249,7 +2249,7 @@ function getRanked(filter) {
   return list.sort((a,b) => total(b)-total(a));
 }
 function vertClass(v) {
-  const m = {Retail:'v-retail',Postos:'v-postos',Auto:'v-auto',Food:'v-food',Enterprise:'v-enterprise'};
+  const m = {Retail:'v-retail',Postos:'v-postos',Auto:'v-auto',Food:'v-food',Enterprise:'v-enterprise',Farma:'v-retail'};
   return m[v]||'v-retail';
 }
 function cell(v) {
@@ -2595,7 +2595,7 @@ function renderStats() {
     </div>
   `;
 
-  const verticals = ['Retail','Postos','Auto','Food','Enterprise'];
+  const verticals = ['Retail','Postos','Auto','Food','Enterprise','Farma'];
   const body = document.getElementById('statsBody');
   body.innerHTML = verticals.map(v=>{
     const group = all.filter(e=>e.vertical===v);
