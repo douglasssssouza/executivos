@@ -1,13 +1,18 @@
 {
+  "database": {
+    "rules": "database.rules.json"
+  },
   "hosting": {
     "public": ".",
     "ignore": [
       "firebase.json",
+      "database.rules.json",
       "**/.*",
       "**/node_modules/**",
       "server-rapido.js",
       "CLAUDE.md",
-      "index.backup-*"
+      "index.backup-*",
+      "backup_dados.json"
     ],
     "rewrites": [
       {

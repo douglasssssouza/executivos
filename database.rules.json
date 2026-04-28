@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "executives":   { ".read": true, ".write": true },
+    "messages":     { ".read": true, ".write": true },
+    "access_log":   { ".read": true, ".write": true },
+    "challenge":    { ".read": true, ".write": true },
+    "coupon_flash": { ".read": true, ".write": true },
+    "$other":       { ".read": false, ".write": false }
+  }
+}

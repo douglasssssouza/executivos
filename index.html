@@ -219,6 +219,16 @@
     background: rgba(0,212,255,0.05);
     border-bottom: 1px solid var(--border);
   }
+  .th-tooltip { position:relative; cursor:help; }
+  .th-tooltip .th-tip {
+    display:none; position:absolute; top:calc(100% + 8px); left:50%; transform:translateX(-50%);
+    background:#1a1a2e; border:1px solid rgba(0,212,255,0.3); border-radius:8px;
+    padding:8px 12px; width:220px; font-family:'Inter',sans-serif; font-size:11px;
+    font-weight:400; letter-spacing:0; text-transform:none; color:#b0c4d8;
+    line-height:1.6; white-space:normal; z-index:999; box-shadow:0 4px 20px rgba(0,0,0,0.5);
+    pointer-events:none;
+  }
+  .th-tooltip:hover .th-tip { display:block; }
   thead th:nth-child(2) { text-align:left; }
   tbody tr {
     border-bottom: 1px solid rgba(255,255,255,0.04);
@@ -1572,10 +1582,60 @@
     .msg-modal-box { max-height:92vh; border-radius:12px 12px 0 0; align-self:flex-end; }
     #msgModal { align-items:flex-end; padding:0; }
   }
+
+  /* ===== CUPOM FLASH OVERLAY ===== */
+  #couponFlashOverlay {
+    position:fixed; inset:0; z-index:9999;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,0.82); backdrop-filter:blur(10px);
+    animation:couponFadeIn 0.35s ease;
+  }
+  #couponFlashOverlay.hidden { display:none; }
+  @keyframes couponFadeIn { from{opacity:0;transform:scale(0.94)} to{opacity:1;transform:scale(1)} }
+  .coupon-card {
+    background:linear-gradient(135deg,#1a0030,#0a1a2e);
+    border:2px solid #ffb828; border-radius:22px;
+    padding:38px 40px 32px; max-width:420px; width:92%;
+    text-align:center; position:relative;
+    box-shadow:0 0 80px rgba(255,184,40,0.35),0 0 160px rgba(255,184,40,0.12);
+    animation:couponGlow 2s ease-in-out infinite;
+  }
+  @keyframes couponGlow {
+    0%,100%{box-shadow:0 0 80px rgba(255,184,40,0.35),0 0 160px rgba(255,184,40,0.12)}
+    50%{box-shadow:0 0 100px rgba(255,184,40,0.55),0 0 200px rgba(255,184,40,0.2)}
+  }
+  .coupon-lightning { font-size:48px; line-height:1; margin-bottom:10px; animation:couponBounce 0.8s ease-in-out infinite alternate; }
+  @keyframes couponBounce { from{transform:translateY(0)} to{transform:translateY(-6px)} }
+  .coupon-label { font-family:Orbitron,monospace; font-size:9px; letter-spacing:3px; color:#ffb828; font-weight:700; margin-bottom:8px; }
+  .coupon-title { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:2px; color:#fff; margin-bottom:12px; line-height:1.2; }
+  .coupon-pts-badge {
+    display:inline-block; background:rgba(255,184,40,0.15); border:1px solid rgba(255,184,40,0.5);
+    color:#ffb828; font-family:Orbitron,monospace; font-size:20px; font-weight:700;
+    padding:6px 22px; border-radius:30px; margin-bottom:18px;
+  }
+  .coupon-countdown {
+    font-family:Orbitron,monospace; font-size:13px; color:rgba(255,255,255,0.55);
+    letter-spacing:2px; margin-bottom:22px;
+  }
+  .coupon-countdown span { color:#ff6060; font-weight:700; }
+  .coupon-btn {
+    width:100%; padding:14px; border-radius:12px; border:none; cursor:pointer;
+    font-family:Orbitron,monospace; font-size:13px; font-weight:700; letter-spacing:2px;
+    background:linear-gradient(135deg,#ffb828,#ff8c00); color:#000;
+    box-shadow:0 4px 20px rgba(255,184,40,0.4); transition:transform 0.15s,box-shadow 0.15s;
+  }
+  .coupon-btn:hover { transform:scale(1.03); box-shadow:0 6px 28px rgba(255,184,40,0.55); }
+  .coupon-btn:disabled { background:rgba(255,255,255,0.08); color:var(--muted); box-shadow:none; cursor:default; transform:none; }
+  .coupon-claimed-msg { font-family:Orbitron,monospace; font-size:11px; color:#00ff88; letter-spacing:2px; margin-top:14px; }
+  .coupon-max-msg { font-family:Orbitron,monospace; font-size:11px; color:#ff6060; letter-spacing:2px; margin-top:14px; }
+  .coupon-viewer-msg { font-family:Rajdhani,sans-serif; font-size:13px; color:rgba(255,255,255,0.4); margin-top:14px; }
+  .coupon-dismiss { position:absolute; top:14px; right:16px; background:none; border:none; color:rgba(255,255,255,0.3); font-size:20px; cursor:pointer; line-height:1; padding:4px; }
+  .coupon-dismiss:hover { color:rgba(255,255,255,0.7); }
+  .coupon-claims-info { font-family:Orbitron,monospace; font-size:9px; color:rgba(255,255,255,0.35); letter-spacing:1px; margin-top:10px; }
 </style>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getDatabase, ref, set, get, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCL_3pwpoV56IluacFESTHihB-55-HBQzc",
@@ -1672,6 +1732,35 @@
       if (typeof renderChallengeBanner === 'function') renderChallengeBanner();
       if (typeof renderChallengeAdmin === 'function') renderChallengeAdmin();
     });
+
+    // Listener de cupom flash em tempo real
+    const couponRef = ref(db, 'coupon_flash');
+    let _lastCouponId = null;
+    onValue(couponRef, (snap) => {
+      const data = snap.val() || null;
+      // Reseta dismissed se for um cupom novo (releaseAt diferente)
+      const newId = data ? data.releaseAt : null;
+      if (newId !== _lastCouponId) {
+        _lastCouponId = newId;
+        window.window._couponOverlayDismissed = false;
+      }
+      window._couponFlashData = data;
+      if (typeof renderCouponAdmin === 'function') renderCouponAdmin();
+      if (typeof syncCouponOverlay === 'function') syncCouponOverlay();
+    });
+
+    // Salvar / deletar / resgatar cupom flash
+    window._saveCouponFlash = function(data) { set(ref(db, 'coupon_flash'), data); };
+    window._deleteCouponFlash = function() { set(ref(db, 'coupon_flash'), null); };
+    window._claimCouponFlash = function(execId, pts) {
+      const e = executives.find(x => x.id === execId);
+      if (!e) return;
+      e.couponPts = (e.couponPts || 0) + pts;
+      const idx = executives.findIndex(x => x.id === execId);
+      const claimKey = 'coupon_flash/claims/' + execId;
+      set(ref(db, claimKey), Date.now());
+      if (idx !== -1) update(ref(db, 'executives/' + idx), { couponPts: e.couponPts });
+    };
 
     // Salvar desafio
     window._saveChallenge = function(data) { set(ref(db, 'challenge'), data); };
@@ -1919,6 +2008,7 @@
       <button class="filter-btn" onclick="filterVertical('Auto',this)">Auto</button>
       <button class="filter-btn" onclick="filterVertical('Food',this)">Food</button>
       <button class="filter-btn" onclick="filterVertical('Enterprise',this)">Enterprise</button>
+      <button class="filter-btn" onclick="filterVertical('Farma',this)">Farma</button>
     </div>
     <div class="ranking-wrap" id="rankingTableWrap">
       <table>
@@ -1931,6 +2021,7 @@
             <th>ALVO</th>
             <th>Índice Des.</th>
             <th>WOW</th>
+            <th class="th-tooltip">Engajamento<span class="th-tip">Soma de 3 critérios:<br>🏆 Desafios concluídos<br>⚡ Cupons Flash resgatados<br>💬 Comentários enviados (máx. 5 pts/dia)</span></th>
             <th>Total</th>
           </tr>
         </thead>
@@ -1973,6 +2064,10 @@
       </h2>
     </div>
     <div id="challengeAdminWrap" style="margin-top:8px;"></div>
+    <div style="margin-top:32px;border-top:1px solid var(--border);padding-top:24px;">
+      <div style="font-family:Orbitron,monospace;font-size:11px;color:#00dbff;letter-spacing:2px;margin-bottom:16px;">⚡ CUPONS FLASH</div>
+      <div id="couponAdminWrap"></div>
+    </div>
   </div>
 
   <!-- ACCESS LOG PANEL -->
@@ -1993,9 +2088,10 @@
   <div class="panel" id="panel-edit">
     <div class="edit-header">
       <h2 style="color:#ffffff;">⚙ Editar Pontos</h2>
-      <div style="display:flex;gap:8px;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <button class="btn btn-add" onclick="openAddModal()">+ Novo Executivo</button>
         <button class="btn btn-primary" onclick="saveAll()">💾 Salvar & Atualizar Ranking</button>
+        <button class="btn" onclick="exportExcel()" style="background:rgba(0,180,80,0.12);border:1px solid rgba(0,180,80,0.35);color:#4caf7d;font-size:11px;padding:6px 14px;" title="Baixa o ranking em planilha Excel">⬇ Exportar Excel</button>
       </div>
     </div>
     
@@ -2228,7 +2324,7 @@ function updateLastUpdateBadge() {
 
 // ===================== HELPERS =====================
 function total(e) {
-  return (e.train||0)+(e.action||0)+(e.alvo||0)+(e.dev||0)+(e.wow||0)+(e.bonusPts||0);
+  return (e.train||0)+(e.action||0)+(e.alvo||0)+(e.dev||0)+(e.wow||0)+(e.bonusPts||0)+(e.couponPts||0)+(e.commentPts||0);
 }
 
 function semaforo(e) {
@@ -2498,6 +2594,7 @@ function renderRanking() {
       <td>${cell(e.alvo)}</td>
       <td>${cell(e.dev)}</td>
       <td>${cell(e.wow)}</td>
+      <td>${cell((e.bonusPts||0)+(e.couponPts||0)+(e.commentPts||0))}</td>
       <td><span class="total-cell">${t}</span></td>
     </tr>`;
   }).join('');
@@ -2676,6 +2773,8 @@ function renderEdit() {
     { key:'dev',       label:'Índice de Desenvolvimento', hint:'até 10 pts/mês · lançar pontos acumulados do mês' },
     { key:'wow',       label:'WOW — Evolução de Receita', hint:'até 35 pts/mês · (crescimento% ÷ 10%) × 35' },
     { key:'bonusPts',  label:'Bônus de Desafios',         hint:'pts acumulados de desafios concluídos · ajuste manual se necessário' },
+    { key:'couponPts',   label:'Bônus de Cupons Flash',     hint:'pts acumulados de cupons resgatados · ajuste manual se necessário' },
+    { key:'commentPts',  label:'Bônus de Comentários',      hint:'1 pt por comentário enviado · ajuste manual se necessário' },
   ];
   cards.innerHTML = ranked.map((e,i)=>{
     const t = total(e);
@@ -2896,6 +2995,19 @@ function removePhoto(id) {
   }
 }
 
+function exportBackup() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const stamp = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+  const payload = JSON.stringify({ executives }, null, 2);
+  const blob = new Blob([payload], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `backup_dados_${stamp}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
 function saveAll() {
   snapshotRanks();
   lastSaveTime = new Date();
@@ -2911,7 +3023,7 @@ function saveAll() {
       .then(() => {
         const ind = document.getElementById('fbIndicator');
         if (ind) { ind.textContent = '🟢 Salvo na nuvem'; ind.style.color = '#00ff88'; }
-        showToast(); // toast only after Firebase confirms the save
+        showToast();
       })
       .catch(() => {
         const ind = document.getElementById('fbIndicator');
@@ -2942,6 +3054,10 @@ function switchTab(name) {
   if (typeof event !== 'undefined' && event && event.target) event.target.classList.add('active');
   const panel = document.getElementById(`panel-${name}`);
   if (panel) panel.classList.add('active');
+  if (name === 'challenge') {
+    if (typeof renderChallengeAdmin === 'function') renderChallengeAdmin();
+    if (typeof renderCouponAdmin === 'function') renderCouponAdmin();
+  }
 }
 
 function showToast() {
@@ -3067,6 +3183,7 @@ async function doLogin() {
     if (isAdmin || isLider) {
       if (isLider) currentProfile = 'lider';
       if (window._logAccess) window._logAccess(isLider ? 'Líder' : 'Admin', isLider ? 'lider' : 'admin');
+      document.body.classList.remove('login-open');
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('appWrap').style.display = '';
       const badge = document.getElementById('userBadge');
@@ -3209,15 +3326,34 @@ function checkMsgLimit(execId) {
   }
 }
 
+const MSG_MAX_PTS_PER_DAY = 5;
+
+function countTodayComments(fromId) {
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+  const cutoff = startOfDay.getTime();
+  const data = window._messagesData || {};
+  let count = 0;
+  for (const execMsgs of Object.values(data)) {
+    for (const msg of Object.values(execMsgs)) {
+      if (msg.fromId === fromId && (msg.timestamp || 0) >= cutoff) count++;
+    }
+  }
+  return count;
+}
+
 function sendMessage() {
   if (!_currentMsgExecId || !currentExecId) return;
   const ta = document.getElementById('msgTextarea');
   const text = ta.value.trim();
   if (!text || text.length > MSG_MAX_CHARS) return;
-  // Verifica limite
+  // Verifica limite por destinatário
   const msgs = (window._messagesData || {})[_currentMsgExecId] || {};
   const myCount = Object.values(msgs).filter(m => m.fromId === currentExecId).length;
   if (myCount >= MSG_MAX_PER_SENDER) return;
+  // Verifica limite de pontos diários (conta antes de salvar)
+  const todayComments = countTodayComments(currentExecId);
+  const earnsPoint = todayComments < MSG_MAX_PTS_PER_DAY;
   const fromExec = executives.find(e => e.id === currentExecId);
   const msgId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
   const msgData = {
@@ -3225,7 +3361,8 @@ function sendMessage() {
     fromName: fromExec ? fromExec.name.split(' ')[0] : 'Anônimo',
     text: text,
     timestamp: Date.now(),
-    reactions: {}
+    reactions: {},
+    earnedPt: earnsPoint
   };
   if (!window._fbReady) return;
   const msgRef = window._fbRef(window._fbDb, `messages/${_currentMsgExecId}/${msgId}`);
@@ -3234,6 +3371,13 @@ function sendMessage() {
     ta.style.height = '42px';
     document.getElementById('msgCharCount').textContent = '0 / 120';
     document.getElementById('msgSendBtn').disabled = true;
+    if (earnsPoint) {
+      const sender = executives.find(e => e.id === currentExecId);
+      if (sender) {
+        sender.commentPts = (sender.commentPts || 0) + 1;
+        saveOne(sender.id);
+      }
+    }
   });
 }
 
@@ -3330,6 +3474,15 @@ function reactToMsg(execId, msgId, emoji) {
 function deleteMsgAdmin(execId, msgId) {
   if (currentProfile !== 'admin') return;
   if (!confirm('Excluir esta mensagem?')) return;
+  // Desconta 1 pt do autor apenas se este comentário gerou ponto
+  const msg = ((window._messagesData || {})[execId] || {})[msgId];
+  if (msg && msg.fromId && msg.earnedPt) {
+    const sender = executives.find(e => e.id === msg.fromId);
+    if (sender) {
+      sender.commentPts = Math.max(0, (sender.commentPts || 0) - 1);
+      saveOne(sender.id);
+    }
+  }
   const r = window._fbRef(window._fbDb, `messages/${execId}/${msgId}`);
   window._fbSet(r, null);
 }
@@ -3582,6 +3735,227 @@ function startMusic() {
   });
 }
 
+// ===================== CUPONS FLASH =====================
+
+let _couponCountdownInterval = null;
+window.window._couponOverlayDismissed = false;
+
+// Verifica a cada 5s se um cupom agendado entrou no ar
+setInterval(() => {
+  if (typeof syncCouponOverlay === 'function') syncCouponOverlay();
+}, 5000);
+
+function renderCouponAdmin() {
+  const wrap = document.getElementById('couponAdminWrap');
+  if (!wrap) return;
+  const c = window._couponFlashData;
+  const now = Date.now();
+
+  const hasCoupon = c && c.active;
+  const isLive      = hasCoupon && c.releaseAt <= now && c.expiresAt > now;
+  const isScheduled = hasCoupon && c.releaseAt > now;
+  const isExpired   = hasCoupon && c.expiresAt <= now;
+  const claimCount  = hasCoupon && c.claims ? Object.keys(c.claims).length : 0;
+
+  let statusBadge = '';
+  if (isScheduled)   statusBadge = `<span style="background:rgba(0,219,255,0.15);border:1px solid rgba(0,219,255,0.5);color:#00dbff;font-family:Orbitron,monospace;font-size:9px;padding:3px 10px;border-radius:20px;letter-spacing:1px;">AGENDADO</span>`;
+  else if (isLive)   statusBadge = `<span style="background:rgba(0,255,136,0.15);border:1px solid rgba(0,255,136,0.5);color:#00ff88;font-family:Orbitron,monospace;font-size:9px;padding:3px 10px;border-radius:20px;letter-spacing:1px;">AO VIVO ⚡</span>`;
+  else if (isExpired) statusBadge = `<span style="background:rgba(120,120,120,0.15);border:1px solid rgba(120,120,120,0.4);color:#888;font-family:Orbitron,monospace;font-size:9px;padding:3px 10px;border-radius:20px;letter-spacing:1px;">EXPIRADO</span>`;
+
+  // Pré-preenche o formulário com dados existentes ou defaults
+  const formTitle    = hasCoupon ? c.title : '';
+  const formPts      = hasCoupon ? c.pts : 5;
+  const formDuration = hasCoupon ? Math.round((c.expiresAt - c.releaseAt) / 60000) : 15;
+  const formMax      = hasCoupon ? (c.maxClaims || 0) : 0;
+  const formRelease  = hasCoupon
+    ? new Date(c.releaseAt - new Date().getTimezoneOffset()*60000).toISOString().slice(0,16)
+    : new Date(now + 5*60*1000 - new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
+
+  const claimedList = (hasCoupon && c.claims)
+    ? Object.keys(c.claims).map(id => {
+        const exec = executives.find(x => x.id == id);
+        return exec ? exec.name.split(' ').slice(0,2).join(' ') : 'ID:' + id;
+      }).join(', ')
+    : '';
+
+  wrap.innerHTML = `
+    ${hasCoupon ? `
+    <div style="background:rgba(255,184,40,0.06);border:1px solid rgba(255,184,40,0.3);border-radius:12px;padding:16px 20px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:17px;color:#fff;letter-spacing:1px;">${c.title}</span>
+        ${statusBadge}
+        <span style="font-family:Orbitron,monospace;font-size:11px;color:#ffb828;margin-left:auto;font-weight:700;">+${c.pts} pts</span>
+      </div>
+      <div style="font-family:Rajdhani,sans-serif;font-size:12px;color:var(--muted);margin-bottom:4px;">
+        📅 ${new Date(c.releaseAt).toLocaleString('pt-BR')} → ${new Date(c.expiresAt).toLocaleString('pt-BR')}
+      </div>
+      <div style="font-family:Rajdhani,sans-serif;font-size:12px;color:var(--muted);margin-bottom:12px;">
+        Resgates: <strong style="color:#fff">${claimCount}</strong>${c.maxClaims > 0 ? ' / ' + c.maxClaims : ' (ilimitado)'}
+        ${claimCount > 0 ? ` · <span style="color:#00ff88">${claimedList}</span>` : ''}
+      </div>
+      <button onclick="deleteCouponFlash()" style="background:rgba(255,50,80,0.12);border:1px solid rgba(255,50,80,0.4);color:#ff5060;font-family:Orbitron,monospace;font-size:10px;letter-spacing:1px;padding:8px 16px;border-radius:8px;cursor:pointer;">
+        🗑 EXCLUIR CUPOM
+      </button>
+    </div>` : ''}
+
+    <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:20px 24px;">
+      <div style="font-family:Orbitron,monospace;font-size:9px;color:#00dbff;letter-spacing:2px;margin-bottom:14px;">
+        ${hasCoupon ? '✏️ EDITAR CUPOM' : '➕ NOVO CUPOM'}
+      </div>
+      <div style="display:grid;gap:12px;">
+        <div>
+          <label style="font-family:Orbitron,monospace;font-size:9px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:5px;">TÍTULO</label>
+          <input id="cf-title" type="text" value="${formTitle}" placeholder="Ex: Surpresa de segunda!" style="width:100%;box-sizing:border-box;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:Rajdhani,sans-serif;font-size:15px;">
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;">
+          <div>
+            <label style="font-family:Orbitron,monospace;font-size:9px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:5px;">PONTOS</label>
+            <input id="cf-pts" type="number" min="1" value="${formPts}" style="width:100%;box-sizing:border-box;background:var(--panel);color:#ffb828;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:Orbitron,monospace;font-size:14px;font-weight:700;">
+          </div>
+          <div>
+            <label style="font-family:Orbitron,monospace;font-size:9px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:5px;">DURAÇÃO (min)</label>
+            <input id="cf-duration" type="number" min="1" value="${formDuration}" style="width:100%;box-sizing:border-box;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:Orbitron,monospace;font-size:14px;">
+          </div>
+          <div>
+            <label style="font-family:Orbitron,monospace;font-size:9px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:5px;">MÁX. RESGATES (0=∞)</label>
+            <input id="cf-max" type="number" min="0" value="${formMax}" style="width:100%;box-sizing:border-box;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:Orbitron,monospace;font-size:14px;">
+          </div>
+        </div>
+        <div>
+          <label style="font-family:Orbitron,monospace;font-size:9px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:5px;">HORÁRIO DE LIBERAÇÃO</label>
+          <input id="cf-release" type="datetime-local" value="${formRelease}" style="width:100%;box-sizing:border-box;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:Orbitron,monospace;font-size:11px;">
+        </div>
+        <div style="display:flex;gap:10px;margin-top:4px;">
+          <button onclick="saveCouponFlash()" style="flex:1;background:rgba(0,219,255,0.1);border:1px solid rgba(0,219,255,0.35);color:#00dbff;font-family:Orbitron,monospace;font-size:11px;letter-spacing:1px;padding:11px;border-radius:8px;cursor:pointer;">
+            ⚡ ${hasCoupon ? 'ATUALIZAR CUPOM' : 'PUBLICAR CUPOM'}
+          </button>
+          ${hasCoupon ? `<button onclick="deleteCouponFlash()" style="background:rgba(255,50,80,0.1);border:1px solid rgba(255,50,80,0.35);color:#ff5060;font-family:Orbitron,monospace;font-size:11px;letter-spacing:1px;padding:11px 16px;border-radius:8px;cursor:pointer;">🗑</button>` : ''}
+        </div>
+      </div>
+    </div>`;
+}
+
+function saveCouponFlash() {
+  const titleEl = document.getElementById('cf-title');
+  const ptsEl   = document.getElementById('cf-pts');
+  const durEl   = document.getElementById('cf-duration');
+  const maxEl   = document.getElementById('cf-max');
+  const relEl   = document.getElementById('cf-release');
+  if (!titleEl || !ptsEl || !durEl || !maxEl || !relEl) { alert('Formulário não encontrado.'); return; }
+  const title    = titleEl.value.trim();
+  const pts      = parseInt(ptsEl.value) || 0;
+  const duration = parseInt(durEl.value) || 15;
+  const maxC     = parseInt(maxEl.value) || 0;
+  const releaseVal = relEl.value;
+  if (!title)       { alert('Digite um título para o cupom.'); return; }
+  if (pts <= 0)     { alert('Pontos deve ser maior que zero.'); return; }
+  if (!releaseVal)  { alert('Selecione o horário de liberação.'); return; }
+  const releaseAt = new Date(releaseVal).getTime();
+  const expiresAt = releaseAt + duration * 60 * 1000;
+  if (isNaN(releaseAt)) { alert('Horário inválido.'); return; }
+  const data = { title, pts, releaseAt, expiresAt, maxClaims: maxC, active: true };
+  if (!window._saveCouponFlash) { alert('Firebase não conectado. Tente novamente.'); return; }
+  window._saveCouponFlash(data);
+  alert('✅ Cupom publicado! Ele aparecerá para todos no horário configurado.');
+}
+
+function deleteCouponFlash() {
+  if (!confirm('Excluir este cupom?')) return;
+  if (window._deleteCouponFlash) window._deleteCouponFlash();
+}
+
+function claimCouponFlash() {
+  if (!currentExecId) return;
+  const c = window._couponFlashData;
+  if (!c || !c.active) return;
+  const now = Date.now();
+  if (now < c.releaseAt || now > c.expiresAt) return;
+  const claims = c.claims || {};
+  if (claims[currentExecId]) return;
+  const claimCount = Object.keys(claims).length;
+  if (c.maxClaims > 0 && claimCount >= c.maxClaims) return;
+  if (window._claimCouponFlash) window._claimCouponFlash(currentExecId, c.pts);
+}
+
+function dismissCouponOverlay() {
+  window._couponOverlayDismissed = true;
+  document.getElementById('couponFlashOverlay').classList.add('hidden');
+}
+
+function syncCouponOverlay() {
+  const c = window._couponFlashData;
+  const overlay = document.getElementById('couponFlashOverlay');
+  if (!overlay) return;
+
+  // Não exibe enquanto a tela de login estiver aberta
+  if (document.body.classList.contains('login-open')) return;
+
+  const now = Date.now();
+  const isLive = c && c.active && c.releaseAt <= now && c.expiresAt > now;
+  const claims = (c && c.claims) || {};
+  const claimCount = Object.keys(claims).length;
+  const maxReached = c && c.maxClaims > 0 && claimCount >= c.maxClaims;
+  const alreadyClaimed = currentExecId && !!claims[currentExecId];
+
+  if (!isLive) {
+    overlay.classList.add('hidden');
+    if (_couponCountdownInterval) { clearInterval(_couponCountdownInterval); _couponCountdownInterval = null; }
+    // Reset dismissed state when coupon is no longer active
+    if (!c || !c.active) window._couponOverlayDismissed = false;
+    return;
+  }
+
+  // Show overlay (unless dismissed this session)
+  if (!window._couponOverlayDismissed) {
+    overlay.classList.remove('hidden');
+  }
+
+  document.getElementById('couponOverlayTitle').textContent = c.title;
+  document.getElementById('couponOverlayPts').textContent = '+' + c.pts + ' pts';
+
+  const btn = document.getElementById('couponOverlayBtn');
+  const statusEl = document.getElementById('couponOverlayStatus');
+  const claimsEl = document.getElementById('couponOverlayClaims');
+
+  claimsEl.textContent = c.maxClaims > 0 ? claimCount + ' / ' + c.maxClaims + ' resgatados' : claimCount + ' resgatado' + (claimCount !== 1 ? 's' : '');
+
+  if (alreadyClaimed) {
+    btn.disabled = true;
+    btn.textContent = '✓ JÁ RESGATADO';
+    statusEl.innerHTML = '<div class="coupon-claimed-msg">✓ Pontos adicionados ao seu saldo!</div>';
+  } else if (maxReached) {
+    btn.disabled = true;
+    btn.textContent = 'ESGOTADO';
+    statusEl.innerHTML = '<div class="coupon-max-msg">Todos os resgates foram utilizados.</div>';
+  } else if (!currentExecId) {
+    btn.disabled = true;
+    btn.textContent = '⚡ RESGATAR';
+    statusEl.innerHTML = '<div class="coupon-viewer-msg">Faça login como Executivo para resgatar.</div>';
+  } else {
+    btn.disabled = false;
+    btn.textContent = '⚡ RESGATAR';
+    statusEl.innerHTML = '';
+  }
+
+  // Start countdown
+  if (_couponCountdownInterval) clearInterval(_couponCountdownInterval);
+  _couponCountdownInterval = setInterval(() => {
+    const remaining = c.expiresAt - Date.now();
+    if (remaining <= 0) {
+      clearInterval(_couponCountdownInterval);
+      _couponCountdownInterval = null;
+      overlay.classList.add('hidden');
+      window._couponOverlayDismissed = false;
+      if (typeof renderCouponAdmin === 'function') renderCouponAdmin();
+      return;
+    }
+    const m = Math.floor(remaining / 60000);
+    const s = Math.floor((remaining % 60000) / 1000);
+    const el = document.getElementById('couponOverlayCountdown');
+    if (el) el.textContent = m + ':' + String(s).padStart(2,'0');
+  }, 1000);
+}
+
 function toggleMute() {
   if (!_audioPlayer) return;
   _audioMuted = !_audioMuted;
@@ -3598,6 +3972,59 @@ function toggleMute() {
     btn.classList.remove('muted');
     btn.title = 'Silenciar música';
   }
+}
+</script>
+
+<!-- COUPON FLASH OVERLAY -->
+<div id="couponFlashOverlay" class="hidden">
+  <div class="coupon-card">
+    <button class="coupon-dismiss" onclick="dismissCouponOverlay()" title="Fechar">✕</button>
+    <div class="coupon-lightning">⚡</div>
+    <div class="coupon-label">CUPOM FLASH</div>
+    <div class="coupon-title" id="couponOverlayTitle"></div>
+    <div class="coupon-pts-badge" id="couponOverlayPts"></div>
+    <div class="coupon-countdown">Expira em <span id="couponOverlayCountdown">--:--</span></div>
+    <button class="coupon-btn" id="couponOverlayBtn" onclick="claimCouponFlash()">⚡ RESGATAR</button>
+    <div id="couponOverlayStatus"></div>
+    <div class="coupon-claims-info" id="couponOverlayClaims"></div>
+  </div>
+</div>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script>
+function exportExcel() {
+  const ranked = [...executives].sort((a,b) => total(b) - total(a));
+  const rows = ranked.map((e, i) => ({
+    'Posição':               i + 1,
+    'Nome':                  e.name,
+    'Vertical':              e.vertical || '',
+    'Treinamentos':          e.train    || 0,
+    'Plano de Ação':         e.action   || 0,
+    'ALVO':                  e.alvo     || 0,
+    'Índice de Desenv.':     e.dev      || 0,
+    'WOW':                   e.wow      || 0,
+    'Bônus Desafios':        e.bonusPts || 0,
+    'Bônus Cupons':          e.couponPts  || 0,
+    'Bônus Comentários':     e.commentPts || 0,
+    'Total':                 total(e),
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(rows);
+
+  // Largura das colunas
+  ws['!cols'] = [
+    { wch: 8 }, { wch: 36 }, { wch: 14 },
+    { wch: 14 }, { wch: 14 }, { wch: 8 },
+    { wch: 18 }, { wch: 8 },
+    { wch: 16 }, { wch: 14 }, { wch: 18 }, { wch: 8 },
+  ];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Ranking');
+
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const stamp = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}`;
+  XLSX.writeFile(wb, `ranking_executivos_${stamp}.xlsx`);
 }
 </script>
 </body>

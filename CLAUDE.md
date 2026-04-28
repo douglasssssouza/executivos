@@ -11,10 +11,11 @@ Single-file: todo o código está em `index.html` (HTML + CSS + JS inline).
 - **Repositório:** `https://github.com/douglasssssouza/executivos` (branch `main`)
 
 ## Firebase
-- Projeto: `executivos-d8c64`
-- Realtime Database: `https://executivos-d8c64-default-rtdb.firebaseio.com`
-- Paths ativos: `executives`, `messages`, `access_log`, `challenge`
-- Rules: apenas esses paths liberados; `$other` bloqueado
+- Projeto: `executivodealtaperformance`
+- Realtime Database: `https://executivodealtaperformance-default-rtdb.firebaseio.com`
+- Paths ativos: `executives`, `messages`, `access_log`, `challenge`, `coupon_flash`
+- Rules: definidas em `database.rules.json`; `$other` bloqueado
+- Deploy das rules: `firebase deploy --only database`
 
 ## Perfis de acesso
 | Perfil     | Pode ver | Pode editar | Aba Acessos |
@@ -40,13 +41,15 @@ Single-file: todo o código está em `index.html` (HTML + CSS + JS inline).
   dev: Number,             // pts Índice de Desenvolvimento
   wow: Number,             // pts WOW — Evolução de Receita
   bonusPts: Number,        // pts de desafios concluídos
+  couponPts: Number,       // pts de cupons flash resgatados
+  commentPts: Number,      // pts de comentários enviados (máx 5 pts/dia)
   lastScoreUpdate: Number  // timestamp da última atualização de pontos
 }
 ```
 
 ## Fórmula de pontuação
 ```js
-total(e) = train + action + alvo + dev + wow + bonusPts
+total(e) = train + action + alvo + dev + wow + bonusPts + couponPts + commentPts
 ```
 
 ## Critérios de pontuação
@@ -74,6 +77,13 @@ total(e) = train + action + alvo + dev + wow + bonusPts
 
 > ⚠️ Sempre use `saveOne` ou `saveAll` após editar — os dados só persistem quando salvos no Firebase.
 
+## Cupons Flash (`/coupon_flash`)
+- Admin cria cupom com título, pontuação, datas de início/expiração e máximo de resgates
+- Overlay aparece automaticamente para executivos logados dentro do período válido
+- Quando resgatado: `couponPts += pts` via `update()` — só atualiza o campo do executivo, sem sobrescrever os demais
+- Claims ficam em `/coupon_flash/claims/{execId}` (timestamp do resgate)
+- Ao excluir o cupom: overlay some automaticamente para todos
+
 ## Desafios (`/challenge`)
 - Admin cria desafio com título, descrição, datas e pontuação
 - Quando marcado como concluído para um executivo: `bonusPts += pts` e salva em `/executives`
@@ -82,11 +92,11 @@ total(e) = train + action + alvo + dev + wow + bonusPts
 
 ## Deploy
 ```bash
-git add index.html
-git commit -m "descrição"
-git push
+firebase deploy --only hosting,database
 ```
-GitHub Pages atualiza em ~1 minuto após o push.
+URL de produção: https://executivodealtaperformance.web.app
+
+> O git push é usado apenas para versionamento, não para deploy.
 
 ## Servidor local
 ```bash
