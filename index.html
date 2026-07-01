@@ -821,6 +821,228 @@
     100% { opacity:0.3; transform: translateY(-50%) rotate(360deg); }
   }
 
+  /* ===== WOW LAUNCH BANNER ===== */
+  @keyframes wowLaunchIn {
+    from { opacity:0; transform: translateY(-16px) scale(0.97); }
+    to   { opacity:1; transform: translateY(0) scale(1); }
+  }
+  @keyframes wowSweep {
+    0%   { transform: translateX(-100%) skewX(-20deg); opacity:0; }
+    10%  { opacity:1; }
+    90%  { opacity:1; }
+    100% { transform: translateX(400%) skewX(-20deg); opacity:0; }
+  }
+  @keyframes wowSparkFloat {
+    0%   { transform: translateY(0) scale(1); opacity:.8; }
+    100% { transform: translateY(-60px) scale(0); opacity:0; }
+  }
+  @keyframes wowBorderRot {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+  @keyframes wowPillBeat {
+    0%,100% { transform: scale(1); box-shadow: 0 0 10px rgba(0,255,136,0.35); }
+    50%      { transform: scale(1.06); box-shadow: 0 0 22px rgba(0,255,136,0.7); }
+  }
+  @keyframes wowCtaGlow {
+    0%,100% { box-shadow: 0 0 18px rgba(0,219,255,0.4), inset 0 0 0 rgba(0,219,255,0); }
+    50%      { box-shadow: 0 0 32px rgba(0,219,255,0.7), inset 0 1px 0 rgba(255,255,255,0.1); }
+  }
+  @keyframes wowTitleShine {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  #wowNewBanner {
+    display: none;
+    position: relative;
+    border-radius: 14px;
+    margin-bottom: 22px;
+    overflow: hidden;
+    cursor: default;
+    isolation: isolate;
+  }
+  #wowNewBanner.visible {
+    display: block;
+    animation: wowLaunchIn 0.6s cubic-bezier(0.16,1,0.3,1) both;
+  }
+
+  /* animated border via wrapper */
+  .wow-launch-border {
+    position: absolute; inset: 0;
+    border-radius: 14px;
+    padding: 1.5px;
+    background: linear-gradient(90deg, #00dbff, #a44dff, #ff6bdb, #00dbff);
+    background-size: 200% 100%;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: wowBorderRot 2.5s linear infinite;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* rich background */
+  .wow-launch-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 120% at 0% 50%, rgba(0,219,255,0.13) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 100% at 100% 50%, rgba(164,77,255,0.13) 0%, transparent 60%),
+      linear-gradient(135deg, rgba(0,10,30,0.95) 0%, rgba(10,5,25,0.98) 100%);
+    z-index: 0;
+  }
+
+  /* sweep shine */
+  .wow-launch-sweep {
+    position: absolute; top: 0; left: 0;
+    width: 30%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+    animation: wowSweep 3.5s ease-in-out infinite;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* floating sparks */
+  .wow-spark {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+    animation: wowSparkFloat linear infinite;
+  }
+  .wow-spark.s1 { width:4px; height:4px; background:#00dbff; left:12%; bottom:10px; animation-duration:2.8s; animation-delay:0s; opacity:.7; }
+  .wow-spark.s2 { width:3px; height:3px; background:#a44dff; left:30%; bottom:14px; animation-duration:3.4s; animation-delay:1s; opacity:.6; }
+  .wow-spark.s3 { width:5px; height:5px; background:#00ff88; left:55%; bottom:8px; animation-duration:2.2s; animation-delay:0.5s; opacity:.5; }
+  .wow-spark.s4 { width:3px; height:3px; background:#ff6bdb; left:75%; bottom:12px; animation-duration:3.1s; animation-delay:1.6s; opacity:.6; }
+  .wow-spark.s5 { width:4px; height:4px; background:#00dbff; left:88%; bottom:10px; animation-duration:2.6s; animation-delay:0.9s; opacity:.5; }
+
+  /* inner content layout */
+  .wow-launch-inner {
+    position: relative; z-index: 3;
+    padding: 22px 24px 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  /* left: icon */
+  .wow-launch-icon {
+    flex-shrink: 0;
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(0,219,255,0.18), rgba(164,77,255,0.18));
+    border: 1px solid rgba(0,219,255,0.3);
+    display: flex; align-items: center; justify-content: center;
+    color: #00dbff;
+    box-shadow: 0 0 20px rgba(0,219,255,0.2);
+  }
+
+  /* center: text */
+  .wow-launch-body { flex: 1; min-width: 0; }
+
+  .wow-launch-eyebrow {
+    font-family: 'Orbitron', monospace;
+    font-size: 8px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(240,232,255,0.5);
+    margin-bottom: 4px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .wow-launch-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(0,255,136,0.12);
+    border: 1px solid rgba(0,255,136,0.45);
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-family: 'Orbitron', monospace;
+    font-size: 7.5px;
+    letter-spacing: 2px;
+    color: #00ff88;
+    text-transform: uppercase;
+    animation: wowPillBeat 1.8s ease-in-out infinite;
+  }
+  .wow-launch-pill-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: #00ff88;
+    flex-shrink: 0;
+  }
+
+  .wow-launch-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    letter-spacing: 4px;
+    line-height: 1;
+    background: linear-gradient(90deg, #fff 0%, #00dbff 30%, #a44dff 60%, #fff 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: wowTitleShine 4s linear infinite;
+  }
+
+  .wow-launch-sub {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(240,232,255,0.5);
+    margin-top: 4px;
+    letter-spacing: 0.3px;
+  }
+
+  /* right: actions */
+  .wow-launch-actions {
+    display: flex; align-items: center; gap: 10px;
+    flex-shrink: 0;
+  }
+  .wow-launch-cta {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #0a0a1a;
+    background: linear-gradient(135deg, #00dbff, #5ee7ff);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    cursor: pointer;
+    font-weight: 700;
+    white-space: nowrap;
+    animation: wowCtaGlow 2s ease-in-out infinite;
+    transition: transform .15s, filter .15s;
+  }
+  .wow-launch-cta:hover {
+    transform: translateY(-1px) scale(1.03);
+    filter: brightness(1.1);
+  }
+  .wow-launch-cta:active { transform: scale(0.98); }
+
+  .wow-banner-dismiss {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(240,232,255,0.3);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s, color .2s;
+    flex-shrink: 0;
+  }
+  .wow-banner-dismiss:hover {
+    background: rgba(255,255,255,0.1);
+    color: rgba(240,232,255,0.8);
+  }
+
+  @media(max-width:600px) {
+    .wow-launch-inner { flex-direction: column; align-items: flex-start; gap: 14px; padding: 18px 16px 16px; }
+    .wow-launch-icon { width:42px; height:42px; border-radius:11px; }
+    .wow-launch-title { font-size:28px; }
+    .wow-launch-sub { font-size:12px; }
+    .wow-launch-actions { width:100%; }
+    .wow-launch-cta { flex:1; text-align:center; justify-content:center; font-size:8.5px; }
+    .wow-banner-dismiss { position:absolute; top:14px; right:14px; }
+  }
+
 
   .edit-name-input {
     background: rgba(255,255,255,0.06); border: 1px solid var(--border);
@@ -1656,6 +1878,94 @@
   .coupon-dismiss { position:absolute; top:14px; right:16px; background:none; border:none; color:rgba(255,255,255,0.3); font-size:20px; cursor:pointer; line-height:1; padding:4px; }
   .coupon-dismiss:hover { color:rgba(255,255,255,0.7); }
   .coupon-claims-info { font-family:Orbitron,monospace; font-size:9px; color:rgba(255,255,255,0.35); letter-spacing:1px; margin-top:10px; }
+
+  /* ===== MODO MANUTENÇÃO ===== */
+  #maintenanceScreen {
+    display: none;
+    position: fixed; inset: 0; z-index: 99999;
+    background: #04080f;
+    align-items: center; justify-content: center;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  #maintenanceScreen.active { display: flex; }
+
+  #maintenanceScreen::before {
+    content:'';
+    position:fixed; inset:0;
+    background:
+      radial-gradient(ellipse 60% 40% at 10% 20%, rgba(0,219,255,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 90% 80%, rgba(164,77,255,0.08) 0%, transparent 55%);
+    pointer-events:none;
+    animation: bgPulse 8s ease-in-out infinite alternate;
+  }
+  #maintenanceScreen::after {
+    content:'';
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(0,219,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,219,255,0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events:none;
+  }
+
+  .mnt-wrap {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; max-width: 500px; width: 100%; padding: 0 24px;
+    animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) both;
+  }
+
+  @keyframes mntBorderRot {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  .mnt-card {
+    position: relative; border-radius: 20px; padding: 2px; width: 100%;
+    background: linear-gradient(135deg, rgba(0,219,255,0.5), rgba(164,77,255,0.5), rgba(0,219,255,0.5));
+    background-size: 200% 200%;
+    animation: mntBorderRot 3s linear infinite;
+  }
+  .mnt-card-inner {
+    background: linear-gradient(145deg, #080e1a, #0c1020);
+    border-radius: 18px;
+    padding: 36px 36px 32px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+
+  .mnt-logo { width: 110px; height: auto; margin-bottom: 16px; display: block; }
+
+  .mnt-h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 64px; font-weight: 900;
+    line-height: .88; letter-spacing: -2px;
+    margin-bottom: 26px; text-align: center;
+  }
+  .mnt-h1 .line1 { display:block; color:#f0f4ff; animation: lsGlowPulse 3s ease-in-out infinite; }
+  .mnt-h1 .line2 {
+    display:block;
+    background: linear-gradient(90deg,#00dbff 0%,#a44dff 60%,#00dbff 100%);
+    background-size: 200% auto;
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    animation: lsShimmerSlide 3s linear infinite;
+  }
+  .mnt-h1 .line3 { display:block; color:#f0f4ff; animation: lsGlowPulse 3s ease-in-out infinite .4s; }
+
+  .mnt-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,190,40,0.1);
+    border: 1px solid rgba(255,190,40,0.4);
+    border-radius: 24px; padding: 8px 20px;
+    font-family: 'Orbitron', monospace;
+    font-size: 14px; letter-spacing: 2px;
+    color: #ffbe28; text-transform: uppercase;
+  }
+  .mnt-pill-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #ffbe28; flex-shrink: 0;
+    animation: blink 1.2s ease-in-out infinite;
+  }
+  /* ===== FIM MODO MANUTENÇÃO ===== */
 </style>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -1683,6 +1993,22 @@
     window._fbReady = true;
     window._fbDataLoaded = false; // guard: only allow save after Firebase data loads
 
+    // Modo Manutenção — escuta /config/maintenance em tempo real
+    // Bypass automático em localhost (ambiente de desenvolvimento)
+    const _isLocalDev = ['localhost','127.0.0.1'].includes(location.hostname);
+    onValue(ref(db, 'config/maintenance'), (snap) => {
+      if (_isLocalDev) return; // dev local nunca entra em manutenção
+      const mnt = document.getElementById('maintenanceScreen');
+      if (!mnt) return;
+      if (snap.val() === true) {
+        mnt.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      } else {
+        mnt.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+
     // Load data from Firebase on start
     const dbRef = ref(db, 'executives');
     onValue(dbRef, (snapshot) => {
@@ -1697,6 +2023,7 @@
         renderPodium();
         renderStats();
         if (typeof renderEdit === 'function') renderEdit();
+        initWowBanner();
       }
       window._fbDataLoaded = true; // Firebase data received — safe to save
       // Update top bar status dot
@@ -1823,6 +2150,54 @@
 
 <!-- LOGIN SCREEN -->
 <script>document.body.classList.add('login-open');</script>
+<!-- ===== MODO MANUTENÇÃO ===== -->
+<div id="maintenanceScreen">
+  <div class="mnt-wrap">
+    <div class="mnt-card">
+      <div class="mnt-card-inner">
+        <svg class="mnt-logo" viewBox="0 0 140 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="mntGaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"   stop-color="#00dbff"/>
+              <stop offset="60%"  stop-color="#a44dff"/>
+              <stop offset="100%" stop-color="#ff0066"/>
+            </linearGradient>
+            <filter id="mntGaugeGlow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <g stroke="rgba(255,255,255,0.12)" stroke-width="1.5" stroke-linecap="round">
+            <line x1="30" y1="97" x2="30" y2="91"/>
+            <line x1="46" y1="54" x2="43" y2="48" transform="rotate(-30 70 76)"/>
+            <line x1="70" y1="30" x2="70" y2="24"/>
+            <line x1="94" y1="54" x2="97" y2="48" transform="rotate(30 70 76)"/>
+            <line x1="110" y1="97" x2="110" y2="91"/>
+          </g>
+          <path d="M 30,99 A 46,46 0 1,0 110,99" stroke="rgba(255,0,80,0.18)" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="23 170"/>
+          <path d="M 30,99 A 46,46 0 1,0 110,99" stroke="rgba(255,255,255,0.08)" stroke-width="8" stroke-linecap="round" fill="none"/>
+          <path class="ls-gauge-arc" d="M 30,99 A 46,46 0 1,0 110,99" stroke="url(#mntGaugeGrad)" stroke-width="8" stroke-linecap="round" fill="none" filter="url(#mntGaugeGlow)" stroke-dasharray="193" stroke-dashoffset="193"/>
+          <line class="ls-gauge-needle" x1="70" y1="80" x2="70" y2="34" stroke="rgba(0,219,255,0.4)" stroke-width="6" stroke-linecap="round" filter="url(#mntGaugeGlow)"/>
+          <line class="ls-gauge-needle" x1="70" y1="83" x2="70" y2="34" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+          <circle class="ls-gauge-flash" cx="70" cy="76" r="46" fill="none" stroke="#ff2200" stroke-width="10" stroke-opacity="0"/>
+          <circle cx="70" cy="76" r="7" fill="rgba(0,219,255,0.12)" stroke="rgba(0,219,255,0.4)" stroke-width="1.5"/>
+          <circle cx="70" cy="76" r="3.5" fill="white"/>
+        </svg>
+        <div class="mnt-h1">
+          <span class="line1">EXECUTIVO</span>
+          <span class="line2">DE ALTA</span>
+          <span class="line3">PERFORMANCE</span>
+        </div>
+        <div class="mnt-pill">
+          <span class="mnt-pill-dot"></span>
+          Em Manutenção
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ===== FIM MODO MANUTENÇÃO ===== -->
+
 <div id="loginScreen">
   <div class="ls-screen">
     <div class="ls-left">
@@ -2024,6 +2399,37 @@
       <div class="confetti-wrap" id="confettiWrap"></div>
       <div class="podium" id="podiumRanking"></div>
     </div>
+    <!-- WOW Launch Banner -->
+    <div id="wowNewBanner">
+      <div class="wow-launch-border"></div>
+      <div class="wow-launch-bg"></div>
+      <div class="wow-launch-sweep"></div>
+      <span class="wow-spark s1"></span>
+      <span class="wow-spark s2"></span>
+      <span class="wow-spark s3"></span>
+      <span class="wow-spark s4"></span>
+      <span class="wow-spark s5"></span>
+      <div class="wow-launch-inner">
+        <div class="wow-launch-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l7-7 4 4 7-7"/><path d="M15 7h5v5"/></svg>
+        </div>
+        <div class="wow-launch-body">
+          <div class="wow-launch-eyebrow">
+            <span class="wow-launch-pill"><span class="wow-launch-pill-dot"></span>novo indicador</span>
+            agora disponível
+          </div>
+          <div class="wow-launch-title">WOW — Evolução de Receita</div>
+          <div class="wow-launch-sub">Crescimento do MRR · 5 faixas · até 35 pts/mês</div>
+        </div>
+        <div class="wow-launch-actions">
+          <button class="wow-launch-cta" onclick="switchTab('rules');dismissWowBanner();">Descobrir agora →</button>
+          <button class="wow-banner-dismiss" onclick="dismissWowBanner()" title="Fechar">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 1l8 8M9 1L1 9"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div class="filter-bar">
       <span class="filter-label">Filtrar:</span>
       <button class="filter-btn active" onclick="filterVertical('Todos',this)">Todos</button>
@@ -2281,15 +2687,15 @@ const CRITERIA = [
     label:'WOW — Evolução de Receita',
     icon:'🚀',
     pts:35,
-    rational:'Mede o crescimento do New MRR da carteira de franquias do executivo — receita nova gerada mês a mês. A meta de referência é 10% de crescimento: quem atinge ou supera ganha 35 pts. Abaixo disso, a pontuação é proporcional ao crescimento. Crescimento negativo ou zero não desconta pontos acumulados — simplesmente não pontua. É o critério que conecta diretamente desenvolvimento com resultado real de negócio.',
-    rule:'até 35 pts/mês · fórmula: (crescimento% ÷ 10%) × 35 · meta de referência: 10% · sem teto · acumula mensalmente',
+    rational:'Mede o crescimento do MRR total da carteira de franquias do executivo mês a mês. O teto de referência é 3% de crescimento, valendo 35 pts. A pontuação é distribuída em 5 faixas — crescimento abaixo de 0,5% não pontua. Crescimento negativo ou zero não desconta pontos acumulados — simplesmente não pontua. É o critério que conecta diretamente o desenvolvimento da carteira com resultado real de negócio.',
+    rule:'até 35 pts/mês · 5 faixas · teto de referência: 3% · crescimento < 0,5% não pontua · acumula mensalmente',
     table: [
-      { crescimento:'10% ou mais', pts:'35 pts' },
-      { crescimento:'8%',          pts:'28 pts' },
-      { crescimento:'6%',          pts:'21 pts' },
-      { crescimento:'4%',          pts:'14 pts' },
-      { crescimento:'2%',          pts:'7 pts'  },
-      { crescimento:'0% ou menos', pts:'0 pts'  },
+      { crescimento:'2,9% ou mais', pts:'35 pts' },
+      { crescimento:'2,3% a 2,8%', pts:'28 pts' },
+      { crescimento:'1,7% a 2,2%', pts:'21 pts' },
+      { crescimento:'1,1% a 1,6%', pts:'14 pts' },
+      { crescimento:'0,5% a 1,0%', pts:'7 pts'  },
+      { crescimento:'< 0,5%',      pts:'0 pts'  },
     ]
   },
 ];
@@ -2577,6 +2983,25 @@ function renderCriteria() {
   g.innerHTML = '';
 }
 
+// ===================== WOW BANNER =====================
+const WOW_BANNER_KEY = 'wow_indicator_banner_dismissed_v2';
+
+function initWowBanner() {
+  if (sessionStorage.getItem(WOW_BANNER_KEY)) return;
+  const banner = document.getElementById('wowNewBanner');
+  if (banner) banner.classList.add('visible');
+}
+
+function dismissWowBanner() {
+  sessionStorage.setItem(WOW_BANNER_KEY, '1');
+  const banner = document.getElementById('wowNewBanner');
+  if (!banner) return;
+  banner.style.transition = 'opacity 0.3s, transform 0.3s';
+  banner.style.opacity = '0';
+  banner.style.transform = 'translateY(-6px)';
+  setTimeout(() => { banner.classList.remove('visible'); banner.style.cssText = ''; }, 320);
+}
+
 // ===================== RENDER RANKING =====================
 function renderRanking() {
   const ranked = getRanked(currentFilter);
@@ -2795,7 +3220,7 @@ function renderEdit() {
     { key:'action',    label:'Plano de Ação',             hint:'5 pts por plano completo e aprovado' },
     { key:'alvo',      label:'ALVO',                      hint:'15 pts por diagnóstico aplicado e anexado' },
     { key:'dev',       label:'Índice de Desenvolvimento', hint:'até 10 pts/mês · lançar pontos acumulados do mês' },
-    { key:'wow',       label:'WOW — Evolução de Receita', hint:'até 35 pts/mês · (crescimento% ÷ 10%) × 35' },
+    { key:'wow',       label:'WOW — Evolução de Receita', hint:'até 35 pts/mês · 5 faixas · teto: 3% = 35 pts · < 0,5% não pontua' },
     { key:'bonusPts',  label:'Bônus de Desafios',         hint:'pts acumulados de desafios concluídos · ajuste manual se necessário' },
     { key:'couponPts',   label:'Bônus de Cupons Flash',     hint:'pts acumulados de cupons resgatados · ajuste manual se necessário' },
     { key:'commentPts',  label:'Bônus de Comentários',      hint:'1 pt por comentário enviado · ajuste manual se necessário' },
@@ -3610,8 +4035,7 @@ function renderRules() {
 
       if (isWow) {
         return `
-        <div class="criteria-card wow-card" style="position:relative;border-radius:12px;padding:20px 24px;padding-top:36px;margin-bottom:16px;">
-          ${lockBadge}
+        <div class="criteria-card wow-card" style="position:relative;border-radius:12px;padding:20px 24px;margin-bottom:16px;">
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
             <span class="wow-rocket" style="color:#00dbff;">${ruleIcons[c.key]||''}</span>
             <div style="flex:1;">
