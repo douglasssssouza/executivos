@@ -12,7 +12,9 @@
       "server-rapido.js",
       "CLAUDE.md",
       "index.backup-*",
-      "backup_dados.json"
+      "backup_dados.json",
+      "maintenance-preview.html",
+      "preview-*.html"
     ],
     "rewrites": [
       {
