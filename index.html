@@ -821,227 +821,6 @@
     100% { opacity:0.3; transform: translateY(-50%) rotate(360deg); }
   }
 
-  /* ===== WOW LAUNCH BANNER ===== */
-  @keyframes wowLaunchIn {
-    from { opacity:0; transform: translateY(-16px) scale(0.97); }
-    to   { opacity:1; transform: translateY(0) scale(1); }
-  }
-  @keyframes wowSweep {
-    0%   { transform: translateX(-100%) skewX(-20deg); opacity:0; }
-    10%  { opacity:1; }
-    90%  { opacity:1; }
-    100% { transform: translateX(400%) skewX(-20deg); opacity:0; }
-  }
-  @keyframes wowSparkFloat {
-    0%   { transform: translateY(0) scale(1); opacity:.8; }
-    100% { transform: translateY(-60px) scale(0); opacity:0; }
-  }
-  @keyframes wowBorderRot {
-    0%   { background-position: 0% 50%; }
-    100% { background-position: 200% 50%; }
-  }
-  @keyframes wowPillBeat {
-    0%,100% { transform: scale(1); box-shadow: 0 0 10px rgba(0,255,136,0.35); }
-    50%      { transform: scale(1.06); box-shadow: 0 0 22px rgba(0,255,136,0.7); }
-  }
-  @keyframes wowCtaGlow {
-    0%,100% { box-shadow: 0 0 18px rgba(0,219,255,0.4), inset 0 0 0 rgba(0,219,255,0); }
-    50%      { box-shadow: 0 0 32px rgba(0,219,255,0.7), inset 0 1px 0 rgba(255,255,255,0.1); }
-  }
-  @keyframes wowTitleShine {
-    0%   { background-position: -200% center; }
-    100% { background-position: 200% center; }
-  }
-
-  #wowNewBanner {
-    display: none;
-    position: relative;
-    border-radius: 14px;
-    margin-bottom: 22px;
-    overflow: hidden;
-    cursor: default;
-    isolation: isolate;
-  }
-  #wowNewBanner.visible {
-    display: block;
-    animation: wowLaunchIn 0.6s cubic-bezier(0.16,1,0.3,1) both;
-  }
-
-  /* animated border via wrapper */
-  .wow-launch-border {
-    position: absolute; inset: 0;
-    border-radius: 14px;
-    padding: 1.5px;
-    background: linear-gradient(90deg, #00dbff, #a44dff, #ff6bdb, #00dbff);
-    background-size: 200% 100%;
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    animation: wowBorderRot 2.5s linear infinite;
-    pointer-events: none;
-    z-index: 2;
-  }
-
-  /* rich background */
-  .wow-launch-bg {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 70% 120% at 0% 50%, rgba(0,219,255,0.13) 0%, transparent 60%),
-      radial-gradient(ellipse 50% 100% at 100% 50%, rgba(164,77,255,0.13) 0%, transparent 60%),
-      linear-gradient(135deg, rgba(0,10,30,0.95) 0%, rgba(10,5,25,0.98) 100%);
-    z-index: 0;
-  }
-
-  /* sweep shine */
-  .wow-launch-sweep {
-    position: absolute; top: 0; left: 0;
-    width: 30%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
-    animation: wowSweep 3.5s ease-in-out infinite;
-    z-index: 1;
-    pointer-events: none;
-  }
-
-  /* floating sparks */
-  .wow-spark {
-    position: absolute;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 1;
-    animation: wowSparkFloat linear infinite;
-  }
-  .wow-spark.s1 { width:4px; height:4px; background:#00dbff; left:12%; bottom:10px; animation-duration:2.8s; animation-delay:0s; opacity:.7; }
-  .wow-spark.s2 { width:3px; height:3px; background:#a44dff; left:30%; bottom:14px; animation-duration:3.4s; animation-delay:1s; opacity:.6; }
-  .wow-spark.s3 { width:5px; height:5px; background:#00ff88; left:55%; bottom:8px; animation-duration:2.2s; animation-delay:0.5s; opacity:.5; }
-  .wow-spark.s4 { width:3px; height:3px; background:#ff6bdb; left:75%; bottom:12px; animation-duration:3.1s; animation-delay:1.6s; opacity:.6; }
-  .wow-spark.s5 { width:4px; height:4px; background:#00dbff; left:88%; bottom:10px; animation-duration:2.6s; animation-delay:0.9s; opacity:.5; }
-
-  /* inner content layout */
-  .wow-launch-inner {
-    position: relative; z-index: 3;
-    padding: 22px 24px 20px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-
-  /* left: icon */
-  .wow-launch-icon {
-    flex-shrink: 0;
-    width: 52px; height: 52px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, rgba(0,219,255,0.18), rgba(164,77,255,0.18));
-    border: 1px solid rgba(0,219,255,0.3);
-    display: flex; align-items: center; justify-content: center;
-    color: #00dbff;
-    box-shadow: 0 0 20px rgba(0,219,255,0.2);
-  }
-
-  /* center: text */
-  .wow-launch-body { flex: 1; min-width: 0; }
-
-  .wow-launch-eyebrow {
-    font-family: 'Orbitron', monospace;
-    font-size: 8px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: rgba(240,232,255,0.5);
-    margin-bottom: 4px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .wow-launch-pill {
-    display: inline-flex; align-items: center; gap: 4px;
-    background: rgba(0,255,136,0.12);
-    border: 1px solid rgba(0,255,136,0.45);
-    border-radius: 20px;
-    padding: 2px 8px;
-    font-family: 'Orbitron', monospace;
-    font-size: 7.5px;
-    letter-spacing: 2px;
-    color: #00ff88;
-    text-transform: uppercase;
-    animation: wowPillBeat 1.8s ease-in-out infinite;
-  }
-  .wow-launch-pill-dot {
-    width: 5px; height: 5px; border-radius: 50%;
-    background: #00ff88;
-    flex-shrink: 0;
-  }
-
-  .wow-launch-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 36px;
-    letter-spacing: 4px;
-    line-height: 1;
-    background: linear-gradient(90deg, #fff 0%, #00dbff 30%, #a44dff 60%, #fff 100%);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: wowTitleShine 4s linear infinite;
-  }
-
-  .wow-launch-sub {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: rgba(240,232,255,0.5);
-    margin-top: 4px;
-    letter-spacing: 0.3px;
-  }
-
-  /* right: actions */
-  .wow-launch-actions {
-    display: flex; align-items: center; gap: 10px;
-    flex-shrink: 0;
-  }
-  .wow-launch-cta {
-    font-family: 'Orbitron', monospace;
-    font-size: 9px;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    color: #0a0a1a;
-    background: linear-gradient(135deg, #00dbff, #5ee7ff);
-    border: none;
-    border-radius: 8px;
-    padding: 10px 18px;
-    cursor: pointer;
-    font-weight: 700;
-    white-space: nowrap;
-    animation: wowCtaGlow 2s ease-in-out infinite;
-    transition: transform .15s, filter .15s;
-  }
-  .wow-launch-cta:hover {
-    transform: translateY(-1px) scale(1.03);
-    filter: brightness(1.1);
-  }
-  .wow-launch-cta:active { transform: scale(0.98); }
-
-  .wow-banner-dismiss {
-    width: 28px; height: 28px;
-    border-radius: 7px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: rgba(240,232,255,0.3);
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background .2s, color .2s;
-    flex-shrink: 0;
-  }
-  .wow-banner-dismiss:hover {
-    background: rgba(255,255,255,0.1);
-    color: rgba(240,232,255,0.8);
-  }
-
-  @media(max-width:600px) {
-    .wow-launch-inner { flex-direction: column; align-items: flex-start; gap: 14px; padding: 18px 16px 16px; }
-    .wow-launch-icon { width:42px; height:42px; border-radius:11px; }
-    .wow-launch-title { font-size:28px; }
-    .wow-launch-sub { font-size:12px; }
-    .wow-launch-actions { width:100%; }
-    .wow-launch-cta { flex:1; text-align:center; justify-content:center; font-size:8.5px; }
-    .wow-banner-dismiss { position:absolute; top:14px; right:14px; }
-  }
 
 
   .edit-name-input {
@@ -1575,15 +1354,6 @@
     font-family:'Inter',sans-serif;
   }
   .btn-logout:hover { border-color:rgba(255,51,85,0.5); color:#ff3355; background:rgba(255,51,85,0.06); }
-  .btn-mute {
-    font-size:14px; line-height:1;
-    padding:6px 10px; border-radius:100px; cursor:pointer;
-    border:1px solid var(--border); background:transparent;
-    color:var(--text); transition:all .2s;
-    font-family:'Inter',sans-serif; display:none;
-  }
-  .btn-mute:hover { border-color:rgba(196,126,255,0.5); background:rgba(196,126,255,0.08); }
-  .btn-mute.muted { border-color:rgba(255,51,85,0.4); color:var(--muted); }
 
   @media(max-width:768px) {
     #userBadge {
@@ -1997,14 +1767,23 @@
     // Bypass automático em localhost (ambiente de desenvolvimento)
     const _isLocalDev = ['localhost','127.0.0.1'].includes(location.hostname);
     onValue(ref(db, 'config/maintenance'), (snap) => {
-      if (_isLocalDev) return; // dev local nunca entra em manutenção
       const mnt = document.getElementById('maintenanceScreen');
-      if (!mnt) return;
+      const login = document.getElementById('loginScreen');
+      const app = document.getElementById('appContainer');
+      if (_isLocalDev) {
+        if (login) login.style.display = '';
+        if (app) app.style.display = '';
+        return;
+      }
       if (snap.val() === true) {
-        mnt.classList.add('active');
+        if (mnt) mnt.classList.add('active');
+        if (login) login.style.display = 'none';
+        if (app) app.style.display = 'none';
         document.body.style.overflow = 'hidden';
       } else {
-        mnt.classList.remove('active');
+        if (mnt) mnt.classList.remove('active');
+        if (login) login.style.display = '';
+        if (app) app.style.display = '';
         document.body.style.overflow = '';
       }
     });
@@ -2023,7 +1802,6 @@
         renderPodium();
         renderStats();
         if (typeof renderEdit === 'function') renderEdit();
-        initWowBanner();
       }
       window._fbDataLoaded = true; // Firebase data received — safe to save
       // Update top bar status dot
@@ -2323,9 +2101,6 @@
       <div class="user-avatar" id="userInitials">—</div>
       <div class="user-name" id="userLabel">—</div>
     </div>
-    <button id="btnMute" class="btn-mute" onclick="toggleMute()" title="Silenciar música">
-      <span id="muteIcon">🔊</span>
-    </button>
     <button class="btn-logout" onclick="doLogout()">Sair</button>
   </div>
 </div>
@@ -2399,36 +2174,6 @@
       <div class="confetti-wrap" id="confettiWrap"></div>
       <div class="podium" id="podiumRanking"></div>
     </div>
-    <!-- WOW Launch Banner -->
-    <div id="wowNewBanner">
-      <div class="wow-launch-border"></div>
-      <div class="wow-launch-bg"></div>
-      <div class="wow-launch-sweep"></div>
-      <span class="wow-spark s1"></span>
-      <span class="wow-spark s2"></span>
-      <span class="wow-spark s3"></span>
-      <span class="wow-spark s4"></span>
-      <span class="wow-spark s5"></span>
-      <div class="wow-launch-inner">
-        <div class="wow-launch-icon">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l7-7 4 4 7-7"/><path d="M15 7h5v5"/></svg>
-        </div>
-        <div class="wow-launch-body">
-          <div class="wow-launch-eyebrow">
-            <span class="wow-launch-pill"><span class="wow-launch-pill-dot"></span>novo indicador</span>
-            agora disponível
-          </div>
-          <div class="wow-launch-title">WOW — Evolução de Receita</div>
-          <div class="wow-launch-sub">Crescimento do MRR · 5 faixas · até 35 pts/mês</div>
-        </div>
-        <div class="wow-launch-actions">
-          <button class="wow-launch-cta" onclick="switchTab('rules');dismissWowBanner();">Descobrir agora →</button>
-          <button class="wow-banner-dismiss" onclick="dismissWowBanner()" title="Fechar">
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 1l8 8M9 1L1 9"/></svg>
-          </button>
-        </div>
-      </div>
-    </div>
 
     <div class="filter-bar">
       <span class="filter-label">Filtrar:</span>
@@ -2447,7 +2192,7 @@
             <th>#</th>
             <th>Executivo</th>
             <th>Treinamentos</th>
-            <th>Plano de Ação</th>
+            <th>Satisfação da Franquia</th>
             <th>ALVO</th>
             <th>Índice Des.</th>
             <th>WOW</th>
@@ -2647,16 +2392,39 @@ const CRITERIA = [
     label:'Treinamentos',
     icon:'📚',
     pts:10,
-    rational:'Os treinamentos são desenvolvidos conforme a evolução do programa e aplicados ao vivo. A presença mínima de 50 minutos é exigida porque aprendizado exige comprometimento real — entrar e sair não conta. Cada participação completa vale 10 pts, sem teto, porque quem aprende mais, cresce mais.',
-    rule:'10 pts por participação · mínimo 50 min ao vivo · sem teto'
+    rational:'',
+    rule:'',
+    sections:[
+      { title:'O que é', text:'Participação em treinamentos promovidos pelo time de Desenvolvimento de Franquias.' },
+      { title:'Como funciona', items:[
+        'São válidos apenas os treinamentos oficiais promovidos pelo time de Desenvolvimento de Franquias.',
+        'Os treinamentos serão comunicados com antecedência mínima de 15 dias.',
+        'Para validar a participação, é necessário permanecer por, no mínimo, 50 minutos na sessão ou até que o treinamento finalize.'
+      ]},
+      { title:'Pontuação', text:'Cada participação válida gera 10 pontos.' }
+    ]
   },
   {
     key:'action',
-    label:'Plano de Ação',
-    icon:'📋',
-    pts:5,
-    rational:'O plano é emitido no portal e só pontua quando completo: objetivo claro, tarefas estruturadas em 5W2H e aprovação de todos os envolvidos — G.O e Franqueado. Sem aprovação total, não conta. Essa régua garante que os planos sejam reais, executáveis e comprometidos por toda a cadeia.',
-    rule:'5 pts por plano · exige objetivo + 5W2H + aprovação G.O + aprovação Franqueado · sem teto'
+    label:'Satisfação da Franquia',
+    icon:'⭐',
+    pts:30,
+    rational:'',
+    rule:'',
+    sections:[
+      { title:'O que é', text:'Indicador que mede o nível de satisfação das franquias com o desenvolvimento realizado pelo Executivo por meio do Plano de Ação pós diagnóstico.' },
+      { title:'Como funciona', items:[
+        'Após a conclusão de cada Plano de Ação, a franquia recebe uma pesquisa de satisfação.',
+        'A avaliação é realizada em uma escala de 1 a 5, podendo ser complementada por comentários.',
+        'A pontuação é calculada com base na média mensal das avaliações obtidas pelo Executivo.'
+      ]},
+      { title:'Pontuação', items:[
+        'Média até 2,0: 0 pontos.',
+        'Média de 2,1 a 3,0: 10 pontos.',
+        'Média de 3,1 a 4,5: 20 pontos.',
+        'Média acima de 4,5: 30 pontos.'
+      ]}
+    ]
   },
   {
     key:'alvo',
@@ -2983,24 +2751,6 @@ function renderCriteria() {
   g.innerHTML = '';
 }
 
-// ===================== WOW BANNER =====================
-const WOW_BANNER_KEY = 'wow_indicator_banner_dismissed_v2';
-
-function initWowBanner() {
-  if (sessionStorage.getItem(WOW_BANNER_KEY)) return;
-  const banner = document.getElementById('wowNewBanner');
-  if (banner) banner.classList.add('visible');
-}
-
-function dismissWowBanner() {
-  sessionStorage.setItem(WOW_BANNER_KEY, '1');
-  const banner = document.getElementById('wowNewBanner');
-  if (!banner) return;
-  banner.style.transition = 'opacity 0.3s, transform 0.3s';
-  banner.style.opacity = '0';
-  banner.style.transform = 'translateY(-6px)';
-  setTimeout(() => { banner.classList.remove('visible'); banner.style.cssText = ''; }, 320);
-}
 
 // ===================== RENDER RANKING =====================
 function renderRanking() {
@@ -3217,7 +2967,7 @@ function renderEdit() {
   const cards = document.getElementById('editCards');
   const FIELDS = [
     { key:'train',     label:'Treinamentos',             hint:'10 pts por participação (mín. 50 min ao vivo)' },
-    { key:'action',    label:'Plano de Ação',             hint:'5 pts por plano completo e aprovado' },
+    { key:'action',    label:'Satisfação da Franquia',     hint:'até 30 pts/mês · média das avaliações de satisfação pós Plano de Ação' },
     { key:'alvo',      label:'ALVO',                      hint:'15 pts por diagnóstico aplicado e anexado' },
     { key:'dev',       label:'Índice de Desenvolvimento', hint:'até 10 pts/mês · lançar pontos acumulados do mês' },
     { key:'wow',       label:'WOW — Evolução de Receita', hint:'até 35 pts/mês · 5 faixas · teto: 3% = 35 pts · < 0,5% não pontua' },
@@ -3623,7 +3373,6 @@ async function doLogin() {
     document.getElementById('userInitials').textContent = exec.name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
     applyRoleRestrictions();
     errEl.textContent = '';
-    if (window.startMusic) startMusic();
   } else {
     // Admin / Líder login — compara hash SHA-256
     const pwdHash = await hashPwd(pwd);
@@ -3641,8 +3390,7 @@ async function doLogin() {
       document.getElementById('userInitials').textContent = isLider ? 'LI' : 'AD';
       applyRoleRestrictions();
       errEl.textContent = '';
-      if (window.startMusic) startMusic();
-    } else {
+      } else {
       errEl.textContent = '✗ Senha incorreta. Tente novamente.';
       errEl.classList.remove('shake');
       void errEl.offsetWidth;
@@ -3977,6 +3725,17 @@ function updateMsgBadges() {
 }
 
 // ===================== RENDER RULES =====================
+function renderSections(c) {
+  if (!c.sections || !c.sections.length) return c.rational;
+  return c.sections.map(s => `
+    <div style="margin-bottom:12px;">
+      <div style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">${s.title}</div>
+      ${s.text ? `<div>${s.text}</div>` : ''}
+      ${s.items ? `<ul style="margin:0;padding-left:18px;">${s.items.map(i=>`<li style="margin-bottom:4px;">${i}</li>`).join('')}</ul>` : ''}
+    </div>
+  `).join('');
+}
+
 function renderRules() {
   const panel = document.getElementById('panel-rules');
   if (!panel) return;
@@ -4044,7 +3803,7 @@ function renderRules() {
             </div>
             <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--accent);line-height:1;flex-shrink:0;">${c.pts}<span style="font-size:14px;font-family:'Orbitron',monospace;"> pts</span></div>
           </div>
-          <div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:500;color:rgba(240,232,255,0.7);line-height:1.6;border-top:1px solid var(--border);padding-top:12px;">${c.rational}</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:500;color:rgba(240,232,255,0.7);line-height:1.6;border-top:1px solid var(--border);padding-top:12px;">${renderSections(c)}</div>
           ${tableHtml}
         </div>`;
       }
@@ -4060,7 +3819,7 @@ function renderRules() {
             </div>
             <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--accent);line-height:1;flex-shrink:0;">${c.pts}<span style="font-size:14px;font-family:'Orbitron',monospace;"> pts</span></div>
           </div>
-          <div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:500;color:rgba(240,232,255,0.7);line-height:1.6;border-top:1px solid var(--border);padding-top:12px;">${c.rational}</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:500;color:rgba(240,232,255,0.7);line-height:1.6;border-top:1px solid var(--border);padding-top:12px;">${renderSections(c)}</div>
           ${tableHtml}
         </div>`;
     }).join('')}
@@ -4155,33 +3914,7 @@ updateLastUpdateBadge();
 
 </div><!-- /appWrap -->
 
-<!-- ===== PLAYER DE MÚSICA (HTML5 NATIVO - Local) ===== -->
-<audio id="bgAudio" src="Musicamotivacional.mp3" loop></audio>
-
 <script>
-var _audioPlayer    = document.getElementById('bgAudio');
-var _audioStarted   = false;
-var _audioMuted     = false;
-
-function startMusic() {
-  if (!_audioPlayer) return;
-  document.getElementById('btnMute').style.display = 'flex';
-  
-  _audioPlayer.volume = 0.5; // Volume inicial 50%
-  
-  _audioPlayer.play().then(() => {
-    _audioStarted = true;
-  }).catch(err => {
-    console.log("Autoplay bloqueado. A música tocará após a primeira interação.");
-    // Fallback: tocar na primeira interação caso o navegador bloqueie autoplay
-    document.addEventListener('click', () => {
-      if (!_audioStarted) {
-        _audioPlayer.play();
-        _audioStarted = true;
-      }
-    }, { once: true });
-  });
-}
 
 // ===================== CUPONS FLASH =====================
 
@@ -4404,23 +4137,6 @@ function syncCouponOverlay() {
   }, 1000);
 }
 
-function toggleMute() {
-  if (!_audioPlayer) return;
-  _audioMuted = !_audioMuted;
-  _audioPlayer.muted = _audioMuted;
-  
-  var btn  = document.getElementById('btnMute');
-  var icon = document.getElementById('muteIcon');
-  if (_audioMuted) {
-    icon.textContent = '🔇';
-    btn.classList.add('muted');
-    btn.title = 'Ativar música';
-  } else {
-    icon.textContent = '🔊';
-    btn.classList.remove('muted');
-    btn.title = 'Silenciar música';
-  }
-}
 </script>
 
 <!-- COUPON FLASH OVERLAY -->
@@ -4446,7 +4162,7 @@ function exportExcel() {
     'Nome':                  e.name,
     'Vertical':              e.vertical || '',
     'Treinamentos':          e.train    || 0,
-    'Plano de Ação':         e.action   || 0,
+    'Satisfação da Franquia': e.action   || 0,
     'ALVO':                  e.alvo     || 0,
     'Índice de Desenv.':     e.dev      || 0,
     'WOW':                   e.wow      || 0,
