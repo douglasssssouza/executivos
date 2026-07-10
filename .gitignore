@@ -1,2 +1,5 @@
 *.backup-*.html
 preview-*.html
+maintenance-preview.html
+*.xlsx
+.firebase/

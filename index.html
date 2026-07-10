@@ -105,17 +105,6 @@
     background:linear-gradient(90deg,var(--accent),#00dbff);
     -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
   }
-  .header-season-badge {
-    display:inline-flex; align-items:center; gap:6px;
-    background:rgba(0,219,255,0.07); border:1px solid rgba(0,219,255,0.25);
-    border-radius:100px; padding:5px 14px;
-    font-size:11px; font-weight:600; color:#00dbff; letter-spacing:1px;
-    text-transform:uppercase; font-family:'Inter',sans-serif; white-space:nowrap;
-  }
-  .header-season-dot {
-    width:6px; height:6px; border-radius:50%; background:#00dbff;
-    box-shadow:0 0 6px #00dbff;
-  }
   .header-glow {
     position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
     width:600px; height:200px;
@@ -210,10 +199,10 @@
   .ranking-wrap {
     background: var(--panel);
     border: 1px solid var(--border);
-    border-radius:8px; overflow:hidden;
+    border-radius:8px; overflow-x:auto; overflow-y:hidden;
   }
-  table { width:100%; border-collapse:collapse; }
-  thead th {
+  .ranking-wrap table { width:100%; min-width:700px; table-layout:fixed; border-collapse:collapse; }
+  .ranking-wrap thead th {
     font-family:'Orbitron',monospace; font-size:10px; letter-spacing:2px;
     text-transform:uppercase; color:#b0c4d8;
     padding:14px 12px; text-align:center;
@@ -221,6 +210,13 @@
     border-bottom: 1px solid var(--border);
   }
   .th-tooltip { position:relative; cursor:help; }
+  .th-link { cursor:pointer; transition:color 0.2s; }
+  .th-link:hover { color:var(--accent); text-decoration:underline; text-underline-offset:3px; }
+  .criteria-flash { animation: criteriaFlash 1.6s ease; }
+  @keyframes criteriaFlash {
+    0%   { box-shadow: 0 0 0 2px var(--accent), 0 0 30px rgba(196,126,255,0.5); }
+    100% { box-shadow: none; }
+  }
   .th-tooltip .th-tip {
     display:none; position:absolute; top:calc(100% + 8px); left:50%; transform:translateX(-50%);
     background:#1a1a2e; border:1px solid rgba(0,212,255,0.3); border-radius:8px;
@@ -230,8 +226,8 @@
     pointer-events:none;
   }
   .th-tooltip:hover .th-tip { display:block; }
-  thead th:nth-child(2) { text-align:left; }
-  tbody tr {
+  .ranking-wrap thead th:nth-child(2) { text-align:left; }
+  .ranking-wrap tbody tr {
     border-bottom: 1px solid rgba(255,255,255,0.04);
     transition: background 0.2s;
     animation: rowIn 0.4s ease both;
@@ -240,15 +236,54 @@
     from { opacity:0; transform:translateX(-20px); }
     to { opacity:1; transform:translateX(0); }
   }
-  tbody tr:hover { background: rgba(0,212,255,0.04); }
-  tbody tr.rank-1 { background: rgba(255,215,0,0.06); }
-  tbody tr.rank-2 { background: rgba(192,192,192,0.04); }
-  tbody tr.rank-3 { background: rgba(205,127,50,0.04); }
-  td {
+  .ranking-wrap tbody tr:hover { background: rgba(0,212,255,0.04); }
+  .ranking-wrap tbody tr.rank-1 { background: linear-gradient(90deg, rgba(255,215,0,0.14), rgba(255,215,0,0.02) 70%); }
+  .ranking-wrap tbody tr.rank-2 { background: linear-gradient(90deg, rgba(192,192,192,0.10), rgba(192,192,192,0.02) 70%); }
+  .ranking-wrap tbody tr.rank-3 { background: linear-gradient(90deg, rgba(205,127,50,0.10), rgba(205,127,50,0.02) 70%); }
+  .ranking-wrap tbody tr.rank-1:hover { background: linear-gradient(90deg, rgba(255,215,0,0.20), rgba(255,215,0,0.04) 70%); }
+  .ranking-wrap tbody tr.rank-2:hover { background: linear-gradient(90deg, rgba(192,192,192,0.15), rgba(192,192,192,0.03) 70%); }
+  .ranking-wrap tbody tr.rank-3:hover { background: linear-gradient(90deg, rgba(205,127,50,0.15), rgba(205,127,50,0.03) 70%); }
+  .ranking-wrap td {
     padding:14px 12px; text-align:center;
     font-size:15px; font-weight:600;
   }
-  td:nth-child(2) { text-align:left; }
+  .ranking-wrap td:nth-child(2) { text-align:left; }
+  .ranking-wrap tbody tr.rank-1 .exec-name { font-size:16px; font-weight:800; }
+  .ranking-wrap tbody tr.rank-2 .exec-name,
+  .ranking-wrap tbody tr.rank-3 .exec-name { font-weight:800; }
+
+  /* Freeze # and Executivo columns (Excel-style) while scrolling through indicators */
+  .ranking-wrap th:nth-child(1), .ranking-wrap td:nth-child(1) { width:50px; min-width:50px; }
+  .ranking-wrap th:nth-child(2), .ranking-wrap td:nth-child(2) { width:280px; min-width:280px; }
+  .ranking-wrap th:nth-child(1), .ranking-wrap td:nth-child(1),
+  .ranking-wrap th:nth-child(2), .ranking-wrap td:nth-child(2) {
+    position:sticky; z-index:6;
+    background: linear-gradient(rgba(0,212,255,0.05), rgba(0,212,255,0.05)), var(--panel);
+  }
+  .ranking-wrap th:nth-child(1), .ranking-wrap td:nth-child(1) { left:0; }
+  .ranking-wrap th:nth-child(2), .ranking-wrap td:nth-child(2) { left:50px; }
+  .ranking-wrap thead th:nth-child(1), .ranking-wrap thead th:nth-child(2) { z-index:8; }
+  .ranking-wrap td:nth-child(1), .ranking-wrap td:nth-child(2) { background: var(--panel); }
+  .ranking-wrap tbody tr:hover td:nth-child(1), .ranking-wrap tbody tr:hover td:nth-child(2) {
+    background: linear-gradient(rgba(0,212,255,0.04), rgba(0,212,255,0.04)), var(--panel);
+  }
+  .ranking-wrap tbody tr.rank-1 td:nth-child(1), .ranking-wrap tbody tr.rank-1 td:nth-child(2) {
+    background: linear-gradient(rgba(255,215,0,0.14), rgba(255,215,0,0.14)), var(--panel);
+  }
+  .ranking-wrap tbody tr.rank-2 td:nth-child(1), .ranking-wrap tbody tr.rank-2 td:nth-child(2) {
+    background: linear-gradient(rgba(192,192,192,0.10), rgba(192,192,192,0.10)), var(--panel);
+  }
+  .ranking-wrap tbody tr.rank-3 td:nth-child(1), .ranking-wrap tbody tr.rank-3 td:nth-child(2) {
+    background: linear-gradient(rgba(205,127,50,0.10), rgba(205,127,50,0.10)), var(--panel);
+  }
+  /* left accent bar marking the top 3, visible even while the frozen column scrolls */
+  .ranking-wrap tbody tr.rank-1 td:nth-child(1) { box-shadow: inset 3px 0 0 0 #FFD700; }
+  .ranking-wrap tbody tr.rank-2 td:nth-child(1) { box-shadow: inset 3px 0 0 0 #C0C0C0; }
+  .ranking-wrap tbody tr.rank-3 td:nth-child(1) { box-shadow: inset 3px 0 0 0 #CD7F32; }
+  /* frozen-pane edge shadow, like Excel's freeze line */
+  .ranking-wrap th:nth-child(2), .ranking-wrap td:nth-child(2) {
+    box-shadow: 6px 0 10px -6px rgba(0,0,0,0.5);
+  }
 
   /* Rank badge */
   .rank-badge {
@@ -280,12 +315,236 @@
     -webkit-background-clip:text; -webkit-text-fill-color:transparent;
     background-clip:text;
   }
-  .rank-1 .total-cell { background: linear-gradient(180deg,#FFD700,#FFA500); -webkit-background-clip:text; background-clip:text; }
+  .rank-1 .total-cell { font-size:32px; background: linear-gradient(180deg,#FFD700,#FFA500); -webkit-background-clip:text; background-clip:text; }
+  .rank-2 .total-cell { background: linear-gradient(180deg,#F0F0F0,#A8A8A8); -webkit-background-clip:text; background-clip:text; }
+  .rank-3 .total-cell { background: linear-gradient(180deg,#E0A868,#B87333); -webkit-background-clip:text; background-clip:text; }
 
   /* Progress bar */
   .progress-wrap { width:80px; margin:0 auto; }
   .progress-bar { height:4px; background:rgba(255,255,255,0.08); border-radius:2px; overflow:hidden; }
   .progress-fill { height:100%; border-radius:2px; background:linear-gradient(90deg,#8b00ff,#FFD700); transition:width 0.8s ease; }
+
+  /* PREMIAÇÕES PANEL */
+  .premi-hero {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px 28px; margin-bottom: 20px;
+  }
+  .premi-hero-top {
+    display:flex; align-items:flex-start; justify-content:space-between; gap:20px;
+    flex-wrap:wrap; margin-bottom: 16px; padding-bottom:16px; border-bottom:1px solid var(--border);
+  }
+  .premi-hero-eyebrow {
+    font-family:'Orbitron',monospace; font-size: 10px; letter-spacing: 3px;
+    text-transform:uppercase; color: var(--muted); margin-bottom: 6px;
+  }
+  .premi-hero-title {
+    font-family:'Bebas Neue',sans-serif; font-size: 24px; letter-spacing: 0.5px;
+    color: var(--text); line-height:1.2;
+  }
+  .premi-prize-stat { text-align:right; flex-shrink:0; }
+  .premi-prize-value {
+    font-family:'Bebas Neue',sans-serif; font-size: 34px; line-height:1;
+    background: linear-gradient(100deg, #b8860b 0%, #FFD700 25%, #FFF8DC 50%, #FFD700 75%, #b8860b 100%);
+    background-size: 250% auto;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    animation: prizeShine 4s linear infinite;
+    filter: drop-shadow(0 0 10px rgba(255,215,0,0.25));
+  }
+  @keyframes prizeShine {
+    0%   { background-position: 0% center; }
+    100% { background-position: 250% center; }
+  }
+  .premi-prize-label {
+    font-family:'Orbitron',monospace; font-size: 9px; letter-spacing: 1px;
+    color: var(--muted); margin-top: 4px; text-transform:uppercase;
+  }
+  .premi-hero-desc {
+    font-family:'Rajdhani',sans-serif; font-size: 14px; font-weight: 500;
+    color: rgba(240,232,255,0.72); line-height: 1.65; margin-bottom: 10px;
+  }
+  .premi-hero-desc:last-child { margin-bottom: 0; }
+  .premi-highlight { color: var(--gold); font-weight: 700; }
+
+  .premi-history { margin-top: 4px; }
+  .premi-history-title {
+    font-family:'Orbitron',monospace; font-size: 11px; letter-spacing: 2px;
+    text-transform:uppercase; color: var(--muted); margin-bottom: 12px;
+  }
+  .premi-winner-card {
+    display:flex; align-items:center; gap:14px;
+    background: rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px;
+    padding: 12px 16px; margin-bottom: 8px; transition: border-color 0.2s;
+  }
+  .premi-winner-card:hover { border-color: rgba(196,126,255,0.35); }
+  .premi-winner-card.is-current {
+    background: rgba(255,215,0,0.04); border-color: rgba(255,215,0,0.3);
+  }
+  .premi-winner-badge {
+    font-family:'Orbitron',monospace; font-size: 8.5px; letter-spacing: 1px;
+    color: var(--gold); background: rgba(255,215,0,0.1); border:1px solid rgba(255,215,0,0.3);
+    border-radius: 100px; padding: 2px 8px; display:inline-block; margin-bottom: 4px;
+  }
+  .premi-winner-name { font-weight:700; font-size:14px; color:var(--text); }
+  .premi-winner-meta { display:flex; align-items:center; gap:8px; margin-top:4px; }
+  .premi-winner-date { font-family:'Orbitron',monospace; font-size:10px; color:var(--muted); letter-spacing:0.5px; }
+  .premi-winner-pts { font-family:'Bebas Neue',sans-serif; font-size:24px; color:var(--gold); flex-shrink:0; }
+  .premi-winner-rm {
+    font-family:'Orbitron',monospace; font-size:9px; color:var(--muted);
+    background:transparent; border:1px solid var(--border); border-radius:6px;
+    padding:5px 9px; cursor:pointer; transition:all 0.2s; flex-shrink:0;
+  }
+  .premi-winner-rm:hover { color:#ff3355; border-color:rgba(255,51,85,0.4); background:rgba(255,51,85,0.06); }
+  .premi-empty { color:var(--muted); font-family:'Rajdhani',sans-serif; font-size:14px; padding:20px; text-align:center; }
+
+  /* HISTÓRICO MENSAL PANEL */
+  .hist-close-card {
+    background: rgba(0,212,255,0.04); border:1px solid rgba(0,212,255,0.25);
+    border-radius:12px; padding:20px 24px; margin-bottom:24px;
+  }
+  .hist-close-title { font-family:Orbitron,monospace; font-size:11px; color:var(--accent); letter-spacing:2px; margin-bottom:12px; }
+  .hist-close-desc { font-family:'Rajdhani',sans-serif; font-size:14px; color:rgba(240,232,255,0.7); line-height:1.6; margin-bottom:16px; }
+  .hist-close-btn {
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    border:none; color:#fff; font-family:Orbitron,monospace; font-size:11px;
+    letter-spacing:1.5px; font-weight:700; padding:12px 20px; border-radius:8px; cursor:pointer;
+  }
+  .hist-month-card {
+    background: var(--panel); border:1px solid var(--border); border-radius:10px;
+    margin-bottom:12px; overflow:hidden;
+  }
+  .hist-month-header {
+    display:flex; align-items:center; gap:12px; padding:16px 20px; cursor:pointer;
+  }
+  .hist-month-name { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:1px; color:var(--text); }
+  .hist-month-sub { font-family:Orbitron,monospace; font-size:10px; color:var(--muted); margin-top:2px; }
+  .hist-month-toggle { color:var(--muted); transition:transform 0.3s; margin-left:auto; }
+  .hist-month-card.open .hist-month-toggle { transform:rotate(180deg); }
+  .hist-month-body { display:none; border-top:1px solid var(--border); }
+  .hist-month-card.open .hist-month-body { display:block; }
+  .hist-rank-row {
+    display:flex; align-items:center; gap:12px; padding:10px 20px;
+    border-bottom:1px solid rgba(255,255,255,0.04);
+  }
+  .hist-rank-row:last-child { border-bottom:none; }
+  .hist-rank-pos { font-family:'Bebas Neue',sans-serif; font-size:18px; color:var(--muted); width:24px; flex-shrink:0; }
+  .hist-rank-row.top1 .hist-rank-pos { color:var(--gold); }
+  .hist-rank-name { font-weight:700; font-size:14px; color:var(--text); }
+  .hist-rank-total { font-family:'Bebas Neue',sans-serif; font-size:20px; color:var(--accent); flex-shrink:0; }
+  .hist-rm-btn {
+    font-family:Orbitron,monospace; font-size:9px; color:var(--muted);
+    background:transparent; border:1px solid var(--border); border-radius:6px;
+    padding:5px 9px; cursor:pointer; transition:all 0.2s; flex-shrink:0;
+  }
+  .hist-rm-btn:hover { color:#ff3355; border-color:rgba(255,51,85,0.4); background:rgba(255,51,85,0.06); }
+
+  /* HISTÓRICO — EVOLUÇÃO POR EXECUTIVO */
+  .hist-evo-card {
+    background: rgba(180,100,255,0.04); border:1px solid var(--border);
+    border-radius:12px; padding:20px 24px; margin-bottom:24px;
+  }
+  .hist-evo-select {
+    width:100%; box-sizing:border-box; background:var(--panel); color:var(--text);
+    border:1px solid var(--border); border-radius:8px; padding:10px 14px;
+    font-family:Rajdhani,sans-serif; font-size:15px; margin-bottom:4px;
+  }
+  .hist-evo-summary {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:12px;
+    margin-top:18px; margin-bottom:12px;
+  }
+  .hist-evo-stat {
+    background:var(--panel); border:1px solid var(--border); border-radius:8px;
+    padding:12px 14px; text-align:center;
+  }
+  .hist-evo-stat-label { font-family:Orbitron,monospace; font-size:9px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
+  .hist-evo-stat-value { font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--accent); }
+  .hist-evo-alert {
+    font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700;
+    border-radius:8px; padding:10px 16px; margin-bottom:16px;
+  }
+  .hist-evo-alert.bad { background:rgba(255,51,85,0.1); border:1px solid rgba(255,51,85,0.35); color:#ff5060; }
+  .hist-evo-alert.good { background:rgba(0,255,136,0.08); border:1px solid rgba(0,255,136,0.3); color:#00ff88; }
+  .hist-evo-table-wrap { overflow-x:auto; border-radius:8px; border:1px solid var(--border); }
+  .hist-evo-table { width:100%; min-width:800px; table-layout:fixed; border-collapse:collapse; font-family:Orbitron,monospace; font-size:11px; }
+  .hist-evo-table th {
+    text-align:center; padding:10px 8px; color:var(--muted); letter-spacing:1px;
+    background:rgba(255,255,255,0.03); border-bottom:1px solid var(--border); white-space:nowrap;
+  }
+  .hist-evo-table td {
+    text-align:center; padding:9px 8px; color:var(--text); font-weight:600;
+    border-bottom:1px solid rgba(255,255,255,0.04); white-space:nowrap;
+    overflow:hidden; text-overflow:clip; box-sizing:border-box;
+  }
+  .hist-evo-table th { box-sizing:border-box; }
+  .hist-evo-table tbody tr:last-child td { border-bottom:none; }
+  .hist-evo-table tbody tr:hover { background:rgba(0,212,255,0.04); }
+  .hist-evo-table.auto-width { table-layout:auto; min-width:0; }
+
+  /* COMPARAÇÃO — chips de seleção múltipla */
+  .hist-compare-chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; margin-bottom:4px; }
+  .hist-compare-chip {
+    font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600;
+    padding:6px 14px; border-radius:100px; cursor:pointer;
+    border:1px solid var(--border); background:transparent; color:var(--muted);
+    transition:all 0.2s;
+  }
+  .hist-compare-chip:hover { border-color:rgba(0,219,255,0.35); color:var(--text); }
+  .hist-compare-chip.active { background:rgba(0,219,255,0.12); border-color:rgba(0,219,255,0.45); color:#00dbff; }
+
+  /* ===== CORRIDA DA SEMANA ===== */
+  .race-banner {
+    position:relative; background:linear-gradient(135deg, rgba(0,219,255,0.06), rgba(164,77,255,0.08));
+    border:1px solid rgba(0,219,255,0.25); border-radius:14px;
+    padding:20px 44px 22px 24px; margin-bottom:20px; overflow:hidden;
+  }
+  .race-banner::before {
+    content:''; position:absolute; inset:0; pointer-events:none; opacity:0.5;
+    background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.025) 0 10px, transparent 10px 20px);
+  }
+  .race-banner-close {
+    position:absolute; top:14px; right:16px; z-index:2;
+    background:transparent; border:none; color:var(--muted); font-size:18px;
+    cursor:pointer; line-height:1; padding:4px; transition:color 0.2s;
+  }
+  .race-banner-close:hover { color:#ff3355; }
+  .race-banner-title {
+    font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1.5px;
+    color:var(--text); position:relative; z-index:1;
+  }
+  .race-banner-sub {
+    font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600;
+    color:rgba(240,232,255,0.65); margin-top:2px; margin-bottom:18px; position:relative; z-index:1;
+  }
+  .race-lane { position:relative; z-index:1; margin-bottom:38px; }
+  .race-lane:last-child { margin-bottom:0; }
+  .race-lane-track {
+    position:relative; height:2px; border-radius:2px;
+    background: repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0 6px, transparent 6px 12px);
+    margin-left:50px; margin-right:30px;
+  }
+  .race-lane-flag { position:absolute; right:-24px; top:50%; transform:translateY(-50%); font-size:18px; }
+  .race-lane-rank {
+    position:absolute; left:0; top:50%; transform:translateY(-50%);
+    font-family:'Bebas Neue',sans-serif; font-size:20px; color:var(--muted); width:36px; text-align:center;
+  }
+  .race-avatar-wrap {
+    position:absolute; top:50%; left:0%; transform:translate(-50%,-50%);
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    opacity:0;
+  }
+  .race-avatar-wrap .exec-avatar { width:56px; height:56px; font-size:19px; box-shadow:0 0 14px rgba(0,219,255,0.5); }
+  .race-gain-badge {
+    font-family:'Orbitron',monospace; font-size:12px; font-weight:700; color:#00ff88;
+    background:rgba(0,255,136,0.12); border:1px solid rgba(0,255,136,0.3);
+    border-radius:100px; padding:3px 11px; white-space:nowrap; margin-top:3px;
+  }
+  .race-lane-name {
+    font-family:'Rajdhani',sans-serif; font-size:12px; font-weight:600; color:var(--muted);
+    margin-left:50px; margin-top:34px;
+  }
+  .race-banner-empty {
+    font-family:'Rajdhani',sans-serif; font-size:13px; color:var(--muted); position:relative; z-index:1;
+  }
 
   /* EDIT PANEL */
   .edit-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
@@ -332,12 +591,24 @@
   .edit-body { display:none; padding:20px; }
   .edit-card.open .edit-body { display:block; }
   .edit-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; }
+  .edit-section-label {
+    font-family:'Orbitron',monospace; font-size:10px; color:var(--muted);
+    letter-spacing:2px; text-transform:uppercase; margin:18px 0 10px;
+  }
+  .edit-section-label:first-of-type { margin-top:0; }
 
   .edit-field label {
-    display:block; font-family:'Orbitron',monospace; font-size:10px; color:var(--muted);
+    display:flex; align-items:center; justify-content:space-between; gap:6px;
+    font-family:'Orbitron',monospace; font-size:10px; color:var(--muted);
     letter-spacing:2px; text-transform:uppercase; margin-bottom:6px;
   }
   .edit-field .pts-hint { font-size:11px; color:var(--accent); margin-bottom:6px; }
+  .auto-badge {
+    display:inline-flex; align-items:center; gap:3px; flex-shrink:0;
+    font-family:'Inter',sans-serif; font-size:8.5px; font-weight:700; letter-spacing:0.5px;
+    text-transform:none; color:#00ff88; background:rgba(0,255,136,0.1);
+    border:1px solid rgba(0,255,136,0.3); border-radius:100px; padding:2px 8px;
+  }
 
   .toggle-group { display:flex; gap:8px; flex-wrap:wrap; }
   .toggle-btn {
@@ -370,22 +641,25 @@
   }
   .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
 
-  /* STATS */
-  .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:32px; }
-  .stat-card {
-    background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:20px;
-    text-align:center; position:relative; overflow:hidden;
-    transition: transform 0.2s, border-color 0.3s;
+  /* Método x Performance bar — same width:100% + calc() ratios as the table's <colgroup>, so it stays aligned at any width */
+  .indicator-group-bar {
+    display:flex; min-width:700px; margin-bottom:0; border-radius:8px 8px 0 0; overflow:hidden;
   }
-  .stat-card:hover { transform:translateY(-3px); border-color:rgba(0,212,255,0.3); }
-  .stat-card::after {
-    content:''; position:absolute; bottom:0; left:0; right:0; height:2px;
-    background:linear-gradient(90deg,var(--accent2),var(--accent));
-    opacity:0.5;
+  .ig-spacer:first-child { flex:0 0 330px; }
+  .ig-spacer:last-child { flex:0 0 calc((100% - 330px) * 0.12857); }
+  .ig-group {
+    text-align:center; padding:8px 0;
+    font-family:'Orbitron',monospace; font-size:11px; font-weight:700; letter-spacing:2px;
+    text-transform:uppercase;
   }
-  .stat-label { font-family:'Inter',sans-serif; font-size:10px; font-weight:600; color:#7a90b0; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px; }
-  .stat-value { font-family:'Bebas Neue',sans-serif; font-size:48px; background:linear-gradient(180deg,#fff,#e0a0ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1; }
-  .stat-sub { font-size:12px; color:#7a90b0; margin-top:4px; }
+  .ig-method {
+    flex:0 0 calc((100% - 330px) * 0.5);
+    background:rgba(0,150,255,0.14); color:#3aa6ff; box-shadow:inset 0 -2px 0 rgba(58,166,255,0.6);
+  }
+  .ig-performance {
+    flex:0 0 calc((100% - 330px) * 0.37143);
+    background:rgba(255,51,85,0.14); color:#ff3355; box-shadow:inset 0 -2px 0 rgba(255,51,85,0.6);
+  }
 
   /* vertical filter */
   .filter-bar { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; align-items:center; }
@@ -408,12 +682,12 @@
   .holo-left {
     background: linear-gradient(170deg, rgba(0,219,255,0.4) 0%, rgba(0,219,255,0.12) 45%, transparent 80%);
     clip-path: polygon(0% 0%, 12% 0%, 38% 100%, 26% 100%);
-    animation: swingLeft 2.8s ease-in-out infinite, holoFlicker 3s ease-in-out infinite;
+    animation: swingLeft 2s ease-in-out infinite, holoFlicker 2.1s ease-in-out infinite;
   }
   .holo-right {
     background: linear-gradient(190deg, rgba(164,77,255,0.4) 0%, rgba(164,77,255,0.12) 45%, transparent 80%);
     clip-path: polygon(88% 0%, 100% 0%, 74% 100%, 62% 100%);
-    animation: swingRight 2.8s ease-in-out infinite .8s, holoFlicker 3.4s ease-in-out infinite .5s;
+    animation: swingRight 2s ease-in-out infinite .6s, holoFlicker 2.4s ease-in-out infinite .4s;
   }
   @keyframes swingLeft {
     0%,100% { clip-path: polygon(0% 0%, 12% 0%, 38% 100%, 26% 100%); }
@@ -432,12 +706,12 @@
   .floor-pool-left {
     width:24%; left:28%;
     background: radial-gradient(ellipse, rgba(0,219,255,0.5) 0%, transparent 100%);
-    animation: poolSwingLeft 2.8s ease-in-out infinite, holoFlicker 3s ease-in-out infinite;
+    animation: poolSwingLeft 2s ease-in-out infinite, holoFlicker 2.1s ease-in-out infinite;
   }
   .floor-pool-right {
     width:24%; right:28%;
     background: radial-gradient(ellipse, rgba(164,77,255,0.5) 0%, transparent 100%);
-    animation: poolSwingRight 2.8s ease-in-out infinite .8s, holoFlicker 3.4s ease-in-out infinite .5s;
+    animation: poolSwingRight 2s ease-in-out infinite .6s, holoFlicker 2.4s ease-in-out infinite .4s;
   }
   @keyframes poolSwingLeft { 0%,100%{left:28%} 50%{left:40%} }
   @keyframes poolSwingRight { 0%,100%{right:28%} 50%{right:40%} }
@@ -449,13 +723,13 @@
     left:8px;
     background: radial-gradient(circle, #fff 0%, rgba(0,219,255,1) 55%);
     box-shadow: 0 0 20px 8px rgba(0,219,255,1), 0 0 60px 20px rgba(0,219,255,0.5);
-    animation: lampPulse 3s ease-in-out infinite;
+    animation: lampPulse 2.1s ease-in-out infinite;
   }
   .lamp-right {
     right:8px;
     background: radial-gradient(circle, #fff 0%, rgba(164,77,255,1) 55%);
     box-shadow: 0 0 20px 8px rgba(164,77,255,1), 0 0 60px 20px rgba(164,77,255,0.5);
-    animation: lampPulse 3.4s ease-in-out infinite .5s;
+    animation: lampPulse 2.4s ease-in-out infinite .4s;
   }
   @keyframes lampPulse {
     0%,100% { transform:scale(1); opacity:1; }
@@ -467,6 +741,15 @@
     0%   { top:-16px; opacity:1; transform:rotate(0deg) translateX(0); }
     80%  { opacity:1; }
     100% { top:105%; opacity:0; transform:rotate(800deg) translateX(40px); }
+  }
+  .cp-burst {
+    top:38%; left:50%; opacity:1;
+    animation: confettiBurst .95s cubic-bezier(.15,.75,.3,1) forwards;
+  }
+  @keyframes confettiBurst {
+    0%   { transform:translate(0,0) rotate(0deg); opacity:1; }
+    65%  { opacity:1; }
+    100% { transform:translate(var(--dx),var(--dy)) rotate(var(--spin)); opacity:0; }
   }
 
   .podium {
@@ -700,10 +983,6 @@
     .mobile-arrow-down { font-size:11px; color:#ff3355; font-weight:700; }
     .mobile-arrow-same { font-size:11px; color:var(--muted); }
 
-
-    /* Stats grid 2 columns */
-    .stats-grid { grid-template-columns:1fr 1fr; }
-
     /* Criteria grid 1 column */
     .criteria-grid { grid-template-columns:1fr; }
 
@@ -741,7 +1020,6 @@
     .tabs { gap:2px; }
     .tab { font-size:9px; padding:9px 10px; }
     .filter-btn { font-size:10px; padding:6px 10px; }
-    .stats-grid { grid-template-columns:1fr 1fr; }
     .mobile-pts { font-size:22px; }
     .mobile-exec-name { font-size:13px; }
     .mobile-rank-num { font-size:22px; }
@@ -754,38 +1032,13 @@
   }
 
 
-  /* ===== WOW CARD ===== */
+  /* ===== EVOLUÇÃO DE RECEITA CARD ===== */
   .criteria-card.wow-card {
-    background: linear-gradient(135deg, rgba(255,165,0,0.12), rgba(139,0,255,0.18), rgba(255,215,0,0.08));
-    border: 1px solid rgba(255,200,0,0.5);
-    box-shadow: 0 0 30px rgba(255,165,0,0.15), inset 0 0 40px rgba(255,215,0,0.04);
     position: relative; overflow: hidden;
-    animation: wowPulse 3s ease-in-out infinite;
-  }
-  @keyframes wowPulse {
-    0%,100% { box-shadow: 0 0 30px rgba(255,165,0,0.15), inset 0 0 40px rgba(255,215,0,0.04); border-color: rgba(255,200,0,0.5); }
-    50%      { box-shadow: 0 0 55px rgba(255,165,0,0.35), inset 0 0 60px rgba(255,215,0,0.08); border-color: rgba(255,215,0,0.85); }
-  }
-  .wow-card::before {
-    content: '';
-    position: absolute; top: -60%; left: -20%; width: 60%; height: 220%;
-    background: linear-gradient(105deg, transparent, rgba(255,215,0,0.06), transparent);
-    animation: wowShine 4s ease-in-out infinite;
-    pointer-events: none;
-  }
-  @keyframes wowShine {
-    0%   { transform: translateX(-100%); }
-    60%,100% { transform: translateX(300%); }
   }
   .wow-rocket {
     font-size: 42px; line-height: 1;
-    animation: rocketBounce 1.8s ease-in-out infinite;
-    filter: drop-shadow(0 0 12px rgba(255,165,0,0.8));
     display: inline-block; flex-shrink: 0;
-  }
-  @keyframes rocketBounce {
-    0%,100% { transform: translateY(0) rotate(-35deg); }
-    50%      { transform: translateY(-10px) rotate(-35deg); }
   }
   .wow-content { flex: 1; }
   .wow-card .criteria-name {
@@ -1089,20 +1342,6 @@
     border-top:1px solid rgba(164,77,255,0.07);
     transform:rotate(-8deg);
   }
-  #loginScreen .ls-brand { position:relative; z-index:1; }
-  #loginScreen .ls-brand-pill {
-    display:inline-flex; align-items:center; gap:8px;
-    background:rgba(0,219,255,0.08); border:1px solid rgba(0,219,255,0.2);
-    border-radius:100px; padding:6px 16px 6px 10px;
-    font-size:12px; font-weight:600; color:#00dbff;
-    letter-spacing:.5px; text-transform:uppercase; margin-bottom:48px;
-  }
-  #loginScreen .ls-brand-dot {
-    width:8px; height:8px; border-radius:50%;
-    background:#00dbff; box-shadow:0 0 8px #00dbff;
-    animation:lsDotBlink 2s ease-in-out infinite;
-  }
-  @keyframes lsDotBlink { 0%,100%{opacity:1} 50%{opacity:.3} }
   #loginScreen .ls-headline {
     position:relative; z-index:1;
     display:flex; flex-direction:column; flex:1;
@@ -1295,7 +1534,6 @@
     #loginScreen { overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior-y:contain; }
     #loginScreen .ls-screen { grid-template-columns:1fr; }
     #loginScreen .ls-left { padding:24px 24px 20px; min-height:auto; gap:16px; justify-content:flex-start; }
-    #loginScreen .ls-brand-pill { margin-bottom:0; font-size:10px; }
     #loginScreen .ls-brand-logo { width:clamp(90px,28vw,120px); margin-bottom:0; margin-top:14px; }
     #loginScreen .ls-h1 { font-size:clamp(52px,15vw,72px); letter-spacing:-1px; margin-bottom:10px; margin-top:10px; }
     #loginScreen .ls-hl-tag { font-size:11px; }
@@ -1321,17 +1559,6 @@
     background:linear-gradient(90deg,var(--accent),#00dbff);
     -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
   }
-  .top-divider { width:1px; height:20px; background:var(--border); }
-  .top-status {
-    display:flex; align-items:center; gap:6px;
-    font-size:11px; font-weight:500; color:var(--muted); letter-spacing:.3px;
-    font-family:'Inter',sans-serif;
-  }
-  .top-status-dot {
-    width:6px; height:6px; border-radius:50%; background:#00ff88;
-    box-shadow:0 0 6px #00ff88; animation:statusPulse 2s ease-in-out infinite;
-  }
-  @keyframes statusPulse { 0%,100%{opacity:1} 50%{opacity:.4} }
   .top-bar-right { display:flex; align-items:center; gap:14px; }
   .user-chip {
     display:flex; align-items:center; gap:8px;
@@ -1354,6 +1581,57 @@
     font-family:'Inter',sans-serif;
   }
   .btn-logout:hover { border-color:rgba(255,51,85,0.5); color:#ff3355; background:rgba(255,51,85,0.06); }
+  .btn-contest {
+    font-size:11px; font-weight:600; letter-spacing:.5px;
+    padding:6px 14px; border-radius:100px; cursor:pointer;
+    border:1px solid rgba(0,212,255,0.35); background:rgba(0,212,255,0.06);
+    color:var(--accent); transition:all .2s;
+    font-family:'Inter',sans-serif;
+  }
+  .btn-contest:hover { border-color:rgba(0,212,255,0.6); background:rgba(0,212,255,0.12); }
+
+  /* ===== CONTESTAÇÃO DE PONTOS ===== */
+  .contest-warning {
+    background:rgba(255,184,40,0.1); border:1px solid rgba(255,184,40,0.35); border-radius:8px;
+    padding:10px 14px; margin:0 0 16px; font-family:Rajdhani,sans-serif; font-size:13px;
+    font-weight:600; color:#ffb828; line-height:1.5;
+  }
+  .contest-form { padding:4px 0 20px; border-bottom:1px solid var(--border); margin-bottom:16px; }
+  .contest-form label {
+    display:block; font-family:Orbitron,monospace; font-size:9px; color:var(--muted);
+    letter-spacing:1px; margin-bottom:5px; text-transform:uppercase;
+  }
+  .contest-form select, .contest-form textarea {
+    width:100%; box-sizing:border-box; background:var(--panel); color:var(--text);
+    border:1px solid var(--border); border-radius:8px; padding:10px 12px;
+    font-family:Rajdhani,sans-serif; font-size:14px; margin-bottom:12px; resize:vertical;
+  }
+  .contest-submit-btn {
+    width:100%; background:linear-gradient(135deg,var(--accent2),var(--accent));
+    border:none; color:#fff; font-family:Orbitron,monospace; font-size:11px;
+    letter-spacing:1px; font-weight:700; padding:11px; border-radius:8px; cursor:pointer;
+  }
+  .contest-card {
+    background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px;
+    padding:12px 14px; margin-bottom:10px;
+  }
+  .contest-card-top { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px; }
+  .contest-indicator { font-weight:700; font-size:14px; color:var(--text); }
+  .contest-status {
+    font-family:Orbitron,monospace; font-size:8.5px; letter-spacing:0.5px;
+    padding:3px 9px; border-radius:100px; flex-shrink:0; white-space:nowrap;
+  }
+  .contest-status.pendente { background:rgba(255,184,40,0.12); border:1px solid rgba(255,184,40,0.35); color:#ffb828; }
+  .contest-status.resolvido { background:rgba(0,255,136,0.1); border:1px solid rgba(0,255,136,0.3); color:#00ff88; }
+  .contest-reason { font-family:Rajdhani,sans-serif; font-size:13px; color:rgba(240,232,255,0.75); line-height:1.5; margin-bottom:6px; }
+  .contest-meta { font-family:Orbitron,monospace; font-size:9px; color:var(--muted); letter-spacing:0.5px; }
+  .contest-exec-name { font-weight:700; font-size:14px; color:var(--text); }
+  .contest-resolve-btn {
+    font-family:Orbitron,monospace; font-size:9px; color:#00ff88;
+    background:rgba(0,255,136,0.08); border:1px solid rgba(0,255,136,0.3); border-radius:6px;
+    padding:6px 12px; cursor:pointer; transition:all 0.2s; margin-top:8px;
+  }
+  .contest-resolve-btn:hover { background:rgba(0,255,136,0.15); }
 
   @media(max-width:768px) {
     #userBadge {
@@ -1362,7 +1640,7 @@
       background:var(--panel); border-bottom:1px solid var(--border);
       padding:10px 16px 10px 16px; box-sizing:border-box; overflow:visible;
     }
-    .top-logo, .top-divider { display:none; }
+    .top-logo { display:none; }
     .top-bar-right { gap:8px; flex-shrink:0; }
     .btn-logout { padding:6px 10px; font-size:10px; flex-shrink:0; }
     .user-info { text-align:left; }
@@ -1457,6 +1735,12 @@
     align-items:center; justify-content:center; padding:16px;
   }
   #msgModal.open { display:flex; }
+  #contestModal {
+    display:none; position:fixed; inset:0; z-index:300;
+    background:rgba(0,0,0,0.7); backdrop-filter:blur(4px);
+    align-items:center; justify-content:center; padding:16px;
+  }
+  #contestModal.open { display:flex; }
   .msg-modal-box {
     background:var(--panel2); border:1px solid var(--border);
     border-radius:16px; width:100%; max-width:480px;
@@ -1800,16 +2084,10 @@
         getRanked('Todos').forEach((e,i) => { previousRanks[e.id] = i+1; });
         renderRanking();
         renderPodium();
-        renderStats();
         if (typeof renderEdit === 'function') renderEdit();
       }
       window._fbDataLoaded = true; // Firebase data received — safe to save
-      // Update top bar status dot
-      const dot = document.querySelector('.top-status-dot');
-      if (dot) { dot.style.background='#00ff88'; dot.style.boxShadow='0 0 6px #00ff88'; }
     }, (error) => {
-      const dot = document.querySelector('.top-status-dot');
-      if (dot) { dot.style.background='#ff3355'; dot.style.boxShadow='0 0 6px #ff3355'; }
     });
 
     // Listener de mensagens em tempo real
@@ -1914,6 +2192,110 @@
       set(ref(db, 'challenge/completedBy'), completed);
       set(ref(db, 'executives'), executives);
     };
+
+    // Listener de premiações (histórico de vencedores)
+    const premiacoesRef = ref(db, 'premiacoes');
+    onValue(premiacoesRef, (snap) => {
+      window._premiacoesData = snap.val() || {};
+      if (typeof renderPremiacoes === 'function') renderPremiacoes();
+    });
+    window._saveWinner = function(winner) {
+      const key = 'win_' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
+      return set(ref(db, 'premiacoes/' + key), winner)
+        .catch((err) => {
+          console.error('Erro ao salvar vencedor:', err);
+          alert('⚠️ Falha ao registrar vencedor(a) no Firebase: ' + err.message);
+        });
+    };
+    window._deleteWinner = function(key) {
+      return set(ref(db, 'premiacoes/' + key), null)
+        .catch((err) => {
+          console.error('Erro ao remover vencedor:', err);
+          alert('⚠️ Falha ao remover registro no Firebase: ' + err.message);
+        });
+    };
+
+    // Listener de histórico mensal (snapshots de fechamento de mês)
+    const historicoRef = ref(db, 'historico_mensal');
+    onValue(historicoRef, (snap) => {
+      window._historicoData = snap.val() || {};
+      if (typeof renderHistorico === 'function') renderHistorico();
+    });
+    window._saveMonthSnapshot = function(key, snapshot) {
+      return set(ref(db, 'historico_mensal/' + key), snapshot)
+        .catch((err) => {
+          console.error('Erro ao fechar o mês:', err);
+          alert('⚠️ Falha ao fechar o mês no Firebase: ' + err.message);
+        });
+    };
+    window._resetMonthlyPoints = function(updatedExecutives) {
+      return set(ref(db, 'executives'), updatedExecutives)
+        .catch((err) => {
+          console.error('Erro ao zerar pontos:', err);
+          alert('⚠️ Falha ao zerar pontos no Firebase: ' + err.message);
+        });
+    };
+    window._deleteMonthSnapshot = function(key) {
+      return set(ref(db, 'historico_mensal/' + key), null)
+        .catch((err) => {
+          console.error('Erro ao remover mês do histórico:', err);
+          alert('⚠️ Falha ao remover do Firebase: ' + err.message);
+        });
+    };
+
+    // Listener de aplicações de pontos de "Acesso ao Ranking" (evita duplicar pontos na mesma semana)
+    const rankingAccessAppliedRef = ref(db, 'ranking_access_applied');
+    onValue(rankingAccessAppliedRef, (snap) => {
+      window._rankingAccessApplied = snap.val() || {};
+      if (typeof renderRankingAccessSummary === 'function') renderRankingAccessSummary();
+    });
+    window._applyRankingAccessPoints = function(weekKey, execIds, updatedExecutives) {
+      const appliedUpdates = {};
+      execIds.forEach(id => { appliedUpdates[weekKey + '/' + id] = true; });
+      return update(ref(db, 'ranking_access_applied'), appliedUpdates)
+        .then(() => set(ref(db, 'executives'), updatedExecutives))
+        .catch((err) => {
+          console.error('Erro ao aplicar pontos de acesso ao ranking:', err);
+          alert('⚠️ Falha ao aplicar pontos no Firebase: ' + err.message);
+        });
+    };
+
+    // Listener de contestações de pontos
+    const contestacoesRef = ref(db, 'contestacoes');
+    onValue(contestacoesRef, (snap) => {
+      window._contestacoesData = snap.val() || {};
+      if (typeof renderContestacoesAdmin === 'function') renderContestacoesAdmin();
+      if (typeof renderContestModal === 'function' && document.getElementById('contestModal')?.classList.contains('open')) renderContestModal();
+      if (typeof updateContestBadge === 'function') updateContestBadge();
+    });
+    window._saveContest = function(contest) {
+      const key = 'ctt_' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
+      return set(ref(db, 'contestacoes/' + key), contest)
+        .catch((err) => {
+          console.error('Erro ao enviar contestação:', err);
+          alert('⚠️ Falha ao enviar contestação: ' + err.message);
+        });
+    };
+    window._resolveContest = function(key) {
+      return update(ref(db, 'contestacoes/' + key), { status: 'resolvido', resolvedAt: Date.now() })
+        .catch((err) => {
+          console.error('Erro ao resolver contestação:', err);
+          alert('⚠️ Falha ao marcar como resolvida: ' + err.message);
+        });
+    };
+
+    // Listener de snapshots diários de pontos (alimenta a "Corrida da Semana")
+    const pointsSnapshotsRef = ref(db, 'points_snapshots');
+    onValue(pointsSnapshotsRef, (snap) => {
+      window._pointsSnapshotData = snap.val() || {};
+      if (typeof renderRaceBanner === 'function') renderRaceBanner();
+    });
+    window._savePointsSnapshot = function(dateKey, snapshot) {
+      return set(ref(db, 'points_snapshots/' + dateKey), snapshot)
+        .catch((err) => {
+          console.error('Erro ao salvar snapshot diário de pontos:', err);
+        });
+    };
   </script>
   <script>
   // Block pinch-zoom on iOS while login screen is visible
@@ -1980,12 +2362,6 @@
   <div class="ls-screen">
     <div class="ls-left">
       <div class="ls-geo-lines"></div>
-      <div class="ls-brand">
-        <div class="ls-brand-pill">
-          <div class="ls-brand-dot"></div>
-          DESENVOLVIMENTO DE FRANQUIAS
-        </div>
-      </div>
       <div class="ls-headline">
         <svg class="ls-brand-logo" viewBox="0 0 140 100" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -2090,13 +2466,9 @@
 <div id="userBadge">
   <div class="top-bar-left">
     <div class="top-logo">ALTA PERFORMANCE</div>
-    <div class="top-divider"></div>
-    <div class="top-status">
-      <div class="top-status-dot"></div>
-      Conectado ao banco
-    </div>
   </div>
   <div class="top-bar-right">
+    <button class="btn-contest" id="contestBtn" onclick="openContestModal()" style="display:none;" title="Válida só dentro do mês vigente — não há ajuste retroativo após o fechamento">📢 Contestar Pontos</button>
     <div class="user-chip">
       <div class="user-avatar" id="userInitials">—</div>
       <div class="user-name" id="userLabel">—</div>
@@ -2116,11 +2488,6 @@
         <span class="ht2">ALTA PERFORMANCE</span>
       </div>
     </div>
-
-    <div class="header-season-badge">
-      <div class="header-season-dot"></div>
-      2026
-    </div>
   </header>
 
   <!-- Criteria Reference (moved to Como Pontuar tab) -->
@@ -2132,15 +2499,19 @@
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 11L5 8l2.5 2.5L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Ranking
     </button>
-    <button class="tab" onclick="switchTab('stats')">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M7 4v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      Estatísticas
+    <button class="tab" onclick="switchTab('premiacoes')">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 2h6v2.5a3 3 0 0 1-6 0V2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M4 2.5H2a1 1 0 0 0 0 2c0 1 .8 1.8 1.8 1.9M10 2.5h2a1 1 0 0 1 0 2c0 1-.8 1.8-1.8 1.9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M7 6.8v2.2M5.2 11.5h3.6M6 9h2l.4 2.5H5.6L6 9z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Premiações
     </button>
-    <div class="tab" onclick="switchTab('rules', this)">
+    <button class="tab" onclick="switchTab('historico')">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7.5" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M7 4.5v3l2 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.2 1.6L2.5 3.3M9.8 1.6l1.7 1.7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      Histórico
+    </button>
+    <div class="tab" id="tab-rules" onclick="switchTab('rules', this)">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="1.5" width="10" height="11" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5h5M4.5 7.5h5M4.5 10h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
       Como Pontuar
     </div>
-    <button class="tab" id="tab-edit" onclick="switchTab('edit')" style="color:#f0f4ff;">
+    <button class="tab" id="tab-edit" onclick="switchTab('edit')">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Editar Pontos
     </button>
@@ -2151,6 +2522,11 @@
     <button class="tab" id="tab-challenge" onclick="switchTab('challenge')" style="display:none;">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.8 3.6L13 5.3l-3 2.9.7 4.1L7 10.4l-3.7 1.9.7-4.1-3-2.9 4.2-.7z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
       Desafios
+    </button>
+    <button class="tab" id="tab-contestacoes" onclick="switchTab('contestacoes')" style="display:none;">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 3h10v6H5.5L2 11.5V3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M5 5.5h4M5 7.5h2.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+      Contestações
+      <span class="msg-badge hidden" id="contestTabBadge" style="margin-left:6px;">0</span>
     </button>
   </div>
 
@@ -2163,6 +2539,7 @@
 
   <!-- RANKING PANEL -->
   <div class="panel active" id="panel-ranking">
+    <div id="raceBannerWrap"></div>
     <div id="challengeBanner"></div>
     <div class="podium-section-wrap">
       <div class="holo-left"></div>
@@ -2175,7 +2552,7 @@
       <div class="podium" id="podiumRanking"></div>
     </div>
 
-    <div class="filter-bar">
+    <div class="filter-bar" id="rankingVerticalFilter">
       <span class="filter-label">Filtrar:</span>
       <button class="filter-btn active" onclick="filterVertical('Todos',this)">Todos</button>
       <button class="filter-btn" onclick="filterVertical('Retail',this)">Retail</button>
@@ -2185,18 +2562,33 @@
       <button class="filter-btn" onclick="filterVertical('Enterprise',this)">Enterprise</button>
       <button class="filter-btn" onclick="filterVertical('Farma',this)">Farma</button>
     </div>
+    <div class="indicator-group-bar">
+      <div class="ig-spacer"></div>
+      <div class="ig-group ig-method">Método</div>
+      <div class="ig-group ig-performance">Performance</div>
+      <div class="ig-spacer"></div>
+    </div>
     <div class="ranking-wrap" id="rankingTableWrap">
       <table>
+        <colgroup>
+          <col style="width:50px">
+          <col style="width:280px">
+          <col style="width:calc((100% - 330px) * 0.14286)">
+          <col style="width:calc((100% - 330px) * 0.17143)">
+          <col style="width:calc((100% - 330px) * 0.18571)">
+          <col style="width:calc((100% - 330px) * 0.15714)">
+          <col style="width:calc((100% - 330px) * 0.21429)">
+          <col style="width:calc((100% - 330px) * 0.12857)">
+        </colgroup>
         <thead>
           <tr>
             <th>#</th>
             <th>Executivo</th>
-            <th>Treinamentos</th>
-            <th>Satisfação da Franquia</th>
-            <th>ALVO</th>
-            <th>Índice Des.</th>
-            <th>WOW</th>
-            <th class="th-tooltip">Engajamento<span class="th-tip">Soma de 3 critérios:<br>🏆 Desafios concluídos<br>⚡ Cupons Flash resgatados<br>💬 Comentários enviados (máx. 5 pts/dia)</span></th>
+            <th class="th-link" onclick="goToCriteria('action')" title="Ver como pontuar">Feedback</th>
+            <th class="th-tooltip th-link" onclick="goToCriteria('engagement')" title="Ver como pontuar">Engajamento<span class="th-tip">Soma de 5 critérios:<br>🏆 Desafios concluídos<br>⚡ Cupons Flash resgatados<br>💬 Comentários enviados (máx. 5 pts/dia)<br>📘 Acesso ao Desenvolve (máx. 10 pts/semana)<br>📊 Acesso ao Ranking (máx. 10 pts/semana)</span></th>
+            <th class="th-link" onclick="goToCriteria('alvo')" title="Ver como pontuar">Planos de Ação</th>
+            <th class="th-link" onclick="goToCriteria('dev')" title="Ver como pontuar">Positivação</th>
+            <th class="th-link" onclick="goToCriteria('wow')" title="Ver como pontuar">Evolução de Receita</th>
             <th>Total</th>
           </tr>
         </thead>
@@ -2207,24 +2599,53 @@
     <div class="mobile-cards" id="mobileCards"></div>
   </div>
 
-
-  <!-- STATS PANEL -->
-  <div class="panel" id="panel-stats">
-    <div class="stats-grid" id="statsGrid"></div>
-    <div class="ranking-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Vertical</th>
-            <th>Executivos</th>
-            <th>Total Pontos</th>
-            <th>Média</th>
-            <th>Líder</th>
-          </tr>
-        </thead>
-        <tbody id="statsBody"></tbody>
-      </table>
+  <!-- PREMIAÇÕES PANEL -->
+  <div class="panel" id="panel-premiacoes">
+    <div class="premi-hero">
+      <div class="premi-hero-top">
+        <div>
+          <div class="premi-hero-eyebrow">Premiação Mensal</div>
+          <div class="premi-hero-title">Ranking do Executivo de Alta Performance</div>
+        </div>
+        <div class="premi-prize-stat">
+          <div class="premi-prize-value">R$ 200</div>
+          <div class="premi-prize-label">Vale-presente · Cartão SBox</div>
+        </div>
+      </div>
+      <p class="premi-hero-desc">Reconhecemos mensalmente o(a) Executivo(a) que mais se destaca na aplicação do método e na evolução dos indicadores de desempenho da sua carteira. Quem fechar o mês com a maior pontuação no Ranking recebe o vale-presente, utilizável em lojas físicas e compras online.</p>
+      <p class="premi-hero-desc">A classificação considera resultados, desenvolvimento das franquias, crescimento de receita, execução de Planos de Ação, positivação da carteira, engajamento e demais critérios definidos pelo time de Desenvolvimento. Boa sorte e bons resultados! 🚀</p>
     </div>
+
+    <div id="premiAdminWrap"></div>
+
+    <div class="premi-history">
+      <div class="premi-history-title">Histórico de Ganhadores</div>
+      <div class="filter-bar" id="premiVerticalFilter">
+        <span class="filter-label">Filtrar:</span>
+        <button class="filter-btn active" onclick="filterPremiacoesVertical('Todos',this)">Todos</button>
+        <button class="filter-btn" onclick="filterPremiacoesVertical('Retail',this)">Retail</button>
+        <button class="filter-btn" onclick="filterPremiacoesVertical('Postos',this)">Postos</button>
+        <button class="filter-btn" onclick="filterPremiacoesVertical('Auto',this)">Auto</button>
+        <button class="filter-btn" onclick="filterPremiacoesVertical('Food',this)">Food</button>
+        <button class="filter-btn" onclick="filterPremiacoesVertical('Enterprise',this)">Enterprise</button>
+        <button class="filter-btn" onclick="filterPremiacoesVertical('Farma',this)">Farma</button>
+      </div>
+      <div id="premiHistoryList"></div>
+    </div>
+  </div>
+
+  <!-- HISTÓRICO MENSAL PANEL -->
+  <div class="panel" id="panel-historico">
+    <div class="edit-header">
+      <h2 style="color:#ffffff;">
+        <svg width="26" height="26" viewBox="0 0 18 18" fill="none" style="vertical-align:-5px;margin-right:6px;"><circle cx="9" cy="9.5" r="6.5" stroke="#ffffff" stroke-width="1.4"/><path d="M9 6v3.5l2.5 1.8" stroke="#ffffff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Histórico Mensal
+      </h2>
+    </div>
+    <div id="historicoAdminWrap"></div>
+    <div id="histExecFilterWrap"></div>
+    <div id="histCompareWrap"></div>
+    <div id="historicoList"></div>
   </div>
 
   <!-- RULES PANEL -->
@@ -2245,6 +2666,17 @@
     </div>
   </div>
 
+  <!-- CONTESTAÇÕES PANEL -->
+  <div class="panel" id="panel-contestacoes">
+    <div class="edit-header">
+      <h2 style="color:#ffffff;">
+        <svg width="26" height="26" viewBox="0 0 18 18" fill="none" style="vertical-align:-5px;margin-right:6px;"><path d="M2 3h14v8H7l-4.5 3.5V11H2V3z" stroke="#ffffff" stroke-width="1.4" stroke-linejoin="round" fill="rgba(255,255,255,0.08)"/></svg>
+        Contestações de Pontos
+      </h2>
+    </div>
+    <div id="contestacoesAdminWrap" style="margin-top:8px;"></div>
+  </div>
+
   <!-- ACCESS LOG PANEL -->
   <div class="panel" id="panel-access">
     <div class="edit-header">
@@ -2256,6 +2688,7 @@
         LIMPAR LOG
       </button>
     </div>
+    <div id="rankingAccessWrap" style="margin-top:16px;"></div>
     <div id="accessLogWrap" style="margin-top:8px;"></div>
   </div>
 
@@ -2332,6 +2765,20 @@
   </div>
 </div>
 
+<!-- CONTESTAÇÃO DE PONTOS -->
+<div id="contestModal" onclick="if(event.target===this)closeContestModal()">
+  <div class="msg-modal-box">
+    <div class="msg-modal-header">
+      <div>
+        <div class="msg-modal-title">Contestar Pontos</div>
+        <div class="msg-modal-sub">SUAS CONTESTAÇÕES · SÓ VISÍVEIS PARA O ADMIN</div>
+      </div>
+      <button class="msg-modal-close" onclick="closeContestModal()">✕</button>
+    </div>
+    <div class="msg-feed" id="contestFeed"></div>
+  </div>
+</div>
+
 <script>
 // ===================== AUTH =====================
 const PASSWORDS = {
@@ -2386,27 +2833,24 @@ function selectProfile(p) {
 }
 
 // ===================== DATA =====================
+const CORE_FIELDS = [
+  { key:'action',    label:'Feedback',                   hint:'até 30 pts/mês · média das avaliações de satisfação pós Plano de Ação' },
+  { key:'alvo',      label:'Planos de Ação',            hint:'10 pts por Plano de Ação concluído com sucesso · sem teto' },
+  { key:'dev',       label:'Positivação da Carteira',   hint:'até 30 pts/mês · % da carteira ativa (faturou ≥ R$ 500) · 6 faixas' },
+  { key:'wow',       label:'Evolução de Receita', hint:'até 35 pts/mês · 5 faixas · teto: 3% = 35 pts · < 0,2% não pontua' },
+];
+const ENGAGEMENT_FIELDS = [
+  { key:'bonusPts',         label:'Bônus de Desafios',       hint:'pts creditados ao marcar conclusão na aba Desafios · ajuste manual se necessário' },
+  { key:'couponPts',        label:'Bônus de Cupons Flash',   hint:'pts creditados automaticamente ao resgatar o cupom · ajuste manual se necessário', auto:true },
+  { key:'commentPts',       label:'Bônus de Comentários',    hint:'até 5 pts/dia, creditados automaticamente por comentário · ajuste manual se necessário', auto:true },
+  { key:'develPts',         label:'Acesso ao Desenvolve',    hint:'10 pts/semana · mín. 3 dias de acesso distintos · plataforma externa, sem rastreio · manual' },
+  { key:'rankingAccessPts', label:'Acesso ao Ranking',       hint:'10 pts/semana · mín. 3 dias de acesso distintos · creditado automaticamente', auto:true },
+];
+
 const CRITERIA = [
   {
-    key:'train',
-    label:'Treinamentos',
-    icon:'📚',
-    pts:10,
-    rational:'',
-    rule:'',
-    sections:[
-      { title:'O que é', text:'Participação em treinamentos promovidos pelo time de Desenvolvimento de Franquias.' },
-      { title:'Como funciona', items:[
-        'São válidos apenas os treinamentos oficiais promovidos pelo time de Desenvolvimento de Franquias.',
-        'Os treinamentos serão comunicados com antecedência mínima de 15 dias.',
-        'Para validar a participação, é necessário permanecer por, no mínimo, 50 minutos na sessão ou até que o treinamento finalize.'
-      ]},
-      { title:'Pontuação', text:'Cada participação válida gera 10 pontos.' }
-    ]
-  },
-  {
     key:'action',
-    label:'Satisfação da Franquia',
+    label:'Feedback',
     icon:'⭐',
     pts:30,
     rational:'',
@@ -2428,67 +2872,153 @@ const CRITERIA = [
   },
   {
     key:'alvo',
-    label:'ALVO',
-    icon:'🎯',
-    pts:15,
-    rational:'ALVO significa Análise de Liderança, Vendas e Operação — um diagnóstico de maturidade com 73 perguntas que avalia o franqueado em três dimensões essenciais. Cada ALVO aplicado e anexado vale 15 pts. Sem teto, porque quanto mais diagnósticos realizados, maior a visibilidade sobre a rede e mais oportunidades de desenvolvimento identificadas.',
-    rule:'15 pts por diagnóstico aplicado e anexado · sem teto'
+    label:'Planos de Ação',
+    icon:'📋',
+    pts:10,
+    rational:'',
+    rule:'',
+    sections:[
+      { title:'O que é', text:'Indicador que mede a quantidade de Planos de Ação concluídos com sucesso pelo Executivo, originados a partir de diagnósticos aplicados por meio do ALVO.' },
+      { title:'Como funciona', items:[
+        'São considerados apenas os Planos de Ação vinculados a diagnósticos realizados pelo ALVO.',
+        'Para gerar pontuação, o Plano de Ação deve estar concluído com o status "Sucesso", comprovando que as ações previstas foram executadas e os objetivos definidos foram alcançados.',
+        'Cada Plano de Ação finalizado com sucesso gera 10 pontos, sem limite máximo de pontuação mensal.',
+        'Planos de Ação que permanecerem em andamento, não forem executados ou forem concluídos sem sucesso não geram pontuação.',
+        'Este indicador incentiva o Executivo a transformar diagnósticos em ações concretas e resultados efetivos para o desenvolvimento das franquias.'
+      ]},
+      { title:'Pontuação', items:[
+        'Cada Plano de Ação concluído com sucesso: 10 pontos.',
+        'Sem limite máximo de pontuação mensal.',
+        '1 Plano de Ação concluído com sucesso: 10 pontos.',
+        '3 Planos de Ação concluídos com sucesso: 30 pontos.',
+        '5 Planos de Ação concluídos com sucesso: 50 pontos.',
+        '8 Planos de Ação concluídos com sucesso: 80 pontos.'
+      ]}
+    ]
   },
   {
     key:'dev',
-    label:'Índice de Desenvolvimento',
-    icon:'🧭',
-    pts:10,
-    rational:'Todo mês o G.O realiza o 1:1 com seu executivo e avalia seu desenvolvimento com uma média de 0 a 100. Essa média é convertida em pontos: média ÷ 10 = pts do mês. Se o G.O não fizer o 1:1, o executivo não pontua — criando uma responsabilidade mútua: o executivo que quer crescer no ranking vai cobrar seu líder. Sem teto — quem é consistente ao longo dos meses se distancia naturalmente.',
-    rule:'até 10 pts/mês · fórmula: média do G.O ÷ 10 · sem teto · acumula mensalmente',
-    table: [
-      { media:'100%', pts:'10 pts' },
-      { media:'80%',  pts:'8 pts'  },
-      { media:'60%',  pts:'6 pts'  },
-      { media:'40%',  pts:'4 pts'  },
-      { media:'20%',  pts:'2 pts'  },
-      { media:'0%',   pts:'0 pts'  },
+    label:'Positivação da Carteira',
+    icon:'📈',
+    pts:30,
+    rational:'',
+    rule:'',
+    sections:[
+      { title:'O que é', text:'Indicador que mede o percentual de franquias da carteira do Executivo que realizaram vendas no mês, considerando como franquia ativa aquela que faturou igual ou acima de R$ 500,00 no período.' },
+      { title:'Como funciona', items:[
+        'Mensalmente é calculado o percentual de franquias positivadas na carteira do Executivo.',
+        'Para ser considerada ativa, a franquia deve registrar faturamento igual ou superior a R$ 500,00 no mês de apuração.',
+        'Quanto maior o percentual de franquias positivadas, maior será a pontuação do Executivo.',
+        'Este indicador incentiva o desenvolvimento equilibrado da carteira, aumentando o número de franquias com vendas recorrentes e reduzindo a quantidade de unidades inativas.'
+      ]},
+      { title:'Pontuação', items:[
+        '95% ou mais da carteira positivada: 30 pontos.',
+        '85% a 94,9%: 24 pontos.',
+        '75% a 84,9%: 18 pontos.',
+        '65% a 74,9%: 12 pontos.',
+        '50% a 64,9%: 6 pontos.',
+        'Abaixo de 50%: 0 pontos.'
+      ]}
     ]
   },
   {
     key:'wow',
-    label:'WOW — Evolução de Receita',
+    label:'Evolução de Receita',
     icon:'🚀',
     pts:35,
-    rational:'Mede o crescimento do MRR total da carteira de franquias do executivo mês a mês. O teto de referência é 3% de crescimento, valendo 35 pts. A pontuação é distribuída em 5 faixas — crescimento abaixo de 0,5% não pontua. Crescimento negativo ou zero não desconta pontos acumulados — simplesmente não pontua. É o critério que conecta diretamente o desenvolvimento da carteira com resultado real de negócio.',
-    rule:'até 35 pts/mês · 5 faixas · teto de referência: 3% · crescimento < 0,5% não pontua · acumula mensalmente',
-    table: [
-      { crescimento:'2,9% ou mais', pts:'35 pts' },
-      { crescimento:'2,3% a 2,8%', pts:'28 pts' },
-      { crescimento:'1,7% a 2,2%', pts:'21 pts' },
-      { crescimento:'1,1% a 1,6%', pts:'14 pts' },
-      { crescimento:'0,5% a 1,0%', pts:'7 pts'  },
-      { crescimento:'< 0,5%',      pts:'0 pts'  },
+    rational:'',
+    rule:'',
+    sections:[
+      { title:'O que é', text:'Indicador que mede o crescimento do MRR (receita recorrente mensal) total da carteira de franquias sob responsabilidade do Executivo, mês a mês.' },
+      { title:'Como funciona', items:[
+        'O crescimento percentual do MRR é apurado mensalmente, comparando o mês vigente com o mês anterior.',
+        'O teto de referência é 3% de crescimento, que já garante a pontuação máxima de 35 pts.',
+        'Crescimento negativo ou estagnado não desconta pontos acumulados — apenas não pontua no mês.',
+        'É o critério que conecta diretamente o desenvolvimento da carteira com resultado real de negócio.'
+      ]},
+      { title:'Pontuação', items:[
+        'Crescimento de 2,9% ou mais: 35 pontos.',
+        'Crescimento de 2,3% a 2,8%: 28 pontos.',
+        'Crescimento de 1,7% a 2,2%: 21 pontos.',
+        'Crescimento de 1,1% a 1,6%: 14 pontos.',
+        'Crescimento de 0,2% a 1,0%: 7 pontos.',
+        'Crescimento abaixo de 0,2%: 0 pontos.'
+      ]}
+    ]
+  },
+  {
+    key:'engagement',
+    label:'Engajamento',
+    icon:'🔥',
+    ptsLabel:'Variável',
+    rational:'',
+    rule:'',
+    sections:[
+      { title:'O que é', text:'Indicador que mede o nível de engajamento do Executivo com a plataforma de desenvolvimento, estimulando a participação ativa nas iniciativas promovidas pelo time de Desenvolvimento de Franquias. A pontuação é obtida por meio de diferentes ações realizadas ao longo do mês e da semana, incentivando a colaboração, o aprendizado contínuo e a utilização frequente das ferramentas disponibilizadas.' },
+      { title:'Como funciona', text:'O indicador é composto por diferentes critérios de pontuação, que podem ser acumulados entre si. Cada ação realizada gera pontos conforme suas regras específicas, sendo responsabilidade do Executivo acompanhar as oportunidades disponíveis na plataforma.' },
+      { title:'Desafios Concluídos', items:[
+        'Periodicamente, o time de Desenvolvimento de Franquias disponibiliza desafios dentro da plataforma do Ranking do Executivo.',
+        'Os desafios possuem regras, prazos e pontuações próprias, previamente divulgadas.',
+        'Após a validação da atividade, o Executivo recebe a quantidade de pontos definida para aquele desafio.',
+        'Exemplo: publicar uma foto ao lado do franqueado segurando o Manual do Franqueado pode valer 10 pontos, conforme campanha vigente.',
+        'A quantidade de pontos é definida exclusivamente pelo time de Desenvolvimento.'
+      ]},
+      { title:'Cupons Flash', items:[
+        'Em datas e horários aleatórios, o time de Desenvolvimento poderá disponibilizar Cupons Flash na plataforma.',
+        'Os Executivos que resgatarem o cupom primeiro receberão a pontuação correspondente.',
+        'Como os cupons possuem quantidade limitada, nem todos os Executivos serão contemplados.',
+        'Este critério incentiva o acesso frequente à plataforma e a participação ativa nas campanhas.'
+      ]},
+      { title:'Comentários Enviados', items:[
+        'Para estimular a colaboração entre Executivos, comentários publicados no Ranking também geram pontuação.',
+        'Cada comentário válido poderá gerar pontuação, respeitando o limite diário — até 5 pontos por dia.',
+        'Comentários considerados inadequados, repetitivos ou sem relevância poderão ser desconsiderados.'
+      ]},
+      { title:'Acesso ao Desenvolve', items:[
+        'O acesso recorrente à plataforma Desenvolve também gera pontuação semanal.',
+        'Para pontuar, o Executivo deverá acessar a plataforma em pelo menos 3 dias diferentes durante a mesma semana.',
+        '3 ou mais dias de acesso na semana: 10 pontos.',
+        'Menos de 3 dias: 0 pontos.'
+      ]},
+      { title:'Acesso ao Ranking', items:[
+        'O acesso frequente ao Ranking do Executivo também é recompensado.',
+        'Para receber a pontuação semanal, o Executivo deverá acessar o Ranking em pelo menos 3 dias diferentes durante a mesma semana.',
+        '3 ou mais dias de acesso na semana: 10 pontos.',
+        'Menos de 3 dias: 0 pontos.'
+      ]}
+    ],
+    tableHeaders:['CRITÉRIO','PONTUAÇÃO'],
+    table:[
+      { label:'Desafios concluídos',      pts:'Conforme campanha vigente' },
+      { label:'Cupons Flash',             pts:'Conforme campanha vigente' },
+      { label:'Comentários enviados',     pts:'Até 5 pts/dia' },
+      { label:'Acesso ao Desenvolve',     pts:'10 pts/semana (mín. 3 dias)' },
+      { label:'Acesso ao Ranking',        pts:'10 pts/semana (mín. 3 dias)' },
     ]
   },
 ];
 
 let executives = [
-  { id:1,  name:'Francisco Humberto Araujo Fernandes', vertical:'Postos',     train:15, action:45, alvo:0, dev:0, wow:0 },
-  { id:2,  name:'Carlile Scarabel',                    vertical:'Retail',     train:15, action:30, alvo:0, dev:0, wow:0 },
-  { id:3,  name:'Denilse Miotto',                      vertical:'Retail',     train:15, action:15, alvo:0, dev:0, wow:0 },
-  { id:4,  name:'Paula Talana Schirmer',               vertical:'Retail',     train:15, action:10, alvo:30, dev:0, wow:0 },
-  { id:5,  name:'Cesar Domingues De Oliveira',         vertical:'Postos',     train:15, action:5,  alvo:0, dev:0, wow:0 },
-  { id:6,  name:'Juliana Bergamasco',                  vertical:'Retail',     train:0,  action:15, alvo:0, dev:0, wow:0 },
-  { id:7,  name:'Monique de Andrade',                  vertical:'Retail',     train:0,  action:15, alvo:0, dev:0, wow:0 },
-  { id:8,  name:'Lisandra Cunha Alves',                vertical:'Retail',     train:15, action:0,  alvo:0, dev:0, wow:0 },
-  { id:9,  name:'Marcos Martins Santos',               vertical:'Postos',     train:15, action:0,  alvo:0, dev:0, wow:0 },
-  { id:10, name:'Adriano Pitel',                       vertical:'Auto',       train:0,  action:5,  alvo:0, dev:0, wow:0 },
-  { id:11, name:'Debora De Lira Dos Santos',           vertical:'Retail',     train:0,  action:0,  alvo:0, dev:0, wow:0 },
-  { id:12, name:'Eluana Jorge Poletti',                vertical:'Food',       train:0,  action:0,  alvo:0, dev:0, wow:0 },
-  { id:13, name:'Carolina Freitas Mouron',             vertical:'Enterprise', train:0,  action:0,  alvo:0, dev:0, wow:0 },
-  { id:14, name:'Jose Paulo Pinelli',                  vertical:'Auto',       train:0,  action:0,  alvo:0, dev:0, wow:0 },
-  { id:15, name:'Elide Matos',                         vertical:'Food',       train:0,  action:0,  alvo:0, dev:0, wow:0 },
-  { id:16, name:'Izabel Cristina Castagna Isidoro',    vertical:'Enterprise', train:15, action:0,  alvo:0, dev:0, wow:0 },
-  { id:17, name:'Leandro Feriato Nogueira',            vertical:'Postos',     train:15, action:0,  alvo:0, dev:0, wow:0 },
+  { id:1,  name:'Francisco Humberto Araujo Fernandes', vertical:'Postos',     action:45, alvo:0,  dev:0, wow:0 },
+  { id:2,  name:'Carlile Scarabel',                    vertical:'Retail',     action:30, alvo:0,  dev:0, wow:0 },
+  { id:3,  name:'Denilse Miotto',                      vertical:'Retail',     action:15, alvo:0,  dev:0, wow:0 },
+  { id:4,  name:'Paula Talana Schirmer',               vertical:'Retail',     action:10, alvo:30, dev:0, wow:0 },
+  { id:5,  name:'Cesar Domingues De Oliveira',         vertical:'Postos',     action:5,  alvo:0,  dev:0, wow:0 },
+  { id:6,  name:'Juliana Bergamasco',                  vertical:'Retail',     action:15, alvo:0,  dev:0, wow:0 },
+  { id:7,  name:'Monique de Andrade',                  vertical:'Retail',     action:15, alvo:0,  dev:0, wow:0 },
+  { id:8,  name:'Lisandra Cunha Alves',                vertical:'Retail',     action:0,  alvo:0,  dev:0, wow:0 },
+  { id:9,  name:'Marcos Martins Santos',               vertical:'Postos',     action:0,  alvo:0,  dev:0, wow:0 },
+  { id:10, name:'Adriano Pitel',                       vertical:'Auto',       action:5,  alvo:0,  dev:0, wow:0 },
+  { id:11, name:'Debora De Lira Dos Santos',           vertical:'Retail',     action:0,  alvo:0,  dev:0, wow:0 },
+  { id:12, name:'Eluana Jorge Poletti',                vertical:'Food',       action:0,  alvo:0,  dev:0, wow:0 },
+  { id:13, name:'Carolina Freitas Mouron',             vertical:'Enterprise', action:0,  alvo:0,  dev:0, wow:0 },
+  { id:14, name:'Jose Paulo Pinelli',                  vertical:'Auto',       action:0,  alvo:0,  dev:0, wow:0 },
+  { id:15, name:'Elide Matos',                         vertical:'Food',       action:0,  alvo:0,  dev:0, wow:0 },
+  { id:16, name:'Izabel Cristina Castagna Isidoro',    vertical:'Enterprise', action:0,  alvo:0,  dev:0, wow:0 },
+  { id:17, name:'Leandro Feriato Nogueira',            vertical:'Postos',     action:0,  alvo:0, dev:0, wow:0 },
 ];
 
-let currentFilter = 'Todos';
+let currentFilter = []; // array de verticais selecionadas; vazio = Todos
 
 // ===================== STORAGE =====================
 // In-memory state (no localStorage needed)
@@ -2522,7 +3052,7 @@ function updateLastUpdateBadge() {
 
 // ===================== HELPERS =====================
 function total(e) {
-  return (e.train||0)+(e.action||0)+(e.alvo||0)+(e.dev||0)+(e.wow||0)+(e.bonusPts||0)+(e.couponPts||0)+(e.commentPts||0);
+  return (e.action||0)+(e.alvo||0)+(e.dev||0)+(e.wow||0)+(e.bonusPts||0)+(e.couponPts||0)+(e.commentPts||0)+(e.develPts||0)+(e.rankingAccessPts||0);
 }
 
 function semaforo(e) {
@@ -2539,7 +3069,11 @@ function maxPossible() {
 }
 function getRanked(filter) {
   let list = [...executives];
-  if (filter && filter !== 'Todos') list = list.filter(e => e.vertical === filter);
+  if (Array.isArray(filter)) {
+    if (filter.length > 0) list = list.filter(e => filter.includes(e.vertical));
+  } else if (filter && filter !== 'Todos') {
+    list = list.filter(e => e.vertical === filter);
+  }
   return list.sort((a,b) => total(b)-total(a));
 }
 function vertClass(v) {
@@ -2680,10 +3214,775 @@ function toggleChallengeComplete(execId, pts, checked) {
   }
 }
 
+// ===================== PREMIAÇÕES =====================
+let premiacoesVerticalFilter = 'Todos';
+
+function filterPremiacoesVertical(v, btn) {
+  premiacoesVerticalFilter = v;
+  const wrap = document.getElementById('premiVerticalFilter');
+  if (wrap) wrap.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderPremiacoes();
+}
+
+function renderPremiacoes() {
+  const adminWrap = document.getElementById('premiAdminWrap');
+  const listWrap = document.getElementById('premiHistoryList');
+  if (!adminWrap || !listWrap) return;
+
+  if (currentProfile === 'admin') {
+    const ranked = getRanked('Todos');
+    const months = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    const now = new Date();
+    adminWrap.innerHTML = `
+      <div class="hist-close-card" style="margin-bottom:20px;">
+        <div class="hist-close-title">REGISTRAR VENCEDOR(A) DO MÊS</div>
+        <div style="display:grid;gap:12px;">
+          <div>
+            <label style="font-family:Orbitron,monospace;font-size:9px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:5px;">EXECUTIVO(A)</label>
+            <select id="pw-exec" onchange="prefillWinnerPts()" style="width:100%;box-sizing:border-box;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:Rajdhani,sans-serif;font-size:15px;">
+              <option value="">Selecione...</option>
+              ${ranked.map(e => `<option value="${e.id}">${e.name} — ${e.vertical}</option>`).join('')}
+            </select>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;">
+            <div>
+              <label style="font-family:Orbitron,monospace;font-size:9px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:5px;">PONTUAÇÃO</label>
+              <input id="pw-pts" type="number" min="0" placeholder="0" style="width:100%;box-sizing:border-box;background:var(--panel);color:var(--gold);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:Orbitron,monospace;font-size:14px;font-weight:700;">
+            </div>
+            <div>
+              <label style="font-family:Orbitron,monospace;font-size:9px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:5px;">MÊS</label>
+              <select id="pw-month" style="width:100%;box-sizing:border-box;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:Rajdhani,sans-serif;font-size:14px;">
+                ${months.map((m,i) => `<option value="${i}" ${i===now.getMonth()?'selected':''}>${m}</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <label style="font-family:Orbitron,monospace;font-size:9px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:5px;">ANO</label>
+              <input id="pw-year" type="number" value="${now.getFullYear()}" style="width:100%;box-sizing:border-box;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:Orbitron,monospace;font-size:14px;">
+            </div>
+          </div>
+          <button class="hist-close-btn" onclick="saveWinner()">Registrar Vencedor(a)</button>
+        </div>
+      </div>`;
+  } else {
+    adminWrap.innerHTML = '';
+  }
+
+  const data = window._premiacoesData || {};
+  const allWinners = Object.entries(data).map(([key, w]) => ({...w, key})).sort((a,b) => (b.year - a.year) || (b.month - a.month) || (b.timestamp - a.timestamp));
+  const currentChampionKey = allWinners.length ? allWinners[0].key : null;
+  const winners = premiacoesVerticalFilter === 'Todos' ? allWinners : allWinners.filter(w => w.vertical === premiacoesVerticalFilter);
+  const monthsShort = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+  if (!winners.length) {
+    listWrap.innerHTML = `<div class="premi-empty">${allWinners.length ? 'Nenhum vencedor nessa vertical ainda.' : 'Ainda não há vencedores registrados.'}</div>`;
+    return;
+  }
+
+  listWrap.innerHTML = winners.map((w) => {
+    const isCurrent = w.key === currentChampionKey;
+    // Registros antigos podem não ter foto salva (campo adicionado depois) — usa a foto atual do executivo como fallback
+    const matchedExec = w.photo ? null : executives.find(e => e.id === w.execId || e.name === w.name);
+    const avatarSource = w.photo ? w : { name: w.name, photo: matchedExec ? matchedExec.photo : null };
+    return `
+    <div class="premi-winner-card ${isCurrent?'is-current':''}">
+      ${avatarHtml(avatarSource, 46, isCurrent?'av-1':'')}
+      <div style="flex:1;min-width:0;">
+        ${isCurrent ? '<span class="premi-winner-badge">🏆 Campeão(ã) Atual</span>' : ''}
+        <div class="premi-winner-name">${w.name}</div>
+        <div class="premi-winner-meta">
+          <span class="vertical-tag ${vertClass(w.vertical)}">${w.vertical}</span>
+          <span class="premi-winner-date">${monthsShort[w.month]} de ${w.year}</span>
+        </div>
+      </div>
+      <div class="premi-winner-pts">${w.points}<span style="font-size:11px;font-family:Orbitron,monospace;color:var(--muted);"> pts</span></div>
+      ${currentProfile === 'admin' ? `<button class="premi-winner-rm" onclick="removeWinner('${w.key}')">✕</button>` : ''}
+    </div>
+  `;
+  }).join('');
+}
+
+function prefillWinnerPts() {
+  const execId = parseInt(document.getElementById('pw-exec')?.value);
+  const ptsInput = document.getElementById('pw-pts');
+  if (!execId || !ptsInput) return;
+  const e = executives.find(x => x.id === execId);
+  if (e) ptsInput.value = total(e);
+}
+
+function saveWinner() {
+  const execId = parseInt(document.getElementById('pw-exec')?.value);
+  const pts = parseInt(document.getElementById('pw-pts')?.value);
+  const month = parseInt(document.getElementById('pw-month')?.value);
+  const year = parseInt(document.getElementById('pw-year')?.value);
+  const e = executives.find(x => x.id === execId);
+  if (!e || isNaN(pts) || isNaN(month) || isNaN(year)) { alert('Preencha o(a) executivo(a), pontuação, mês e ano.'); return; }
+  const winner = { execId: e.id, name: e.name, vertical: e.vertical, photo: e.photo || null, points: pts, month, year, timestamp: Date.now() };
+  if (window._saveWinner) window._saveWinner(winner);
+}
+
+function removeWinner(key) {
+  if (!confirm('Remover este registro de premiação?')) return;
+  if (window._deleteWinner) window._deleteWinner(key);
+}
+
+// ===================== HISTÓRICO MENSAL =====================
+const HIST_MONTH_NAMES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const HIST_MONTH_SHORT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+function renderHistorico() {
+  const adminWrap = document.getElementById('historicoAdminWrap');
+  const listWrap = document.getElementById('historicoList');
+  if (!adminWrap || !listWrap) return;
+
+  if (typeof renderExecEvolutionSelect === 'function') renderExecEvolutionSelect();
+  if (typeof renderHistCompare === 'function') renderHistCompare();
+
+  const now = new Date();
+
+  if (currentProfile === 'admin') {
+    adminWrap.innerHTML = `
+      <div class="hist-close-card">
+        <div class="hist-close-title">📸 FECHAR O MÊS (SALVAR FOTO DO RANKING)</div>
+        <div class="hist-close-desc">Salva o ranking completo de <strong>${HIST_MONTH_NAMES[now.getMonth()]} de ${now.getFullYear()}</strong> no histórico. <strong>Não mexe nos pontos de ninguém</strong> — pode fechar quantas vezes quiser, a foto mais recente substitui a anterior. Zerar os pontos é uma ação separada, abaixo.</div>
+        <button class="hist-close-btn" onclick="closeMonth()">📸 Fechar ${HIST_MONTH_NAMES[now.getMonth()]}/${now.getFullYear()}</button>
+      </div>
+      <div class="hist-close-card" style="background:rgba(255,51,85,0.04);border-color:rgba(255,51,85,0.3);">
+        <div class="hist-close-title" style="color:#ff5060;">🗑️ ZERAR PONTOS PARA O PRÓXIMO CICLO</div>
+        <div class="hist-close-desc">Zera os pontos de <strong>todos os executivos</strong> (Feedback, Planos de Ação, Positivação, Evolução de Receita, Engajamento) para começar o próximo mês do zero. <strong>Ação irreversível.</strong> Só use depois de já ter fechado o mês acima.</div>
+        <button class="hist-close-btn" style="background:linear-gradient(135deg,#ff3355,#ff6b3d);" onclick="resetMonthlyPoints()">🗑️ Zerar Pontos Agora</button>
+      </div>`;
+  } else {
+    adminWrap.innerHTML = '';
+  }
+
+  const data = window._historicoData || {};
+  const months = Object.entries(data).map(([key, m]) => ({...m, key})).sort((a,b) => (b.year - a.year) || (b.month - a.month));
+
+  if (!months.length) {
+    listWrap.innerHTML = '<div class="premi-empty">Nenhum mês arquivado ainda.</div>';
+    return;
+  }
+
+  listWrap.innerHTML = months.map(m => `
+    <div class="hist-month-card" id="hist-${m.key}">
+      <div class="hist-month-header" onclick="toggleMonthCard('${m.key}')">
+        <div>
+          <div class="hist-month-name">${HIST_MONTH_NAMES[m.month]} de ${m.year}</div>
+          <div class="hist-month-sub">${m.ranking.length} executivos · vencedor: ${m.ranking[0]?.name || '—'}</div>
+        </div>
+        <div class="hist-month-toggle">▼</div>
+      </div>
+      <div class="hist-month-body">
+        ${m.ranking.map(r => `
+          <div class="hist-rank-row ${r.position===1?'top1':''}">
+            <div class="hist-rank-pos">${r.position}</div>
+            <div style="flex:1;min-width:0;">
+              <div class="hist-rank-name">${r.name}</div>
+              <span class="vertical-tag ${vertClass(r.vertical)}">${r.vertical}</span>
+            </div>
+            <div class="hist-rank-total">${r.total}<span style="font-size:11px;font-family:Orbitron,monospace;color:var(--muted);"> pts</span></div>
+          </div>
+        `).join('')}
+        ${currentProfile === 'admin' ? `<div style="padding:12px 20px;"><button class="hist-rm-btn" onclick="removeMonthSnapshot('${m.key}')">✕ Remover este mês do histórico</button></div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleMonthCard(key) {
+  const card = document.getElementById('hist-' + key);
+  if (card) card.classList.toggle('open');
+}
+
+function closeMonth() {
+  const now = new Date();
+  const month = now.getMonth();
+  const year = now.getFullYear();
+  const key = year + '-' + String(month+1).padStart(2,'0');
+
+  if (window._historicoData && window._historicoData[key]) {
+    if (!confirm(`${HIST_MONTH_NAMES[month]}/${year} já foi fechado antes. Fechar de novo vai SUBSTITUIR o snapshot existente. Continuar?`)) return;
+  }
+
+  const ranked = getRanked('Todos');
+  const snapshot = {
+    month, year, closedAt: Date.now(),
+    ranking: ranked.map((e,i) => ({
+      position: i+1, id: e.id, name: e.name, vertical: e.vertical,
+      action: e.action||0, alvo: e.alvo||0, dev: e.dev||0, wow: e.wow||0,
+      engagement: (e.bonusPts||0)+(e.couponPts||0)+(e.commentPts||0)+(e.develPts||0)+(e.rankingAccessPts||0),
+      total: total(e)
+    }))
+  };
+
+  if (window._saveMonthSnapshot) window._saveMonthSnapshot(key, snapshot);
+}
+
+function resetMonthlyPoints() {
+  const now = new Date();
+  if (!confirm(`Zerar os pontos de TODOS os executivos para iniciar o ciclo de ${HIST_MONTH_NAMES[now.getMonth()]}/${now.getFullYear()}?\n\nEssa ação NÃO pode ser desfeita. Certifique-se de já ter fechado o mês (tirado a foto do ranking) antes de continuar.`)) return;
+
+  executives.forEach(e => {
+    e.action = 0; e.alvo = 0; e.dev = 0; e.wow = 0;
+    e.bonusPts = 0; e.couponPts = 0; e.commentPts = 0; e.develPts = 0; e.rankingAccessPts = 0;
+    delete e.lastScoreUpdate;
+  });
+
+  if (window._resetMonthlyPoints) window._resetMonthlyPoints(executives);
+  snapshotRanks();
+  renderRanking();
+  renderPodium();
+  renderEdit();
+}
+
+function removeMonthSnapshot(key) {
+  if (!confirm('Remover este mês do histórico? Isso não afeta os pontos atuais dos executivos.')) return;
+  if (window._deleteMonthSnapshot) window._deleteMonthSnapshot(key);
+}
+
+function getHistoricoExecNames() {
+  const data = window._historicoData || {};
+  const names = new Set();
+  Object.values(data).forEach(m => (m.ranking || []).forEach(r => names.add(r.name)));
+  return [...names].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+}
+
+function renderExecEvolutionSelect() {
+  const wrap = document.getElementById('histExecFilterWrap');
+  if (!wrap) return;
+  const prevSelected = document.getElementById('hist-exec-select')?.value || '';
+  const names = getHistoricoExecNames();
+
+  wrap.innerHTML = `
+    <div class="hist-evo-card">
+      <div class="hist-close-title">📈 EVOLUÇÃO POR EXECUTIVO</div>
+      <select id="hist-exec-select" class="hist-evo-select" onchange="renderExecEvolution(this.value)">
+        <option value="">Selecione um(a) executivo(a)...</option>
+        ${names.map(n => `<option value="${n}" ${n===prevSelected?'selected':''}>${n}</option>`).join('')}
+      </select>
+      <div id="histExecEvolutionBody"></div>
+    </div>`;
+
+  if (prevSelected && names.includes(prevSelected)) renderExecEvolution(prevSelected);
+}
+
+function renderExecEvolution(name) {
+  const body = document.getElementById('histExecEvolutionBody');
+  if (!body) return;
+  if (!name) { body.innerHTML = ''; return; }
+
+  const data = window._historicoData || {};
+  const entries = Object.values(data)
+    .map(m => {
+      const r = (m.ranking || []).find(x => x.name === name);
+      if (!r) return null;
+      return { ...r, month: m.month, year: m.year, monthsInHistory: (m.ranking || []).length };
+    })
+    .filter(Boolean)
+    .sort((a, b) => (a.year - b.year) || (a.month - b.month));
+
+  if (!entries.length) { body.innerHTML = '<div class="premi-empty">Sem histórico para este(a) executivo(a) ainda.</div>'; return; }
+
+  const rows = entries.map((e, i) => {
+    const delta = i > 0 ? entries[i - 1].position - e.position : null; // positivo = subiu (melhorou)
+    return { ...e, delta };
+  });
+
+  // Sequência atual de meses consecutivos caindo de posição (olhando do mês mais recente pra trás)
+  let currentDeclineStreak = 0;
+  for (let i = rows.length - 1; i > 0; i--) {
+    if (rows[i].delta !== null && rows[i].delta < 0) currentDeclineStreak++;
+    else break;
+  }
+  let currentRiseStreak = 0;
+  for (let i = rows.length - 1; i > 0; i--) {
+    if (rows[i].delta !== null && rows[i].delta > 0) currentRiseStreak++;
+    else break;
+  }
+
+  const first = entries[0];
+  const last = entries[entries.length - 1];
+  const overallDelta = first.position - last.position;
+  const positions = entries.map(e => e.position);
+  const avgPos = Math.round(positions.reduce((a, b) => a + b, 0) / positions.length);
+
+  let alertHtml = '';
+  if (currentDeclineStreak >= 2) {
+    alertHtml = `<div class="hist-evo-alert bad">⚠️ Caiu de posição em ${currentDeclineStreak} meses consecutivos — vale atenção do líder.</div>`;
+  } else if (currentRiseStreak >= 2) {
+    alertHtml = `<div class="hist-evo-alert good">📈 Subindo de posição há ${currentRiseStreak} meses consecutivos.</div>`;
+  } else if (overallDelta > 0) {
+    alertHtml = `<div class="hist-evo-alert good">📈 Subiu ${overallDelta} posição(ões) desde ${HIST_MONTH_NAMES[first.month]}/${first.year}.</div>`;
+  } else if (overallDelta < 0) {
+    alertHtml = `<div class="hist-evo-alert bad">📉 Caiu ${Math.abs(overallDelta)} posição(ões) desde ${HIST_MONTH_NAMES[first.month]}/${first.year}.</div>`;
+  }
+
+  body.innerHTML = `
+    <div class="hist-evo-summary">
+      <div class="hist-evo-stat"><div class="hist-evo-stat-label">Posição Média</div><div class="hist-evo-stat-value">${avgPos}º</div></div>
+      <div class="hist-evo-stat"><div class="hist-evo-stat-label">Melhor Posição</div><div class="hist-evo-stat-value">${Math.min(...positions)}º</div></div>
+      <div class="hist-evo-stat"><div class="hist-evo-stat-label">Pior Posição</div><div class="hist-evo-stat-value">${Math.max(...positions)}º</div></div>
+      <div class="hist-evo-stat"><div class="hist-evo-stat-label">Meses Registrados</div><div class="hist-evo-stat-value">${entries.length}</div></div>
+    </div>
+    ${alertHtml}
+    <div class="hist-evo-table-wrap">
+      <table class="hist-evo-table">
+        <colgroup>
+          <col style="width:115px"><col style="width:80px"><col style="width:65px">
+          <col style="width:85px"><col style="width:100px"><col style="width:90px">
+          <col style="width:95px"><col style="width:95px"><col style="width:75px">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Mês</th><th>Posição</th><th>Total</th><th>Feedback</th><th>Planos de Ação</th><th>Positivação</th><th>Evol. Receita</th><th>Engajamento</th><th>Variação</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(r => `
+            <tr>
+              <td>${HIST_MONTH_SHORT[r.month]}/${r.year}</td>
+              <td>${r.position}º/${r.monthsInHistory}</td>
+              <td style="color:var(--gold);">${r.total}</td>
+              <td>${r.action}</td>
+              <td>${r.alvo}</td>
+              <td>${r.dev}</td>
+              <td>${r.wow}</td>
+              <td>${r.engagement}</td>
+              <td>${
+                r.delta === null ? '<span style="color:var(--muted);">—</span>'
+                : r.delta > 0 ? `<span style="color:#00ff88;">▲ ${r.delta}</span>`
+                : r.delta < 0 ? `<span style="color:#ff3355;">▼ ${Math.abs(r.delta)}</span>`
+                : '<span style="color:var(--muted);">＝</span>'
+              }</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ===================== HISTÓRICO — COMPARAÇÃO =====================
+let histCompareExecIds = [];
+let histCompareVerticals = [];
+
+function getExecHistoryEntriesById(execId) {
+  const data = window._historicoData || {};
+  return Object.values(data)
+    .map(m => {
+      const r = (m.ranking || []).find(x => x.id === execId);
+      if (!r) return null;
+      return { ...r, month: m.month, year: m.year, monthsInHistory: (m.ranking || []).length };
+    })
+    .filter(Boolean)
+    .sort((a, b) => (a.year - b.year) || (a.month - b.month));
+}
+
+function renderHistCompare() {
+  const wrap = document.getElementById('histCompareWrap');
+  if (!wrap) return;
+
+  const data = window._historicoData || {};
+  const months = Object.values(data).sort((a,b) => (b.year-a.year) || (b.month-a.month));
+
+  const execMap = new Map();
+  months.forEach(m => (m.ranking || []).forEach(r => {
+    if (!execMap.has(r.id)) execMap.set(r.id, { id: r.id, name: r.name, vertical: r.vertical });
+  }));
+  const execList = [...execMap.values()].sort((a,b) => a.name.localeCompare(b.name, 'pt-BR'));
+  const verticalsAvailable = [...new Set(execList.map(e => e.vertical))].sort((a,b) => a.localeCompare(b, 'pt-BR'));
+
+  if (!execList.length) {
+    wrap.innerHTML = '';
+    return;
+  }
+
+  const execChips = execList.map(e => `
+    <button class="hist-compare-chip ${histCompareExecIds.includes(e.id)?'active':''}" onclick="toggleCompareExec(${e.id})">${e.name.split(' ').slice(0,2).join(' ')}</button>
+  `).join('');
+  const vertChips = verticalsAvailable.map(v => `
+    <button class="hist-compare-chip ${histCompareVerticals.includes(v)?'active':''}" onclick="toggleCompareVertical('${v}')">${v}</button>
+  `).join('');
+
+  wrap.innerHTML = `
+    <div class="hist-evo-card">
+      <div class="hist-close-title">⚖️ COMPARAR EXECUTIVOS</div>
+      <div class="hist-compare-chips">${execChips}</div>
+      <div id="histCompareExecBody"></div>
+    </div>
+    <div class="hist-evo-card">
+      <div class="hist-close-title">🏢 COMPARAR VERTICAIS</div>
+      <div class="hist-compare-chips">${vertChips}</div>
+      <div id="histCompareVerticalBody"></div>
+    </div>`;
+
+  renderCompareExecBody();
+  renderCompareVerticalBody();
+}
+
+function toggleCompareExec(id) {
+  const idx = histCompareExecIds.indexOf(id);
+  if (idx === -1) histCompareExecIds.push(id); else histCompareExecIds.splice(idx, 1);
+  renderHistCompare();
+}
+
+function toggleCompareVertical(v) {
+  const idx = histCompareVerticals.indexOf(v);
+  if (idx === -1) histCompareVerticals.push(v); else histCompareVerticals.splice(idx, 1);
+  renderHistCompare();
+}
+
+function renderCompareExecBody() {
+  const body = document.getElementById('histCompareExecBody');
+  if (!body) return;
+  if (histCompareExecIds.length < 2) {
+    body.innerHTML = '<div class="premi-empty">Selecione 2 ou mais executivos acima para comparar.</div>';
+    return;
+  }
+
+  const stats = histCompareExecIds.map(id => {
+    const entries = getExecHistoryEntriesById(id);
+    if (!entries.length) return null;
+    const positions = entries.map(e => e.position);
+    const last = entries[entries.length - 1];
+    return {
+      id, name: last.name, vertical: last.vertical,
+      avgPos: positions.reduce((a,b) => a+b, 0) / positions.length,
+      best: Math.min(...positions), worst: Math.max(...positions),
+      currentTotal: last.total, months: entries.length, entries
+    };
+  }).filter(Boolean);
+
+  if (stats.length < 2) {
+    body.innerHTML = '<div class="premi-empty">Pelo menos um(a) dos(as) executivos(as) selecionados(as) ainda não tem histórico.</div>';
+    return;
+  }
+
+  const summaryRows = [...stats].sort((a,b) => a.avgPos - b.avgPos).map((s,i) => `
+    <tr>
+      <td style="text-align:left;">${i===0?'🏆 ':''}${s.name}</td>
+      <td><span class="vertical-tag ${vertClass(s.vertical)}">${s.vertical}</span></td>
+      <td>${s.avgPos.toFixed(1)}º</td>
+      <td>${s.best}º</td>
+      <td>${s.worst}º</td>
+      <td style="color:var(--gold);">${s.currentTotal}</td>
+      <td>${s.months}</td>
+    </tr>`).join('');
+
+  const allMonthKeys = [...new Set(stats.flatMap(s => s.entries.map(e => `${e.year}-${e.month}`)))].sort();
+  const monthRows = allMonthKeys.map(key => {
+    const [year, month] = key.split('-').map(Number);
+    const cells = stats.map(s => {
+      const e = s.entries.find(en => en.year === year && en.month === month);
+      return e ? `<td>${e.position}º <span style="color:var(--muted);font-size:10px;">(${e.total}pts)</span></td>` : '<td style="color:var(--muted);">—</td>';
+    }).join('');
+    return `<tr><td style="text-align:left;">${HIST_MONTH_SHORT[month]}/${year}</td>${cells}</tr>`;
+  }).join('');
+
+  body.innerHTML = `
+    <div class="hist-evo-table-wrap" style="margin-top:16px;margin-bottom:16px;">
+      <table class="hist-evo-table auto-width">
+        <thead><tr><th style="text-align:left;">Executivo(a)</th><th>Vertical</th><th>Pos. Média</th><th>Melhor</th><th>Pior</th><th>Total Atual</th><th>Meses</th></tr></thead>
+        <tbody>${summaryRows}</tbody>
+      </table>
+    </div>
+    <div class="hist-evo-table-wrap">
+      <table class="hist-evo-table auto-width">
+        <thead><tr><th style="text-align:left;">Mês</th>${stats.map(s => `<th>${s.name.split(' ')[0]}</th>`).join('')}</tr></thead>
+        <tbody>${monthRows}</tbody>
+      </table>
+    </div>`;
+}
+
+function renderCompareVerticalBody() {
+  const body = document.getElementById('histCompareVerticalBody');
+  if (!body) return;
+  if (histCompareVerticals.length < 2) {
+    body.innerHTML = '<div class="premi-empty">Selecione 2 ou mais verticais acima para comparar.</div>';
+    return;
+  }
+
+  const data = window._historicoData || {};
+  const months = Object.values(data);
+
+  const stats = histCompareVerticals.map(v => {
+    let totalPts = 0, count = 0, bestPos = Infinity, champions = 0;
+    months.forEach(m => (m.ranking || []).forEach(r => {
+      if (r.vertical !== v) return;
+      totalPts += r.total; count++;
+      if (r.position < bestPos) bestPos = r.position;
+      if (r.position === 1) champions++;
+    }));
+    return { vertical: v, count, avgPts: count ? totalPts/count : 0, bestPos: count ? bestPos : null, champions };
+  });
+
+  const rows = [...stats].sort((a,b) => b.avgPts - a.avgPts).map((s,i) => `
+    <tr>
+      <td style="text-align:left;">${i===0 && s.count>0 ? '🏆 ' : ''}<span class="vertical-tag ${vertClass(s.vertical)}">${s.vertical}</span></td>
+      <td>${s.count}</td>
+      <td style="color:var(--gold);">${s.avgPts.toFixed(1)}</td>
+      <td>${s.bestPos ? s.bestPos+'º' : '—'}</td>
+      <td>${s.champions}</td>
+    </tr>`).join('');
+
+  body.innerHTML = `
+    <div class="hist-evo-table-wrap" style="margin-top:16px;">
+      <table class="hist-evo-table auto-width">
+        <thead><tr><th style="text-align:left;">Vertical</th><th>Registros</th><th>Média de Pontos</th><th>Melhor Posição</th><th>Vezes Campeã</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+// ===================== ACESSO AO RANKING (automação semanal) =====================
+let rankingAccessWeekOffset = 0;
+
+function getWeekStart(date) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  const day = d.getDay(); // 0=dom, 1=seg, ... 6=sáb
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  return d;
+}
+
+function changeRankingAccessWeek(delta) {
+  rankingAccessWeekOffset = delta === 0 ? 0 : rankingAccessWeekOffset + delta;
+  if (rankingAccessWeekOffset > 0) rankingAccessWeekOffset = 0;
+  renderRankingAccessSummary();
+}
+
+function getRankingAccessWeekRange() {
+  const ref = new Date();
+  ref.setDate(ref.getDate() + rankingAccessWeekOffset * 7);
+  const weekStart = getWeekStart(ref);
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekEnd.getDate() + 6);
+  weekEnd.setHours(23, 59, 59, 999);
+  const weekKey = weekStart.toISOString().split('T')[0];
+  return { weekStart, weekEnd, weekKey };
+}
+
+function getRankingAccessDaysByExec(weekStart, weekEnd) {
+  const logData = window._accessLogData || {};
+  const byExec = {};
+  Object.values(logData).forEach(e => {
+    if (e.profile !== 'exec' || e.execId == null) return;
+    if (e.timestamp < weekStart.getTime() || e.timestamp > weekEnd.getTime()) return;
+    const dateKey = new Date(e.timestamp).toDateString();
+    if (!byExec[e.execId]) byExec[e.execId] = new Set();
+    byExec[e.execId].add(dateKey);
+  });
+  return byExec;
+}
+
+function renderRankingAccessSummary() {
+  const wrap = document.getElementById('rankingAccessWrap');
+  if (!wrap) return;
+  if (currentProfile !== 'admin') { wrap.innerHTML = ''; return; }
+
+  const { weekStart, weekEnd, weekKey } = getRankingAccessWeekRange();
+  const fmtD = d => d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+  const weekLabel = `${fmtD(weekStart)} a ${fmtD(weekEnd)}`;
+
+  const byExec = getRankingAccessDaysByExec(weekStart, weekEnd);
+  const appliedThisWeek = (window._rankingAccessApplied || {})[weekKey] || {};
+
+  // Aplica automaticamente para quem qualificou na semana ATUAL (não mexe em semanas passadas navegadas manualmente)
+  if (rankingAccessWeekOffset === 0) {
+    autoApplyRankingAccessPoints(weekKey, byExec, appliedThisWeek);
+  }
+
+  const rows = executives.map(ex => {
+    const days = byExec[ex.id] ? byExec[ex.id].size : 0;
+    return { exec: ex, days, qualifies: days >= 3, applied: !!appliedThisWeek[ex.id] };
+  }).sort((a, b) => b.days - a.days);
+
+  wrap.innerHTML = `
+    <div class="hist-close-card">
+      <div class="hist-close-title">📊 ACESSO AO RANKING — SEMANA DE ${weekLabel}</div>
+      <div class="hist-close-desc">Calculado a partir dos logins registrados no log abaixo. Quem acessa em <strong>3 ou mais dias diferentes</strong> na semana recebe <strong>10 pts</strong> em Engajamento — aplicado automaticamente, sem precisar de ação manual.</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px;">
+        <button onclick="changeRankingAccessWeek(-1)" style="font-family:Orbitron,monospace;font-size:10px;letter-spacing:1px;padding:7px 12px;border-radius:6px;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--text);">← Semana anterior</button>
+        <button onclick="changeRankingAccessWeek(1)" ${rankingAccessWeekOffset >= 0 ? 'disabled style="opacity:0.35;cursor:not-allowed;font-family:Orbitron,monospace;font-size:10px;letter-spacing:1px;padding:7px 12px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--text);"' : 'style="font-family:Orbitron,monospace;font-size:10px;letter-spacing:1px;padding:7px 12px;border-radius:6px;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--text);"'}>Próxima semana →</button>
+        ${rankingAccessWeekOffset !== 0 ? `<button onclick="changeRankingAccessWeek(0)" style="font-family:Orbitron,monospace;font-size:10px;letter-spacing:1px;padding:7px 12px;border-radius:6px;cursor:pointer;border:1px solid rgba(0,212,255,0.35);background:rgba(0,212,255,0.08);color:var(--accent);">Semana atual</button>` : ''}
+      </div>
+      <div style="overflow-x:auto;border-radius:8px;border:1px solid var(--border);">
+        <table style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr style="background:rgba(255,255,255,0.03);">
+              <th style="padding:10px 14px;text-align:left;font-family:Orbitron,monospace;font-size:9px;color:var(--muted);letter-spacing:1.5px;border-bottom:1px solid var(--border);">EXECUTIVO(A)</th>
+              <th style="padding:10px 14px;text-align:center;font-family:Orbitron,monospace;font-size:9px;color:var(--muted);letter-spacing:1.5px;border-bottom:1px solid var(--border);">DIAS ACESSADOS</th>
+              <th style="padding:10px 14px;text-align:center;font-family:Orbitron,monospace;font-size:9px;color:var(--muted);letter-spacing:1.5px;border-bottom:1px solid var(--border);">STATUS</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(r => `
+              <tr>
+                <td style="padding:10px 14px;font-family:Rajdhani,sans-serif;font-size:14px;font-weight:600;color:var(--text);">${r.exec.name}</td>
+                <td style="padding:10px 14px;text-align:center;font-family:Orbitron,monospace;font-size:13px;color:${r.qualifies ? '#00ff88' : 'var(--muted)'};">${r.days}/7</td>
+                <td style="padding:10px 14px;text-align:center;font-family:Orbitron,monospace;font-size:10px;">
+                  ${r.applied ? '<span style="color:#00ff88;">✓ +10 PTS APLICADO</span>' : r.qualifies ? '<span style="color:#ffb828;">⏳ APLICANDO…</span>' : '<span style="color:var(--muted);">—</span>'}
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function autoApplyRankingAccessPoints(weekKey, byExec, appliedThisWeek) {
+  if (window._rankingAccessApplyInFlight) return; // evita disparos concorrentes na mesma sessão
+
+  const toApply = executives.filter(ex => {
+    const days = byExec[ex.id] ? byExec[ex.id].size : 0;
+    return days >= 3 && !appliedThisWeek[ex.id];
+  });
+  if (!toApply.length) return;
+  if (!window._applyRankingAccessPoints) return;
+
+  toApply.forEach(ex => { ex.rankingAccessPts = (ex.rankingAccessPts || 0) + 10; });
+
+  window._rankingAccessApplyInFlight = true;
+  Promise.resolve(window._applyRankingAccessPoints(weekKey, toApply.map(ex => ex.id), executives))
+    .finally(() => { window._rankingAccessApplyInFlight = false; });
+
+  renderRanking();
+  renderPodium();
+  renderEdit();
+}
+
+// ===================== CONTESTAÇÕES DE PONTOS =====================
+function openContestModal() {
+  if (!currentExecId) return;
+  document.getElementById('contestModal').classList.add('open');
+  renderContestModal();
+}
+
+function closeContestModal() {
+  document.getElementById('contestModal').classList.remove('open');
+}
+
+function renderContestModal() {
+  const feed = document.getElementById('contestFeed');
+  if (!feed || !currentExecId) return;
+
+  const exec = executives.find(e => e.id === currentExecId);
+  if (!exec) return;
+
+  const allFields = [...CORE_FIELDS, ...ENGAGEMENT_FIELDS];
+  const warningHtml = `
+    <div class="contest-warning">
+      ⚠️ A contestação só é válida <strong>dentro do mês vigente</strong>. Depois que o mês for fechado, não há ajuste retroativo — envie antes do fechamento.
+    </div>`;
+  const formHtml = `
+    <div class="contest-form">
+      <label>Indicador</label>
+      <select id="contest-indicator">
+        ${allFields.map(f => `<option value="${f.key}">${f.label} — atual: ${exec[f.key]||0} pts</option>`).join('')}
+      </select>
+      <label>Motivo da contestação</label>
+      <textarea id="contest-reason" rows="3" placeholder="Explique por que acha que a pontuação está incorreta..." maxlength="300"></textarea>
+      <button class="contest-submit-btn" onclick="submitContest()">Enviar Contestação</button>
+    </div>`;
+
+  const data = window._contestacoesData || {};
+  const mine = Object.entries(data)
+    .map(([key, c]) => ({...c, key}))
+    .filter(c => c.execId === currentExecId)
+    .sort((a,b) => b.timestamp - a.timestamp);
+
+  const listHtml = mine.length ? mine.map(c => `
+    <div class="contest-card">
+      <div class="contest-card-top">
+        <div class="contest-indicator">${c.indicatorLabel}</div>
+        <div class="contest-status ${c.status}">${c.status === 'resolvido' ? '✓ Resolvido' : '⏳ Pendente'}</div>
+      </div>
+      <div class="contest-reason">${c.reason}</div>
+      <div class="contest-meta">${new Date(c.timestamp).toLocaleDateString('pt-BR')} · pontuação na época: ${c.currentValue} pts</div>
+    </div>
+  `).join('') : '<div class="msg-empty">Nenhuma contestação enviada ainda.</div>';
+
+  feed.innerHTML = warningHtml + formHtml + listHtml;
+}
+
+function submitContest() {
+  const indicatorKey = document.getElementById('contest-indicator')?.value;
+  const reason = document.getElementById('contest-reason')?.value.trim();
+  if (!indicatorKey || !reason) { alert('Selecione o indicador e explique o motivo.'); return; }
+
+  const exec = executives.find(e => e.id === currentExecId);
+  if (!exec) return;
+  const field = [...CORE_FIELDS, ...ENGAGEMENT_FIELDS].find(f => f.key === indicatorKey);
+
+  const contest = {
+    execId: exec.id, execName: exec.name, vertical: exec.vertical,
+    indicatorKey, indicatorLabel: field ? field.label : indicatorKey,
+    currentValue: exec[indicatorKey] || 0, reason,
+    status: 'pendente', timestamp: Date.now()
+  };
+  if (window._saveContest) window._saveContest(contest);
+  document.getElementById('contest-reason').value = '';
+  renderContestModal();
+}
+
+function renderContestacoesAdmin() {
+  const wrap = document.getElementById('contestacoesAdminWrap');
+  if (!wrap) return;
+
+  const data = window._contestacoesData || {};
+  const all = Object.entries(data).map(([key, c]) => ({...c, key})).sort((a,b) => b.timestamp - a.timestamp);
+  const pending = all.filter(c => c.status === 'pendente');
+  const resolved = all.filter(c => c.status === 'resolvido');
+
+  if (!all.length) {
+    wrap.innerHTML = '<div class="premi-empty">Nenhuma contestação recebida ainda.</div>';
+    updateContestBadge();
+    return;
+  }
+
+  const cardHtml = c => `
+    <div class="contest-card">
+      <div class="contest-card-top">
+        <div>
+          <div class="contest-exec-name">${c.execName}</div>
+          <span class="vertical-tag ${vertClass(c.vertical)}">${c.vertical}</span>
+        </div>
+        <div class="contest-status ${c.status}">${c.status === 'resolvido' ? '✓ Resolvido' : '⏳ Pendente'}</div>
+      </div>
+      <div class="contest-indicator" style="margin-top:8px;">${c.indicatorLabel} — ${c.currentValue} pts na época</div>
+      <div class="contest-reason">${c.reason}</div>
+      <div class="contest-meta">${new Date(c.timestamp).toLocaleDateString('pt-BR')} às ${new Date(c.timestamp).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div>
+      ${c.status === 'pendente' ? `<button class="contest-resolve-btn" onclick="resolveContest('${c.key}')">✓ Marcar como Resolvido</button>` : ''}
+    </div>`;
+
+  wrap.innerHTML = `
+    ${pending.length ? `<div class="edit-section-label" style="margin-top:0;">⏳ Pendentes (${pending.length})</div>${pending.map(cardHtml).join('')}` : '<div class="premi-empty">Nenhuma contestação pendente.</div>'}
+    ${resolved.length ? `<div class="edit-section-label">✓ Resolvidas (${resolved.length})</div>${resolved.map(cardHtml).join('')}` : ''}
+  `;
+  updateContestBadge();
+}
+
+function resolveContest(key) {
+  if (!confirm('Marcar esta contestação como resolvida?')) return;
+  if (window._resolveContest) window._resolveContest(key);
+}
+
+function updateContestBadge() {
+  const badge = document.getElementById('contestTabBadge');
+  if (!badge) return;
+  const data = window._contestacoesData || {};
+  const pendingCount = Object.values(data).filter(c => c.status === 'pendente').length;
+  badge.textContent = pendingCount;
+  badge.classList.toggle('hidden', pendingCount === 0);
+}
+
 // ===================== ACCESS LOG =====================
 function renderAccessLog() {
   const wrap = document.getElementById('accessLogWrap');
   if (!wrap) return;
+  if (typeof renderRankingAccessSummary === 'function') renderRankingAccessSummary();
   const data = window._accessLogData || {};
   const entries = Object.values(data).sort((a,b) => b.timestamp - a.timestamp);
 
@@ -2753,7 +4052,138 @@ function renderCriteria() {
 
 
 // ===================== RENDER RANKING =====================
+// ===================== CORRIDA DA SEMANA =====================
+function getTodayDateKey() {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d.toISOString().split('T')[0];
+}
+
+function autoSnapshotDailyPoints() {
+  if (currentProfile !== 'admin') return;
+  if (!window._savePointsSnapshot) return;
+  if (window._snapshotInFlight) return;
+  const todayKey = getTodayDateKey();
+  const existing = window._pointsSnapshotData || {};
+  if (existing[todayKey]) return; // já tem um snapshot de hoje, não sobrescreve
+
+  const snapshot = {};
+  executives.forEach(e => { snapshot[e.id] = total(e); });
+  window._snapshotInFlight = true;
+  Promise.resolve(window._savePointsSnapshot(todayKey, snapshot))
+    .finally(() => { window._snapshotInFlight = false; });
+}
+
+function getWeekAgoSnapshot() {
+  const data = window._pointsSnapshotData || {};
+  const keys = Object.keys(data).sort();
+  if (!keys.length) return null;
+  const weekAgo = new Date();
+  weekAgo.setHours(0, 0, 0, 0);
+  weekAgo.setDate(weekAgo.getDate() - 7);
+
+  let best = null;
+  keys.forEach(k => {
+    const kd = new Date(k + 'T00:00:00');
+    if (kd <= weekAgo && (!best || kd > new Date(best + 'T00:00:00'))) best = k;
+  });
+  return best ? data[best] : null;
+}
+
+function computeWeeklyMovers() {
+  const baseline = getWeekAgoSnapshot();
+  if (!baseline) return [];
+  return executives
+    .map(e => {
+      const before = baseline[e.id];
+      if (before === undefined) return null;
+      const gain = total(e) - before;
+      return { id: e.id, name: e.name, vertical: e.vertical, photo: e.photo, gain };
+    })
+    .filter(m => m && m.gain > 0)
+    .sort((a, b) => b.gain - a.gain)
+    .slice(0, 5);
+}
+
+function dismissRaceBanner() {
+  clearTimeout(window._raceBannerAutoCloseTimer);
+  const wrap = document.getElementById('raceBannerWrap');
+  if (wrap) wrap.innerHTML = '';
+  _lastRaceBannerSignature = null;
+  const weekKey = getWeekStart(new Date()).toISOString().split('T')[0];
+  localStorage.setItem('raceBannerDismissed', weekKey);
+}
+
+let _lastRaceBannerSignature = null;
+function renderRaceBanner() {
+  const wrap = document.getElementById('raceBannerWrap');
+  if (!wrap) return;
+
+  const weekKey = getWeekStart(new Date()).toISOString().split('T')[0];
+  if (localStorage.getItem('raceBannerDismissed') === weekKey) {
+    wrap.innerHTML = ''; _lastRaceBannerSignature = null; return;
+  }
+
+  const movers = computeWeeklyMovers();
+  if (!movers.length) { wrap.innerHTML = ''; _lastRaceBannerSignature = null; return; }
+
+  // Evita reconstruir (e reiniciar a animação de "corrida") quando os dados não mudaram
+  // — renderRanking() é chamado com frequência por vários listeners do Firebase.
+  const signature = JSON.stringify(movers.map(m => [m.id, m.gain]));
+  if (signature === _lastRaceBannerSignature) return;
+  _lastRaceBannerSignature = signature;
+
+  const maxGain = movers[0].gain;
+  const lanes = movers.map((m, i) => {
+    const pct = 8 + (m.gain / maxGain) * 88; // 8% a 96% da pista — espalha bem do início ao fim
+    return `
+      <div class="race-lane">
+        <div class="race-lane-rank">${i + 1}º</div>
+        <div class="race-lane-track">
+          <span class="race-lane-flag">🏁</span>
+          <div class="race-avatar-wrap" data-target-left="${pct}" data-delay="${i * 280}">
+            ${avatarHtml(m, 56)}
+            <div class="race-gain-badge">+${m.gain} pts</div>
+          </div>
+        </div>
+        <div class="race-lane-name">${m.name.split(' ').slice(0,2).join(' ')} <span class="vertical-tag ${vertClass(m.vertical)}" style="margin-left:4px;">${m.vertical}</span></div>
+      </div>`;
+  }).join('');
+
+  wrap.innerHTML = `
+    <div class="race-banner">
+      <button class="race-banner-close" onclick="dismissRaceBanner()">✕</button>
+      <div class="race-banner-title">🏁 CORRIDA DA SEMANA</div>
+      <div class="race-banner-sub">Quem mais evoluiu nos últimos 7 dias</div>
+      ${lanes}
+    </div>`;
+
+  // Anima cada corredor da esquerda (0%) até a posição final, com a Web Animations API
+  // (mais confiável que animar `left` com custom property em @keyframes entre navegadores).
+  wrap.querySelectorAll('.race-avatar-wrap').forEach(el => {
+    const target = el.dataset.targetLeft + '%';
+    const delay = parseInt(el.dataset.delay) || 0;
+    el.style.left = target; // garante a posição final correta mesmo se a animação não rodar
+    el.animate(
+      [
+        { left: '0%', opacity: 0 },
+        { left: '0%', opacity: 1, offset: 0.12 },
+        { left: target, opacity: 1 }
+      ],
+      { duration: 2600, delay, easing: 'cubic-bezier(.34,.02,.22,1)', fill: 'both' }
+    );
+  });
+
+  // Fecha sozinho depois de 3 minutos se ninguém interagir
+  clearTimeout(window._raceBannerAutoCloseTimer);
+  window._raceBannerAutoCloseTimer = setTimeout(() => {
+    if (document.querySelector('.race-banner')) dismissRaceBanner();
+  }, 3 * 60 * 1000);
+}
+
 function renderRanking() {
+  autoSnapshotDailyPoints();
+  renderRaceBanner();
   const ranked = getRanked(currentFilter);
   const max = maxPossible();
   const body = document.getElementById('rankingBody');
@@ -2788,12 +4218,11 @@ function renderRanking() {
           </div>
         </div>
       </td>
-      <td>${cell(e.train)}</td>
       <td>${cell(e.action)}</td>
+      <td>${cell((e.bonusPts||0)+(e.couponPts||0)+(e.commentPts||0)+(e.develPts||0)+(e.rankingAccessPts||0))}</td>
       <td>${cell(e.alvo)}</td>
       <td>${cell(e.dev)}</td>
       <td>${cell(e.wow)}</td>
-      <td>${cell((e.bonusPts||0)+(e.couponPts||0)+(e.commentPts||0))}</td>
       <td><span class="total-cell">${t}</span></td>
     </tr>`;
   }).join('');
@@ -2862,54 +4291,6 @@ function renderPodium() {
   }).join('');
 }
 
-// ===================== RENDER STATS =====================
-function renderStats() {
-  const all = executives;
-  const totals = all.map(e=>total(e));
-  const max = maxPossible();
-
-  document.getElementById('statsGrid').innerHTML = `
-    <div class="stat-card">
-      <div class="stat-label">Total de Executivos</div>
-      <div class="stat-value">${all.length}</div>
-      <div class="stat-sub">Competidores ativos</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Maior Pontuação</div>
-      <div class="stat-value">${Math.max(...totals)}</div>
-      <div class="stat-sub">de ${max} possíveis</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Média Geral</div>
-      <div class="stat-value">${Math.round(totals.reduce((a,b)=>a+b,0)/all.length)}</div>
-      <div class="stat-sub">pontos por executivo</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">WOW! Conquistados</div>
-      <div class="stat-value">${all.filter(e=>e.wow>0).length}</div>
-      <div class="stat-sub">de ${all.length} executivos</div>
-    </div>
-  `;
-
-  const verticals = ['Retail','Postos','Auto','Food','Enterprise','Farma'];
-  const body = document.getElementById('statsBody');
-  body.innerHTML = verticals.map(v=>{
-    const group = all.filter(e=>e.vertical===v);
-    if(!group.length) return '';
-    const pts = group.map(e=>total(e));
-    const leader = group.reduce((a,b)=>total(b)>total(a)?b:a);
-    const avg = Math.round(pts.reduce((a,b)=>a+b,0)/pts.length);
-    const sum = pts.reduce((a,b)=>a+b,0);
-    return `<tr>
-      <td><span class="vertical-tag ${vertClass(v)}">${v}</span></td>
-      <td>${group.length}</td>
-      <td><span class="score-cell">${sum}</span></td>
-      <td><span class="score-cell">${avg}</span></td>
-      <td><span class="exec-name" style="font-size:14px">${leader.name.split(' ').slice(0,2).join(' ')}</span></td>
-    </tr>`;
-  }).join('');
-}
-
 // ===================== RENDER EDIT =====================
 // ===================== INATIVIDADE =====================
 function getLastAccessForExec(execId) {
@@ -2965,16 +4346,6 @@ function inactivityBadges(exec) {
 function renderEdit() {
   const ranked = getRanked('Todos');
   const cards = document.getElementById('editCards');
-  const FIELDS = [
-    { key:'train',     label:'Treinamentos',             hint:'10 pts por participação (mín. 50 min ao vivo)' },
-    { key:'action',    label:'Satisfação da Franquia',     hint:'até 30 pts/mês · média das avaliações de satisfação pós Plano de Ação' },
-    { key:'alvo',      label:'ALVO',                      hint:'15 pts por diagnóstico aplicado e anexado' },
-    { key:'dev',       label:'Índice de Desenvolvimento', hint:'até 10 pts/mês · lançar pontos acumulados do mês' },
-    { key:'wow',       label:'WOW — Evolução de Receita', hint:'até 35 pts/mês · 5 faixas · teto: 3% = 35 pts · < 0,5% não pontua' },
-    { key:'bonusPts',  label:'Bônus de Desafios',         hint:'pts acumulados de desafios concluídos · ajuste manual se necessário' },
-    { key:'couponPts',   label:'Bônus de Cupons Flash',     hint:'pts acumulados de cupons resgatados · ajuste manual se necessário' },
-    { key:'commentPts',  label:'Bônus de Comentários',      hint:'1 pt por comentário enviado · ajuste manual se necessário' },
-  ];
   cards.innerHTML = ranked.map((e,i)=>{
     const t = total(e);
     return `<div class="edit-card" id="ec-${e.id}">
@@ -3012,10 +4383,21 @@ function renderEdit() {
           <button onclick="regenPassword(${e.id})"
             style="font-family:'Orbitron',monospace;font-size:13px;padding:7px 10px;border-radius:4px;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,0.06);color:var(--muted);transition:all 0.2s;" title="Gerar nova senha">🔄</button>
         </div>
+        <div class="edit-section-label">📊 Critérios Principais</div>
         <div class="edit-grid">
-          ${FIELDS.map(f=>`
+          ${CORE_FIELDS.map(f=>`
           <div class="edit-field">
-            <label>${f.label}</label>
+            <label>${f.label}${f.auto ? '<span class="auto-badge" title="Pontuação creditada automaticamente pelo sistema, sem precisar digitar aqui">🤖 Automático</span>' : ''}</label>
+            <div class="pts-hint">${f.hint}</div>
+            <input type="number" min="0" value="${e[f.key]||0}"
+              oninput="setFieldRaw(${e.id},'${f.key}',this.value)" placeholder="0">
+          </div>`).join('')}
+        </div>
+        <div class="edit-section-label">🔥 Engajamento</div>
+        <div class="edit-grid">
+          ${ENGAGEMENT_FIELDS.map(f=>`
+          <div class="edit-field">
+            <label>${f.label}${f.auto ? '<span class="auto-badge" title="Pontuação creditada automaticamente pelo sistema, sem precisar digitar aqui">🤖 Automático</span>' : ''}</label>
             <div class="pts-hint">${f.hint}</div>
             <input type="number" min="0" value="${e[f.key]||0}"
               oninput="setFieldRaw(${e.id},'${f.key}',this.value)" placeholder="0">
@@ -3056,7 +4438,7 @@ function clearSearch() {
 function setFieldRaw(id, field, val) {
   const e = executives.find(x=>x.id===id);
   if(!e) return;
-  const scoreFields = ['train','action','alvo','dev','wow'];
+  const scoreFields = ['action','alvo','dev','wow'];
   const prev = e[field];
   e[field] = parseInt(val)||0;
   if (scoreFields.includes(field) && e[field] !== prev) e.lastScoreUpdate = Date.now();
@@ -3100,7 +4482,6 @@ function saveOne(id) {
   lastSaveTime = new Date();
   renderRanking();
   renderPodium();
-  renderStats();
   updateLastUpdateBadge();
   // Save to Firebase
   if (window._fbReady && window._fbDataLoaded) {
@@ -3212,7 +4593,6 @@ function saveAll() {
   lastSaveTime = new Date();
   renderRanking();
   renderPodium();
-  renderStats();
   renderEdit();
   updateLastUpdateBadge();
   // Save to Firebase
@@ -3237,9 +4617,19 @@ function saveAll() {
 }
 
 function filterVertical(v, btn) {
-  currentFilter = v;
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  const wrap = document.getElementById('rankingVerticalFilter');
+  const todosBtn = wrap.querySelector('.filter-btn');
+  if (v === 'Todos') {
+    currentFilter = [];
+    wrap.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    todosBtn.classList.add('active');
+  } else {
+    const idx = currentFilter.indexOf(v);
+    if (idx === -1) { currentFilter.push(v); btn.classList.add('active'); }
+    else { currentFilter.splice(idx, 1); btn.classList.remove('active'); }
+    // Sem nenhuma vertical selecionada, volta a mostrar "Todos"
+    todosBtn.classList.toggle('active', currentFilter.length === 0);
+  }
   renderRanking();
 }
 
@@ -3247,7 +4637,7 @@ function switchTab(name) {
   // Block edit tab access for exec/lider profile
   if (name === 'edit' && (currentProfile === 'exec' || currentProfile === 'lider')) return;
   // Block access log and challenge tabs for non-admin
-  if ((name === 'access' || name === 'challenge') && currentProfile !== 'admin') return;
+  if ((name === 'access' || name === 'challenge' || name === 'contestacoes') && currentProfile !== 'admin') return;
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   if (typeof event !== 'undefined' && event && event.target) event.target.classList.add('active');
@@ -3257,6 +4647,32 @@ function switchTab(name) {
     if (typeof renderChallengeAdmin === 'function') renderChallengeAdmin();
     if (typeof renderCouponAdmin === 'function') renderCouponAdmin();
   }
+  if (name === 'premiacoes') {
+    if (typeof renderPremiacoes === 'function') renderPremiacoes();
+  }
+  if (name === 'historico') {
+    if (typeof renderHistorico === 'function') renderHistorico();
+  }
+  if (name === 'access') {
+    if (typeof renderRankingAccessSummary === 'function') renderRankingAccessSummary();
+  }
+  if (name === 'contestacoes') {
+    if (typeof renderContestacoesAdmin === 'function') renderContestacoesAdmin();
+  }
+}
+
+function goToCriteria(key) {
+  switchTab('rules');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const tabBtn = document.getElementById('tab-rules');
+  if (tabBtn) tabBtn.classList.add('active');
+  setTimeout(() => {
+    const card = document.getElementById('criteria-' + key);
+    if (!card) return;
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    card.classList.add('criteria-flash');
+    setTimeout(() => card.classList.remove('criteria-flash'), 1600);
+  }, 50);
 }
 
 function showToast() {
@@ -3300,7 +4716,7 @@ function addExecutive() {
   if(!name) return;
   const newId = (executives.length > 0 ? Math.max(...executives.map(e=>e.id)) : 0) + 1;
   const password = generatePassword(name);
-  executives.push({id:newId, name, vertical, train:0, action:0, alvo:0, dev:0, wow:0, password});
+  executives.push({id:newId, name, vertical, action:0, alvo:0, dev:0, wow:0, password});
   closeAddModal();
   document.getElementById('newName').value='';
   saveAll();
@@ -3415,6 +4831,12 @@ function applyRoleRestrictions() {
   // Show challenge tab only for admin
   const challengeTab = document.getElementById('tab-challenge');
   if (challengeTab) challengeTab.style.display = isAdmin ? '' : 'none';
+  // Show contestações tab only for admin
+  const contestTab = document.getElementById('tab-contestacoes');
+  if (contestTab) contestTab.style.display = isAdmin ? '' : 'none';
+  // Show "Contestar Pontos" button only for exec profile
+  const contestBtn = document.getElementById('contestBtn');
+  if (contestBtn) contestBtn.style.display = isExec ? '' : 'none';
   // Destroy edit panel contents so it cannot be accessed via DOM tricks
   if (restricted) {
     const editCards = document.getElementById('editCards');
@@ -3426,6 +4848,10 @@ function applyRoleRestrictions() {
     window.addExecutive = function() {};
     window.toggleCard = function() {};
   }
+  if (typeof renderPremiacoes === 'function') renderPremiacoes();
+  if (typeof renderHistorico === 'function') renderHistorico();
+  if (typeof renderRankingAccessSummary === 'function') renderRankingAccessSummary();
+  if (typeof renderContestacoesAdmin === 'function') renderContestacoesAdmin();
 }
 
 function filterEditCards(query) {
@@ -3741,19 +5167,19 @@ function renderRules() {
   if (!panel) return;
 
   const ruleIcons = {
-    train: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="12" height="17" rx="2"/><path d="M7 7h6M7 11h6M7 15h4"/><path d="M16 2h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8"/></svg>`,
     action: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12l3 3 5-5"/></svg>`,
     alvo:   `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg>`,
     dev:    `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 5-6 4 3"/><path d="M3 21h18"/></svg>`,
     wow:    `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l7-7 4 4 7-7"/><path d="M15 7h5v5"/></svg>`,
+    engagement: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 3-1 4-2 6-1.5 3 0 5 2 5s3.5-2 2-5c2 1 3 3 3 5a5 5 0 0 1-10 0c0-4 3-6 5-11z"/></svg>`,
   };
 
   const maxTotal = maxPossible();
 
   panel.innerHTML = `
     <div style="margin-bottom:28px;">
-      <div style="font-family:'Orbitron',monospace;font-size:10px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:6px;">Ranking de esforço contínuo · sem teto · sem prazo</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:#f0f4ff;letter-spacing:2px;">Pontuação aberta — quem mais se dedica, mais pontua</div>
+      <div style="font-family:'Orbitron',monospace;font-size:10px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:6px;">Ranking mensal · ciclo reinicia todo mês</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:#f0f4ff;letter-spacing:2px;">Pontuação mensal — quem mais se dedica no mês, mais pontua</div>
     </div>
     ${CRITERIA.map(c => {
       const tableHtml = c.table ? `
@@ -3761,17 +5187,14 @@ function renderRules() {
           <table style="width:100%;border-collapse:collapse;font-family:'Orbitron',monospace;font-size:10px;">
             <thead>
               <tr>
-                ${c.key==='dev'
-                  ? '<th style="text-align:left;padding:6px 10px;color:var(--muted);border-bottom:1px solid var(--border);">MÉDIA DO G.O</th>'
-                  : '<th style="text-align:left;padding:6px 10px;color:var(--muted);border-bottom:1px solid var(--border);">CRESCIMENTO NEW MRR</th>'
-                }
-                <th style="text-align:right;padding:6px 10px;color:var(--muted);border-bottom:1px solid var(--border);">PONTOS NO MÊS</th>
+                <th style="text-align:left;padding:6px 10px;color:var(--muted);border-bottom:1px solid var(--border);">${(c.tableHeaders&&c.tableHeaders[0])||'CRITÉRIO'}</th>
+                <th style="text-align:right;padding:6px 10px;color:var(--muted);border-bottom:1px solid var(--border);">${(c.tableHeaders&&c.tableHeaders[1])||'PONTOS'}</th>
               </tr>
             </thead>
             <tbody>
               ${c.table.map((row,i) => `
                 <tr style="background:${i%2===0?'rgba(255,255,255,0.02)':'transparent'}">
-                  <td style="padding:7px 10px;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);">${c.key==='dev'?row.media:row.crescimento}</td>
+                  <td style="padding:7px 10px;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);">${row.label||row.media||row.crescimento}</td>
                   <td style="padding:7px 10px;color:var(--accent);text-align:right;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:700;">${row.pts}</td>
                 </tr>
               `).join('')}
@@ -3780,28 +5203,20 @@ function renderRules() {
         </div>` : '';
 
       const isWow = c.key === 'wow';
-      const isDev = c.key === 'dev';
-
-      const lockBadge = `
-        <div title="Em breve — critério ainda não está sendo computado" style="position:absolute;top:10px;left:10px;display:flex;align-items:center;gap:5px;background:rgba(255,190,40,0.1);border:1px solid rgba(255,190,40,0.35);border-radius:6px;padding:3px 7px 3px 5px;cursor:default;">
-          <svg width="11" height="13" viewBox="0 0 11 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="0.75" y="5.5" width="9.5" height="7" rx="1.5" stroke="rgba(255,190,40,0.8)" stroke-width="1.2" fill="rgba(255,190,40,0.12)"/>
-            <path d="M3 5.5V3.5a2.5 2.5 0 0 1 5 0v2" stroke="rgba(255,190,40,0.8)" stroke-width="1.2" stroke-linecap="round" fill="none"/>
-            <circle cx="5.5" cy="9" r="1.2" fill="rgba(255,190,40,0.8)"/>
-          </svg>
-          <span style="font-family:'Orbitron',monospace;font-size:8px;color:rgba(255,190,40,0.8);letter-spacing:0.5px;">EM BREVE</span>
-        </div>`;
+      const ptsBadge = c.ptsLabel
+        ? `<div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);line-height:1;flex-shrink:0;text-align:right;">${c.ptsLabel}</div>`
+        : `<div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--accent);line-height:1;flex-shrink:0;">${c.pts}<span style="font-size:14px;font-family:'Orbitron',monospace;"> pts</span></div>`;
 
       if (isWow) {
         return `
-        <div class="criteria-card wow-card" style="position:relative;border-radius:12px;padding:20px 24px;margin-bottom:16px;">
+        <div class="criteria-card wow-card" id="criteria-${c.key}" style="position:relative;border-radius:12px;padding:20px 24px;margin-bottom:16px;">
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
             <span class="wow-rocket" style="color:#00dbff;">${ruleIcons[c.key]||''}</span>
             <div style="flex:1;">
               <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--text);">${c.label}</div>
               <div style="font-family:'Orbitron',monospace;font-size:10px;color:var(--accent);letter-spacing:1px;margin-top:2px;">${c.rule}</div>
             </div>
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--accent);line-height:1;flex-shrink:0;">${c.pts}<span style="font-size:14px;font-family:'Orbitron',monospace;"> pts</span></div>
+            ${ptsBadge}
           </div>
           <div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:500;color:rgba(240,232,255,0.7);line-height:1.6;border-top:1px solid var(--border);padding-top:12px;">${renderSections(c)}</div>
           ${tableHtml}
@@ -3809,15 +5224,14 @@ function renderRules() {
       }
 
       return `
-        <div style="position:relative;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:20px 24px;${isDev?'padding-top:36px;':''}margin-bottom:16px;">
-          ${isDev ? lockBadge : ''}
+        <div class="criteria-card" id="criteria-${c.key}" style="position:relative;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:16px;">
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
             <span style="color:#00dbff;display:flex;align-items:center;">${ruleIcons[c.key]||''}</span>
             <div style="flex:1;">
               <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--text);">${c.label}</div>
               <div style="font-family:'Orbitron',monospace;font-size:10px;color:var(--accent);letter-spacing:1px;margin-top:2px;">${c.rule}</div>
             </div>
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--accent);line-height:1;flex-shrink:0;">${c.pts}<span style="font-size:14px;font-family:'Orbitron',monospace;"> pts</span></div>
+            ${ptsBadge}
           </div>
           <div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:500;color:rgba(240,232,255,0.7);line-height:1.6;border-top:1px solid var(--border);padding-top:12px;">${renderSections(c)}</div>
           ${tableHtml}
@@ -3859,20 +5273,6 @@ function renderRules() {
           </div>
         </div>
       </div>
-
-      <!-- Desafios -->
-      <div style="background:rgba(255,184,40,0.05);border:1px solid rgba(255,184,40,0.25);border-radius:12px;padding:20px 24px;">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
-          <span style="font-size:26px;line-height:1;flex-shrink:0;">🏆</span>
-          <div style="flex:1;">
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--text);">Desafios</div>
-            <div style="font-family:'Orbitron',monospace;font-size:10px;color:#ffb828;letter-spacing:1px;margin-top:2px;">Bônus de pontos · período limitado · publicado pelo time</div>
-          </div>
-        </div>
-        <div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:500;color:rgba(240,232,255,0.7);line-height:1.6;border-top:1px solid rgba(255,184,40,0.2);padding-top:12px;">
-          O time de Desenvolvimento de Franquias pode publicar desafios extras com prazo e pontuação definidos. Quando um desafio está ativo, ele aparece como banner no topo do Ranking. Executivos que cumprirem o desafio dentro do período recebem os pontos automaticamente após validação do time. Os pontos de desafio são somados ao total do ranking.
-        </div>
-      </div>
     </div>
   `;
 }
@@ -3884,15 +5284,44 @@ getRanked('Todos').forEach((e,i) => { previousRanks[e.id] = i+1; });
 renderCriteria();
 renderRanking();
 renderPodium();
-renderStats();
 renderEdit();
 renderRules();
+renderPremiacoes();
+renderHistorico();
+renderRankingAccessSummary();
+renderContestacoesAdmin();
 updateLastUpdateBadge();
 
 (function(){
   const wrap = document.getElementById('confettiWrap');
   if (!wrap) return;
   const colors = ['#FFD700','#c47eff','#ff3355','#00ff88','#ff7f50','#ffffff','#f472b6','#34d399','#60a5fa'];
+
+  // Explosão inicial: peças saem de um ponto central com força, em todas as direções
+  for (let i = 0; i < 55; i++) {
+    const el = document.createElement('div');
+    el.className = 'cp cp-burst';
+    const size = 3 + Math.random() * 5;
+    const isRect = Math.random() > 0.4;
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 110 + Math.random() * 260;
+    const dx = Math.cos(angle) * distance;
+    const dy = Math.sin(angle) * distance - 40;
+    el.style.cssText = [
+      'width:'+size+'px',
+      'height:'+(isRect ? size*1.6 : size)+'px',
+      'background:'+colors[Math.floor(Math.random()*colors.length)],
+      'border-radius:'+(isRect ? '2px' : '50%'),
+      '--dx:'+dx+'px',
+      '--dy:'+dy+'px',
+      '--spin:'+(Math.random()*720-360)+'deg',
+      'animation-delay:'+(Math.random()*0.12)+'s',
+      'animation-duration:'+(0.85+Math.random()*0.45)+'s'
+    ].join(';');
+    wrap.appendChild(el);
+  }
+
+  // Chuva contínua, que segue caindo depois da explosão
   for(let i = 0; i < 65; i++){
     const el = document.createElement('div');
     el.className = 'cp';
@@ -4161,14 +5590,15 @@ function exportExcel() {
     'Posição':               i + 1,
     'Nome':                  e.name,
     'Vertical':              e.vertical || '',
-    'Treinamentos':          e.train    || 0,
-    'Satisfação da Franquia': e.action   || 0,
-    'ALVO':                  e.alvo     || 0,
-    'Índice de Desenv.':     e.dev      || 0,
-    'WOW':                   e.wow      || 0,
+    'Feedback':              e.action   || 0,
+    'Planos de Ação':        e.alvo     || 0,
+    'Positivação da Carteira': e.dev    || 0,
+    'Evolução de Receita':   e.wow      || 0,
     'Bônus Desafios':        e.bonusPts || 0,
     'Bônus Cupons':          e.couponPts  || 0,
     'Bônus Comentários':     e.commentPts || 0,
+    'Acesso ao Desenvolve':  e.develPts || 0,
+    'Acesso ao Ranking':     e.rankingAccessPts || 0,
     'Total':                 total(e),
   }));
 

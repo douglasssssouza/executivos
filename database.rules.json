@@ -5,6 +5,11 @@
     "access_log":   { ".read": true, ".write": true },
     "challenge":    { ".read": true, ".write": true },
     "coupon_flash": { ".read": true, ".write": true },
+    "premiacoes":   { ".read": true, ".write": true },
+    "historico_mensal": { ".read": true, ".write": true },
+    "ranking_access_applied": { ".read": true, ".write": true },
+    "contestacoes": { ".read": true, ".write": true },
+    "points_snapshots": { ".read": true, ".write": true },
     "$other":       { ".read": false, ".write": false }
   }
 }
